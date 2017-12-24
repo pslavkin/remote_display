@@ -1,0 +1,19 @@
+Info : clock speed 1000 kHz
+Info : SWD DPIDR 0x2ba01477
+Info : kl.cpu: hardware has 6 breakpoints, 4 watchpoints
+invalid command name "kinetis_ke"
+in procedure 'init' 
+in procedure 'ocd_bouncer'
+
+Info : accepting 'gdb' connection from pipe
+invalid command name "kinetis_ke"
+in procedure 'reset' 
+in procedure 'ocd_bouncer' 
+in procedure 'ocd_process_reset' 
+in procedure 'ocd_process_reset_inner' called at file "embedded:startup.tcl", line 248
+in procedure 'kl.cpu' called at file "embedded:startup.tcl", line 299
+in procedure 'ocd_bouncer'
+
+target halted due to debug-request, current mode: Thread 
+xPSR: 0x01000000 pc: 0x1c0001b0 msp: 0x20000748
+Info : dropped 'gdb' connection

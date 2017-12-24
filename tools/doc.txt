@@ -1,0 +1,7 @@
+ente alguna macana, la flash se bloquea o no entra por el bootloader por la uart y hay que borrarla.
+para eso hacemos:
+./debug
+y una vez que entra tipeamos
+monitor kinetis mdm mass_erase
+
+y listo, deberia volver a como estaba de fabrica

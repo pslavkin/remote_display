@@ -1,0 +1,79 @@
+#
+OBJDIR?=obj
+LIBDIR?=lib
+BINDIR?=exe
+PREFIX:=/opt/arm-none-eabi-6/bin/arm-none-eabi
+CC=${PREFIX}-gcc
+
+# The command for extracting images from the linked executables.
+OBJCOPY=${PREFIX}-objcopy
+OBJDUMP=${PREFIX}-objdump
+
+# The flags passed to the assembler.
+AFLAGS=-mthumb \
+       ${CPU}  \
+       ${FPU}  \
+       -MD
+
+# The flags passed to the compiler.
+CFLAGS=-mthumb             		\
+       	-mcpu=cortex-m4      		\
+       	-mfpu=fpv4-sp-d16		\
+	-mfloat-abi=hard		\
+	-O0				\
+	-fno-common			\
+	-g3				\
+	-Wall				\
+	-c				\
+	-fmessage-length=0		\
+	-fno-builtin			\
+	-ffunction-sections		\
+	-fdata-sections			\
+	-mthumb				\
+	-imultilib armv7e-m/fpu		\
+#      	-std=c99            		\
+#	-S				\
+	-dumpbase			\
+	-auxbase-strip
+
+# The flags passed to the linker.
+LDFLAGS=-static				\
+       	-mcpu=cortex-m4      		\
+       	-mfpu=fpv4-sp-d16		\
+	-mfloat-abi=hard		\
+	-Xlinker -print-memory-usage	\
+	-Xlinker --gc-sections		\
+	-Xlinker -Map="exe/app.map"	\
+	-mthumb
+
+# The command for calling the library archiver.
+AR=${PREFIX}-ar
+# The command for calling the linker.
+LD=${PREFIX}-gcc 
+
+# Add the include file paths to AFLAGS and CFLAGS.
+AFLAGS+=${patsubst %,-I%,${subst :, ,${IPATH}}}
+CFLAGS+=${patsubst %,-I%,${subst :, ,${IPATH}}}
+
+# The rule for building the object file from each C source file.
+${OBJDIR}/%.o: %.c
+	@echo "  CC    ${<}";
+	@${CC} ${CFLAGS} -o ${@} ${<}
+
+# The rule for building the object file from each assembly source file.
+${OBJDIR}/%.o: ${SDIR}/%.S
+	@echo "  AS    ${<}"; 
+	@${CC} ${AFLAGS} -o ${@} -c ${<}
+
+# The rule for creating an object library.
+${BINDIR}/%.a:
+	@echo "  AR    ${@}"; 
+	@${AR} -cr ${@} ${^}
+
+# The rule for linking the application.
+${BINDIR}/%.axf:
+	@echo "  LD    ${@}"; 
+	@${LD} -T ld/app.ld ${LDFLAGS} -o ${@} $(filter %.o, ${^}) lib/libc.a lib/libm.a lib/libcr_newlib_nohost.a
+	@${OBJCOPY} -O binary ${@} ${@:.axf=.bin}
+	@${OBJDUMP} -d -S ${@} > ${@:.axf=.asm}
+
