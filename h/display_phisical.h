@@ -35,19 +35,25 @@ extern void 		Write_Disp_Bank			(void);
 extern void 		Send_Disp_Bank2Serial		(void);
 extern void 		Init_Lcd_Pins			(void);
 //---------------------------------------------------
+extern void 		Write_Next			(void);
 extern void 		Write_Custom_Char		(unsigned char Pos,unsigned char* Pic);
 extern void 		Write_Custom_Bank		(unsigned char Length,unsigned char* Bank); 
 //---------------------------------------------------
-extern void 		Disp_DI_Set			(void);	
-extern void 		Disp_DI_Clr			(void);	
-extern void 		Disp_E_Set			(void);	
-extern void 		Disp_E_Clr			(void);	
-extern void 		Disp_RW_Set			(void);	
-extern void 		Disp_RW_Clr			(void);	
-extern void 		Disp_Data_Port2Out		(void);
-extern void 		Disp_Data_Port2In		(void);
+extern void 		Disp_CS_Set			(void);
+extern void 		Disp_CS_Clr			(void);
+extern void 		Disp_DI_Set			(void);
+extern void 		Disp_DI_Clr			(void);
+extern void 		Disp_Rst_Set			(void);
+extern void 		Disp_Rst_Clr			(void);
+extern void 		Disp_WR_Set			(void);
+extern void 		Disp_WR_Clr			(void);
+extern void 		Disp_RD_Set			(void);
+extern void 		Disp_RD_Clr			(void);
 
+static inline void Disp_Data_Write	(unsigned char Data)	
+{
+	GPIOA->PDOR=(GPIOA->PDOR&0xFFFF00FF)|(Data<<8);
+}
 extern unsigned char 	Disp_Data_Read			(void);
-extern void 		Disp_Data_Write			(unsigned char Data);
 #endif
 

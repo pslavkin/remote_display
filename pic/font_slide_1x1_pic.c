@@ -19,8 +19,8 @@ unsigned char Customs_Chars_Font_Slide_1x1[][8] RODATA=	{
 
 void Init_Font_Slide_1x1		(void) 	
 {
-	unsigned char i;
-	for (i=0;i<sizeof(Customs_Chars_Font_Slide_1x1)/8;i++) 
-		Write_Custom_Char(7-i,Customs_Chars_Font_Slide_1x1[i]); //de atras para adelante...
+//	unsigned char i;
+//	for (i=0;i<sizeof(Customs_Chars_Font_Slide_1x1)/8;i++) 
+//		Write_Custom_Char(7-i,Customs_Chars_Font_Slide_1x1[i]); //de atras para adelante...
 }
 //------------------------------------------------------

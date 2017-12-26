@@ -25,7 +25,7 @@ unsigned char Customs_Chars_Programs[][8] RODATA =	{
 	};
 void Init_Custom_Chars_Programs		(void) 	
 {
-	Write_Custom_Bank(sizeof(Customs_Chars_Programs),(unsigned char*)Customs_Chars_Programs[0]);
+//	Write_Custom_Bank(sizeof(Customs_Chars_Programs),(unsigned char*)Customs_Chars_Programs[0]);
 }
 //-------------MEMORY---------------------------------------------------------------------------------
 unsigned char Customs_Chars_Memory[][8] RODATA =	{
@@ -37,7 +37,7 @@ unsigned char Customs_Chars_Memory[][8] RODATA =	{
 	};
 void Init_Custom_Chars_Memory		(void) 	
 {
-	Write_Custom_Bank(sizeof(Customs_Chars_Memory),Customs_Chars_Memory[0]);
+	//Write_Custom_Bank(sizeof(Customs_Chars_Memory),Customs_Chars_Memory[0]);
 }
 //------------------BANK-----------------------------------------------------------------------------
 unsigned char Customs_Chars_Setting_Bank[][8] RODATA =	{
@@ -47,7 +47,7 @@ unsigned char Customs_Chars_Setting_Bank[][8] RODATA =	{
 	};
 void Init_Custom_Chars_Setting_Bank		(void) 	
 {
-	Write_Custom_Bank(sizeof(Customs_Chars_Setting_Bank),Customs_Chars_Setting_Bank[0]);
+	//Write_Custom_Bank(sizeof(Customs_Chars_Setting_Bank),Customs_Chars_Setting_Bank[0]);
 }
 //--------------Pics Data----------------------------------
 struct Struct_String_List Setting_Bank_Data_Const[] RODATA =

@@ -2,6 +2,7 @@
 #include "everythings.h"
 #include "mke18f16.h"
 #include "fsl_clock.h"
+#include "display_phisical.h"
 //---------------------------------------------------
 void Func1(void);
 void Func2(void);

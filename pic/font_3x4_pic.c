@@ -21,9 +21,9 @@ unsigned char Customs_Chars_Font_3x4[][8] RODATA=	{
 
 void Init_Font_3x4		(void) 	
 {
-	unsigned char i;
-	for (i=0;i<sizeof(Customs_Chars_Font_3x4)/8;i++) 
-		Write_Custom_Char(i,(uint8_t*)Customs_Chars_Font_3x4[i]);
+//	unsigned char i;
+//	for (i=0;i<sizeof(Customs_Chars_Font_3x4)/8;i++) 
+//		Write_Custom_Char(i,(uint8_t*)Customs_Chars_Font_3x4[i]);
 }
 //------------------------------------------------------
 char* Font_3x4_Data[] RODATA=
