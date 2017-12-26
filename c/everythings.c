@@ -15,7 +15,6 @@
 #include "display_phisical.h"
 #include "display_layers.h"
 #include "type_conversion.h"
-#include "estim_phisical.h"
 
 State   
         Free_State1[],
@@ -37,7 +36,7 @@ void 		Init_Everythings	(void)
 	Init_Schedule();
 	Init_Leds_Session();
 	Init_Display_Phisical();
-//	Init_Estim_Phisical();
+	Init_Display_Layers();
 }	
 State** 	Everythings		(void) 			{return &Everythings_Sm;} 			//devuelve la direccion de la maquina de estados Everythings para poder mandarle mensajes.
 void 		Everythings_Rti		(void)			{Send_Event(ANY_Event,Everythings());}		//manda mensajes ANY a tiempos predefinidos...
@@ -52,15 +51,15 @@ State Free_State2[] RODATA  =
 }};
 State Free_State3[] RODATA  =
 {{
- ANY_Event			,Rien					,Free_State4,
+ ANY_Event			,Display_Layers_Rti			,Free_State4,
 }};
 State Free_State4[] RODATA  =
 {{
- ANY_Event			,Write_Next				,Free_State5,
+ ANY_Event			,Rien				,Free_State5,
 }};
 State Free_State5[] RODATA  =
 {{
- ANY_Event			,Write_Next 				,Free_State6,
+ ANY_Event			,Rien 				,Free_State6,
 }};
 State Free_State6[] RODATA  =
 {{
@@ -68,7 +67,7 @@ State Free_State6[] RODATA  =
 }};
 State Free_State7[] RODATA  =
 {{
- ANY_Event			,Write_Next				,Free_State8,
+ ANY_Event			,Rien				,Free_State8,
 }};
 State Free_State8[] RODATA  =
 {{
@@ -76,10 +75,10 @@ State Free_State8[] RODATA  =
 }};
 State Free_State9[] RODATA  =
 {{
- ANY_Event			,Write_Next	 			,Free_State10,
+ ANY_Event			,Rien	 			,Free_State10,
 }};
 State Free_State10[] RODATA  =
 {{
- ANY_Event			,Write_Next				,Free_State1,
+ ANY_Event			,Rien				,Free_State1,
 }};
 //-------------------------------------------------------------------------------

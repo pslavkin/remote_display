@@ -16,7 +16,6 @@
 #include "rotary.h"
 #include "type_conversion.h"
 #include "buzzer.h"
-#include "power_pic.h"
 
 State 
 	Button_Disabled		[],
@@ -43,13 +42,13 @@ void 		Release_Hold_Button	(void)	{Atomic_Send_Event(Wait_Any_Button_Release_Eve
 void 	Button_Rotary_Press		(void)	
 {
 	Send_NVDebug_Buttons_Data2Serial(22,"Button Rotary Pressed\n");	
-	Find_Event_Handler(Button_Rotary_Code,0);
+//	Find_Event_Handler(Button_Rotary_Code,0);
 	Reset_Accel();
 }
 void 	Button_Rotary_Released	(void)	
 {
 	Send_NVDebug_Buttons_Data2Serial(19,"Button Rotary Released\n");		
-	if(Find_Event_Handler(Button_Rotary_Code,2)) Beep();
+//	if(Find_Event_Handler(Button_Rotary_Code,2)) Beep();
 }
 void 	Button_Rotary_Hold		(void)	
 {
@@ -64,18 +63,17 @@ void 	Button_Rotary_Next_Hold		(void)
 void 	Button_Rotary_Hold1_Released	(void)	
 {
 	Send_NVDebug_Buttons_Data2Serial(19,"Button Rotary Hold1\n");		
-	if(Find_Event_Handler(Button_Rotary_Code,1)) Beep();
+//	if(Find_Event_Handler(Button_Rotary_Code,1)) Beep();
 }
 void 	Button_Rotary_Hold2_Released	(void)	
 {
 	Send_NVDebug_Buttons_Data2Serial(19,"Button Rotary Hold2\n");
-	Del_All_Layers_But_Power();
+	//Del_All_Layers_But_Power();
 	Beep();
 }
 void 	Button_Rotary_Hold3_Released	(void)	
 {
 	Send_NVDebug_Buttons_Data2Serial(19,"Button Rotary Hold3\n");
-	Del_All_Layers_But_Power();
 	Beep();
 }
 //--------------------------------------------------------------------------------------

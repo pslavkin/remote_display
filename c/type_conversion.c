@@ -1,6 +1,8 @@
-#include <type_conversion.h>
-#include <str.h>
-#include <state_machine.h>
+#include "type_conversion.h"
+#include "str.h"
+#include "state_machine.h"
+#include "display_phisical.h"
+#include "display_layers.h"
 
 static unsigned long Dec[] RODATA = {		//este array de long se usa para las restas suscesivas en las funciones de conversion de long a BCD y de char a BCD. Notar que no banca el maximo de los long, porque por ahora no se necesita, en caso de requerir habra que seguir agragando potencias de 10 a este array///
  		            	   10000000, 	//convierte hasta 99 999 999 y yo necesito convertir 24 bits para los codigos del RC que va de 0 a 2^24 =16 777 215
@@ -142,20 +144,56 @@ unsigned char* Int2Hex_Bcd(unsigned char* Bcd,unsigned int Bin)
 	return String2Hex_Bcd(Bcd,(unsigned char*)&Bin,2);
 }
 //----------------------------------------------------------------
-unsigned char* Signed_Int2_2Dec_Fix_Point_Bcd(unsigned char* Bcd,signed int Bin)	//convierte un entero pero lo considera como punto fijo y lo pasa a bcd considerando 2 decimales mas signo, del tipo "+655.35"
-{
- String_Copy((unsigned char*)"+655.35",Bcd,7);			//copia el formato en el destino
- if(Bin<0) {Bcd[0]='-';Bin=-Bin;}		//si el valore es negativo, se cambia el signo y se complementa el daro para poder convertir a bcd
- Int2Bcd(Bcd+1,Bin);				//convioerte a bcd y pisa la respuesta salteando la primera posicion reservada para el signo...
- Shift_String2Rigth(Bcd+4,2,1);			//hace lugar para poner el punto decimal..
- Bcd[4]='.';					//agrega el puntito...
- return Bcd;
-}
-//----------------------------------------------------------------
 unsigned char*	Replace_Zero2Space(unsigned char* Buf,unsigned char Length)
 {
 	unsigned char i;
 	for(i=0;i<Length && Buf[i]=='0';i++) Buf[i]='/';		//ceros a la izquierda afuera.. excepto el primero...
 	return Buf;
 }
+//----------------------------------------------------------------
+void Int2Pic(unsigned int Bin,struct Struct_Pic *Font,struct Struct_Pic *Pic)
+{
+ unsigned char Buf[5];
+ Int2Bcd(Buf,Bin);
+ String2Pic(Buf,sizeof(Buf),Font,Pic);
+}
+void Int2_4Digit_Pic(unsigned int Bin,struct Struct_Pic *Font,struct Struct_Pic *Pic)
+{
+ unsigned char Buf[5];
+ Int2Bcd(Buf,Bin);
+ String2Pic(Buf+1,sizeof(Buf)-1,Font,Pic);
+}
+void Int2_3Digit_Pic(unsigned int Bin,struct Struct_Pic *Font,struct Struct_Pic *Pic)
+{
+ unsigned char Buf[5];
+ Int2Bcd(Buf,Bin);
+ String2Pic(Buf+1,sizeof(Buf)-2,Font,Pic);
+}
+//----------------------------------------------------------------
+void Char2Pic(unsigned char Bin,struct Struct_Pic *Font,struct Struct_Pic *Pic)
+{
+ unsigned char Buf[3];
+ Char2Bcd(Buf,Bin);
+ String2Pic(Buf,sizeof(Buf),Font,Pic);
+ Layer_Info_Modified();
+}
+void Char2_2Digit_Pic(unsigned char Bin,struct Struct_Pic *Font,struct Struct_Pic *Pic)
+{
+ unsigned char Buf[3];
+ Char2Bcd(Buf,Bin);
+ String2Pic(Buf+1,sizeof(Buf)-1,Font,Pic);
+}
+//----------------------------------------------------------------
+void Insert_String2Pic(unsigned char *String,unsigned char Length,struct Struct_Pic *Font,struct Struct_Pic *Pic,unsigned char Offset)
+{
+// unsigned char** Font_Data=Font->Data;
+// unsigned char** Pic_Data=Pic->Data;
+// Pic_Data+=Offset;
+//// Pic->Height=Length/Pic->Width*Font->Height;
+// while(Length--) Pic_Data[Length]=Font_Data[String[Length]-' '];
+// Layer_Info_Modified();
+}
+void String2Pic(unsigned char *String,unsigned char Length,struct Struct_Pic *Font,struct Struct_Pic *Pic)	{Insert_String2Pic(String,Length,Font,Pic,0);}
+void Append_Char2Pic(unsigned char Char,struct Struct_Pic *Font,struct Struct_Pic *Pic)				{Insert_String2Pic(&Char,1,Font,Pic,Pic->PCount++);}
+//----------------------------------------------------------------
 

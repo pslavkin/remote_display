@@ -1,7 +1,6 @@
-#ifndef STRING
-#define STRING
+#ifndef STR
+#define STR
 
-#include <display_pics.h>
 
 #define String_Copy(Source,Destiny,Length)	String_Copy_Backward(Source,Destiny,Length)
 extern void 		String_Copy_Forward		(unsigned char* Source,unsigned char* Destiny,unsigned int Length);
@@ -17,7 +16,5 @@ extern void 		Clear_Bit_On_String		(unsigned char* Data, unsigned char Bit);
 extern void 		Set_Bit_On_String		(unsigned char* Data, unsigned char Bit);
 extern void 		Clear_Bit_On_String_Array	(unsigned char* Data, unsigned char Bit, unsigned char Size, unsigned char Number);
 extern unsigned char 	Read_Bit4String			(unsigned char* Data,unsigned char Bit);
-extern void 		Char2Pic			(unsigned char Data,struct Struct_Pic *Pic,struct Struct_Pic *Font,unsigned char XPos,unsigned char YPos);
-extern void 		String2Pic			(unsigned char* String,unsigned char Length,struct Struct_Pic *Pic,struct Struct_Pic *Font,unsigned char XPos,unsigned char YPos);
 
 #endif

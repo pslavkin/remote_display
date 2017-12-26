@@ -77,9 +77,9 @@ State Parsing_Working[] RODATA=
 };
 State Parsing_Layers[] RODATA=
 {
-{'A' 				,Print_Actual_Layers			,Parsing_Layers},
-{'B' 				,Print_Layer_Modified			,Parsing_Layers},
-{'C' 				,Print_Layers_Used			,Parsing_Layers},
+//{'A' 				,Print_Actual_Layers			,Parsing_Layers},
+//{'B' 				,Print_Layer_Modified			,Parsing_Layers},
+//{'C' 				,Print_Layers_Used			,Parsing_Layers},
 {'<' 				,Rien					,Parsing_Main},
 {'?' 				,Print_Layers_Menu			,Parsing_Layers},
 { ANY_Event  			,Rien                          		,Parsing_Layers},

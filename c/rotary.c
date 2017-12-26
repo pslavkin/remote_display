@@ -77,7 +77,7 @@ static void Calculate_Accel(void)
 static void Handler_CW(void)	
 {
 	if(Rotary_Params.Repetition)  {
-		Find_Event_Handler(Rotary_CW_Code,0); 
+		//Find_Event_Handler(Rotary_CW_Code,0); 
 		Rotary_Params.Repetition--;	
 	}
 	Atomic_Send_Event(Rotary_Params.Repetition?Rotary_CW_Handler_Event:Rotary_CW_Handler_End_Event,Actual_Sm()); 
@@ -96,7 +96,7 @@ static void Print_CW(void)
 static void Handler_ACW(void)	
 {
 	if(Rotary_Params.Repetition) {
-		Find_Event_Handler(Rotary_ACW_Code,0); 
+//		Find_Event_Handler(Rotary_ACW_Code,0); 
 		Rotary_Params.Repetition--;	
 	}
 	Atomic_Send_Event(Rotary_Params.Repetition?Rotary_ACW_Handler_Event:Rotary_ACW_Handler_End_Event,Actual_Sm()); 

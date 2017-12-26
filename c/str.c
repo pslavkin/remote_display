@@ -64,18 +64,3 @@ unsigned char Read_Bit4String(unsigned char* Data,unsigned char Bit)
  return (Data[Bit/8]&(0x80>>Bit%8))!=0;
 }
 //----------------------------------------------------------------------------------------
-void Char2Pic(unsigned char Data,struct Struct_Pic *Pic,struct Struct_Pic *Font,unsigned char XPos,unsigned char YPos)
-{
-	unsigned char X,Y,Font_Offset=0;
-	unsigned char **Font_Strings=(unsigned char**)Font->List.Font;
-	for(Y=0;Y<Font->EndY;Y++) 
-		for(X=0;X<Font->EndX;X++) 
-			Pic->List.String[Y+YPos].String[X+XPos]=Font_Strings[Data-' '][Font_Offset++];
-}
-void String2Pic(unsigned char* String,unsigned char Length,struct Struct_Pic *Pic,struct Struct_Pic *Font,unsigned char XPos,unsigned char YPos)
-{
-	unsigned char L;
-	for(L=0;L<Length;L++) 
-		Char2Pic(String[L],Pic,Font,XPos+L*Font->EndX,YPos);
-}
-

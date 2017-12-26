@@ -15,13 +15,7 @@
 #include <stdint.h>
 #include "type_conversion.h"
 
-char* Clear_Data RODATA="                    ";
-uint8_t	Disp_Bank[DISP_LINES][DISP_COLUMNS];		//es el unico banco principal en donde se tiene una copia de lo que pasa en display para hacer operaciones mas rapidas que leyendo la info del display....
 //---------------------------------------------------------------------
-unsigned char** Read_Disp_Bank(void)
-{
-	return (uint8_t**)Disp_Bank;
-}
 void Write_Disp_Instr(unsigned char Instr)
 {
 	GPIOE->PCOR = 1<<1;	//Disp_DI_Clr();
@@ -37,25 +31,6 @@ void Write_Disp_Data(unsigned char Data)
 	GPIOC->PSOR = 1<<7;	//Disp_WR_Set();
 }
 //----------------------------------------------------------------------
-void Write_Disp_Bank		(void)					//14621=730useg por fila.
-{
-	unsigned char i;
-	for(i=0;i<DISP_COLUMNS;i++) Write_Disp_Data(Disp_Bank[0][i]);
-	for(i=0;i<DISP_COLUMNS;i++) Write_Disp_Data(Disp_Bank[2][i]);
-	for(i=0;i<DISP_COLUMNS;i++) Write_Disp_Data(Disp_Bank[1][i]);
-	for(i=0;i<DISP_COLUMNS;i++) Write_Disp_Data(Disp_Bank[3][i]);
-}
-void Send_Disp_Bank2Serial		(void)	
-{
-}
-//----------------------------------------------------------------------
-void Clear_Bank		(void)								
-{
- uint8_t i;
- for(i=0;i<DISP_LINES;i++)
-   String_Copy((uint8_t*)Clear_Data,Disp_Bank[i],DISP_COLUMNS);
-}
-
 void Init_Lcd_Pins(void)
 {
     	CLOCK_EnableClock	(kCLOCK_PortA); //lo usa el canal de datos
@@ -222,21 +197,37 @@ void Init_Display_Phisical(void)
 	Write_Disp_Instr(0x0029);	//display On 
 	Write_Disp_Data(0x0000);	//start 0x0000 
 
+	Clear_Lcd();
+}
+
+void Clear_Lcd(void)
+{
+	Write_Disp_Instr(0x2A);			//column address set 
+	Write_Disp_Data(0);
+	Write_Disp_Data(0);
+	Write_Disp_Data(0);
+	Write_Disp_Data(0xEF);
+	 
+	Write_Disp_Instr(0x002B);		//page address set 
+	Write_Disp_Data(0);
+	Write_Disp_Data(0);
+	Write_Disp_Data(0x1);
+	Write_Disp_Data(0x3F);
 
 	Write_Disp_Instr(0x2C);	
-	for(int j=0;j<322;j++) 
+	for(int j=0;j<320;j++) 
 			for(int i=0;i<240;i++) {
 				Write_Disp_Data(0);
 				Write_Disp_Data(0);	
 			}
 }
 
+
 unsigned char Img [] RODATA  =
 {
 //	#include "img.txt"
 //	#include "img2.txt"
 //	#include "yellow.txt"
- 	 #include "calc3.txt"
 };
 
 void Write_Next(void)
@@ -251,4 +242,28 @@ void Write_Next(void)
 	if(++j>=(sizeof(Img)/480)) j=0;
 }
 //----------------------------------------------------------------------
+void Pic2Lcd(struct Struct_Pic *Pic) 
+{
+ uint16_t Start_X=Pic->Start_X; 
+ uint16_t End_X=Pic->End_X; 
+ uint16_t Start_Y=Pic->Start_Y; 
+ uint16_t End_Y=Pic->End_Y; 
+ uint32_t Size=(End_X-Start_X+1)*(End_Y-Start_Y+1); 
+
+	Write_Disp_Instr(0x2A);			//column address set 
+	Write_Disp_Data(Start_X>>8);
+	Write_Disp_Data(Start_X);
+	Write_Disp_Data(End_X>>8);
+	Write_Disp_Data(End_X);
+	 
+	Write_Disp_Instr(0x002B);		//page address set 
+	Write_Disp_Data(Start_Y>>8);
+	Write_Disp_Data(Start_Y);
+	Write_Disp_Data(End_Y>>8);
+	Write_Disp_Data(End_Y);
+
+	Write_Disp_Instr(0x2C);	
+	for(uint32_t i=0;i<Size*2;i++) 
+		Write_Disp_Data(Pic->Data[i]);
+}
 

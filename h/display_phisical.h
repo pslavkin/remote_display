@@ -3,41 +3,44 @@
 
 #include <stdint.h>
 
-#define DISP_LINES	4
-#define DISP_COLUMNS	20
-//-----PORT D map--------------------------------------------
-//   - - - E  R D - -
-//   - - - -  / / - -
-//   - - - -  W I - -
-//0b 0 0 0 0  0 0 0 0
+struct Struct_Pic_Events
+{
+ uint16_t Upper_X;	
+ uint16_t Upper_Y;
+ uint16_t Lower_X;
+ uint16_t Lower_Y;
+ unsigned char Button;
+ void (* Handler[3]) (void);
+};
 
-#define CLEAR_CODE		0x01
-#define RETURN_CODE		0x03
-#define SHIFT_MODE_CODE		0x06
-#define DISP_ON_CODE 		0x0C
-#define DISP_OFF_CODE 		0x08
-#define CURSOR_ON_CODE 		0x0E
-#define CURSOR_OFF_CODE 	0x0C
-#define FUN_SET_CODE 		0x38
-#define SET_DDRAM_CODE		0x80
-#define SET_CGRAM_CODE		0x40
-//-------------- WINSTAR ------------------
-#define INSTR_DELAY 		50
-#define DATA_DELAY 		50
+struct Struct_Pic
+{
+ uint16_t Start_X;
+ uint16_t End_X;
+ uint16_t Start_Y;
+ uint16_t End_Y;
+ uint8_t Blink_Period;
+ unsigned char Alpha;
+ unsigned char ECount;				//numero de eventos
+ struct Struct_Pic_Events* Events; 		//
+ unsigned char PCount;				//Pic count, numero de pics.... usualmente 1, pero mas de uno para strings.
+ unsigned char* Data;				//
+};
+
 //---------------------------------------------------
 extern void 		Init_Display_Phisical		(void);
-extern uint8_t	Disp_Bank[DISP_LINES][DISP_COLUMNS];
 //---------------------------------------------------
 extern unsigned char**	Read_Disp_Bank			(void);
 extern void 		Clear_Bank			(void);
 extern void 		Wait_Disp_Ready 		(void);
-extern void 		Write_Disp_Bank			(void);
 extern void 		Send_Disp_Bank2Serial		(void);
 extern void 		Init_Lcd_Pins			(void);
 //---------------------------------------------------
 extern void 		Write_Next			(void);
 extern void 		Write_Custom_Char		(unsigned char Pos,unsigned char* Pic);
 extern void 		Write_Custom_Bank		(unsigned char Length,unsigned char* Bank); 
+extern void 		Clear_Lcd			(void);
+extern void 		Pic2Lcd				(struct Struct_Pic *Pic);
 //---------------------------------------------------
 extern void 		Disp_CS_Set			(void);
 extern void 		Disp_CS_Clr			(void);
@@ -49,11 +52,6 @@ extern void 		Disp_WR_Set			(void);
 extern void 		Disp_WR_Clr			(void);
 extern void 		Disp_RD_Set			(void);
 extern void 		Disp_RD_Clr			(void);
-
-static inline void Disp_Data_Write	(unsigned char Data)	
-{
-	GPIOA->PDOR=(GPIOA->PDOR&0xFFFF00FF)|(Data<<8);
-}
 extern unsigned char 	Disp_Data_Read			(void);
 #endif
 

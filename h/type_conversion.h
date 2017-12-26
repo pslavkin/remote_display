@@ -1,7 +1,8 @@
 #ifndef TYPE_CONVERSION
 #define TYPE_CONVERSION
+
+#include "display_phisical.h"
 //-----------------------------------------------------
-#define STR(string) 	#string				//Stringification
 #define Hi(Int)		(*(unsigned char*)&Int)
 #define Lo(Int)		(*((unsigned char*)&Int+1))
 #define Char(Int)	(*(unsigned char*)&Int+1)
@@ -35,10 +36,18 @@ extern void 		Left_Roll_Jumping	(unsigned char *Data,unsigned char Times,unsigne
 unsigned char* 		String2Hex_Bcd			(unsigned char* Bcd,unsigned char* String,unsigned char Length);
 unsigned char* 		Char2Hex_Bcd			(unsigned char* Bcd,unsigned char Bin);
 extern unsigned char* 	Int2Hex_Bcd			(unsigned char* Bcd,unsigned int Bin);
-unsigned char* 		Signed_Int2_2Dec_Fix_Point_Bcd	(unsigned char* Bcd,signed int Bin);
 //---------------------------------------------------------------------
 extern unsigned char*	Replace_Zero2Space		(unsigned char* Buf,unsigned char Length);
-
+//---------------------------------------------------------------------
+extern void Int2Pic		(unsigned int Bin,struct Struct_Pic *Font,struct Struct_Pic *Pic);
+extern void Int2_4Digit_Pic	(unsigned int Bin,struct Struct_Pic *Font,struct Struct_Pic *Pic);
+extern void Int2_3Digit_Pic	(unsigned int Bin,struct Struct_Pic *Font,struct Struct_Pic *Pic);
+extern void Char2Pic		(unsigned char Bin,struct Struct_Pic *Font,struct Struct_Pic *Pic);
+extern void Char2_2Digit_Pic	(unsigned char Bin,struct Struct_Pic *Font,struct Struct_Pic *Pic);
+extern void Insert_String2Pic	(unsigned char *String,unsigned char Length,struct Struct_Pic *Font,struct Struct_Pic *Pic,unsigned char Offset);
+extern void String2Pic		(unsigned char *String,unsigned char Length,struct Struct_Pic *Font,struct Struct_Pic *Pic);
+extern void Append_Char2Pic	(unsigned char Char,struct Struct_Pic *Font,struct Struct_Pic *Pic);
+//----------------------------------------------------------------
 
 #endif
 

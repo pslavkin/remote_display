@@ -41,6 +41,7 @@ IPATH= ./cmsis
 IPATH+=./board
 IPATH+=./drivers
 IPATH+=./h
+IPATH+=./pic
 IPATH+=./startup
 IPATH+=./utilities
 #
@@ -81,24 +82,7 @@ ${BINDIR}/app.axf: ${OBJDIR}/buttons.o
 ${BINDIR}/app.axf: ${OBJDIR}/rotary.o
 ${BINDIR}/app.axf: ${OBJDIR}/buzzer.o
 ${BINDIR}/app.axf: ${OBJDIR}/tpm.o
-${BINDIR}/app.axf: ${OBJDIR}/estim_phisical.o
 #../pics
-${BINDIR}/app.axf: ${OBJDIR}/blank_pic.o
-${BINDIR}/app.axf: ${OBJDIR}/font_2x2_pic.o
-${BINDIR}/app.axf: ${OBJDIR}/font_3x3_pic.o
-${BINDIR}/app.axf: ${OBJDIR}/font_3x4_pic.o
-${BINDIR}/app.axf: ${OBJDIR}/font_5x4_pic.o
-${BINDIR}/app.axf: ${OBJDIR}/font_slide_1x1_pic.o
-${BINDIR}/app.axf: ${OBJDIR}/memory_pic.o
-${BINDIR}/app.axf: ${OBJDIR}/player_pic.o
-${BINDIR}/app.axf: ${OBJDIR}/pointer_pic.o
-${BINDIR}/app.axf: ${OBJDIR}/power_pic.o
-${BINDIR}/app.axf: ${OBJDIR}/programs_pic.o
-${BINDIR}/app.axf: ${OBJDIR}/sel_arrows_pic.o
-${BINDIR}/app.axf: ${OBJDIR}/setting_bank_pic.o
-${BINDIR}/app.axf: ${OBJDIR}/setting_menu_pic.o
-${BINDIR}/app.axf: ${OBJDIR}/setting_param_pic.o
-${BINDIR}/app.axf: ${OBJDIR}/time_pic.o
 ${BINDIR}/app.axf: ${OBJDIR}/welcome_pic.o
 
 #../board
