@@ -183,11 +183,11 @@ void Set_Frame_Address(struct Struct_Pic *Pic)
 {
 	Write_Disp_Instr(0x2A);			//column address set 
 	Write_Disp_2Data(Pic->Start_X);
-	Write_Disp_2Data(Pic->End_X);
+	Write_Disp_2Data(Pic->Start_X+Pic->Width);
 	 
 	Write_Disp_Instr(0x2B);		//page address set 
 	Write_Disp_2Data(Pic->Start_Y);
-	Write_Disp_2Data(Pic->End_Y);
+	Write_Disp_2Data(Pic->Start_Y+Pic->Height);
 }
 void Clear_Lcd(void)
 {
@@ -212,7 +212,7 @@ uint16_t Invert_Pixel(uint16_t Pixel)
 void Lcd2Pic_Inverted(struct Struct_Pic *Pic) 
 {
 	uint8_t R,G,B;
-	uint32_t Size=(Pic->End_X-Pic->Start_X+1)*(Pic->End_Y-Pic->Start_Y+1); 
+	uint32_t Size=Pic->Width*Pic->Height; 
 	Set_Frame_Address(Pic);
 	Write_Disp_Instr(0x2E);			//comando de lectura
 	GPIO_Port_As_In(GPIOA,0x0000FF00);
@@ -227,10 +227,14 @@ void Lcd2Pic_Inverted(struct Struct_Pic *Pic)
 }
 void Pic2Lcd(struct Struct_Pic *Pic) 
 {
-	uint32_t Size=(Pic->End_X-Pic->Start_X+1)*(Pic->End_Y-Pic->Start_Y+1); 
-	Set_Frame_Address(Pic);
-	Write_Disp_Instr(0x2C);	
-	for(uint32_t i=0;i<Size;i++) 
-		Write_Disp_2Data(Pic->Data[0][i]);
+	struct Struct_Pic P=*Pic;
+	uint32_t Size=Pic->Width*Pic->Height; 
+	for(uint8_t j=0;j<P.PCount;j++) {
+		Set_Frame_Address(&P);
+		Write_Disp_Instr(0x2C);	
+		for(uint32_t i=0;i<Size;i++) 
+			Write_Disp_2Data(P.Data[j][i]);
+		P.Start_X+=P.Width;
+	}
 }
 

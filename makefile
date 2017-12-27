@@ -85,6 +85,7 @@ ${BINDIR}/app.axf: ${OBJDIR}/tpm.o
 #../pics
 ${BINDIR}/app.axf: ${OBJDIR}/welcome_pic.o
 ${BINDIR}/app.axf: ${OBJDIR}/mask_pic.o
+${BINDIR}/app.axf: ${OBJDIR}/numbers_pic.o
 
 #../board
 #${BINDIR}/app.axf: ${OBJDIR}/board.o

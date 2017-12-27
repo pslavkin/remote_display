@@ -16,9 +16,9 @@ struct Struct_Pic_Events
 struct Struct_Pic
 {
  uint16_t Start_X;
- uint16_t End_X;
+ uint16_t Width;
  uint16_t Start_Y;
- uint16_t End_Y;
+ uint16_t Height;
  uint8_t Blink_Period;
  unsigned char Alpha;
  unsigned char ECount;				//numero de eventos
