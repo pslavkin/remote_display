@@ -8,11 +8,12 @@
 #include "type_conversion.h"
 #include "everythings.h"
 #include "welcome_pic.h"
+#include "mask_pic.h"
 
 static State 
 	Idle[],
 	Updating[],
-	Displaying[];
+	Masking[];
 //------------------------------------------------------------------------------------
 struct Struct_Pic_Layer	Pic_Layers[MAX_PICS+1];
 unsigned char 		Pic_Layers_Used;
@@ -170,11 +171,16 @@ void Next_Layer2Display		(void)
 	else  
 	  Atomic_Send_Event(All_Updated_Event,Display_Layers());
 }
+
+void Mask2Lcd(void)
+{
+	       Pic2Lcd(Read_Mask_Pic());
+}
 //-------------------------------------------------------------------------------------
 void Init_Actual_Layer		(void)	{Actual_Layer=Layer_Modified=0;}
 void All_Displayed		(void)	{Atomic_Send_Event(All_Displayed_Event,Display_Layers());}
 //-------------------------------------------------------------------------------------
-void Init_Actual_Layer_And_Clear_Lcd		(void)	{Init_Actual_Layer();Clear_Lcd();}
+void Mask2Lcd_And_Does_Layer_Modified(void)	{Mask2Lcd();Does_Layer_Modified();}
 //-------------------------------------------------------------------------------------
 static State Idle[] RODATA =
 {
@@ -184,17 +190,16 @@ static State Idle[] RODATA =
 };
 static State Updating[] RODATA =
 {
-{ All_Updated_Event		,Does_Layer_Modified				,Idle},
+{ All_Updated_Event		,Update_Mask_Pic				,Masking},
 { Info_Modified_Event		,Rien						,Updating},
 { Structure_Modified_Event	,Rien						,Updating},
 { ANY_Event			,Next_Layer2Display				,Updating},
 };
-static State Displaying[] RODATA =
+static State Masking[] RODATA =
 {
-{ All_Displayed_Event		,Does_Layer_Modified				,Idle},
-{ Info_Modified_Event		,Rien						,Displaying},
-{ Structure_Modified_Event	,Rien						,Displaying},
-{ ANY_Event			,Rien						,Displaying},
+{ Info_Modified_Event		,Rien						,Masking},
+{ Structure_Modified_Event	,Rien						,Masking},
+{ ANY_Event			,Mask2Lcd_And_Does_Layer_Modified		,Idle},
 };
 //-------------------------------------------------------------------------------------
 

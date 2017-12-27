@@ -30,18 +30,11 @@ struct Struct_Pic
 //---------------------------------------------------
 extern void 		Init_Display_Phisical		(void);
 //---------------------------------------------------
-extern unsigned char**	Read_Disp_Bank			(void);
-extern void 		Clear_Bank			(void);
-extern void 		Wait_Disp_Ready 		(void);
-extern void 		Send_Disp_Bank2Serial		(void);
 extern void 		Init_Lcd_Pins			(void);
 //---------------------------------------------------
-extern void 		Write_Next			(void);
-extern void 		Write_Custom_Char		(unsigned char Pos,unsigned char* Pic);
-extern void 		Write_Custom_Bank		(unsigned char Length,unsigned char* Bank); 
 extern void 		Clear_Lcd			(void);
 extern void 		Pic2Lcd				(struct Struct_Pic *Pic);
-extern void 		Lcd2Pic				(struct Struct_Pic *Pic);
+extern void 		Lcd2Pic_Inverted		(struct Struct_Pic *Pic);
 //---------------------------------------------------
 extern void 		Disp_CS_Set			(void);
 extern void 		Disp_CS_Clr			(void);
@@ -53,6 +46,5 @@ extern void 		Disp_WR_Set			(void);
 extern void 		Disp_WR_Clr			(void);
 extern void 		Disp_RD_Set			(void);
 extern void 		Disp_RD_Clr			(void);
-extern unsigned char 	Disp_Data_Read			(void);
 #endif
 

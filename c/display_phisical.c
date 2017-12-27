@@ -14,7 +14,6 @@
 #include "str.h"
 #include <stdint.h>
 #include "type_conversion.h"
-
 //---------------------------------------------------------------------
 void Write_Disp_Instr(unsigned char Instr)
 {
@@ -30,6 +29,15 @@ void Write_Disp_Data(unsigned char Data)
 	GPIOC->PCOR = 1<<7;	//Disp_WR_Clr();
 	GPIOC->PSOR = 1<<7;	//Disp_WR_Set();
 }
+void Write_Disp_2Data(uint16_t Data)
+{
+	GPIOA->PDOR=(GPIOA->PDOR&0xFFFF00FF)|(Data&0xFF00);
+	GPIOC->PCOR = 1<<7;	//Disp_WR_Clr();
+	GPIOC->PSOR = 1<<7;	//Disp_WR_Set();
+	GPIOA->PDOR=(GPIOA->PDOR&0xFFFF00FF)|((Data&0x00FF)<<8);
+	GPIOC->PCOR = 1<<7;	//Disp_WR_Clr();
+	GPIOC->PSOR = 1<<7;	//Disp_WR_Set();
+}
 unsigned char Read_Disp_Data(void)
 {
 	GPIOA->PCOR = 1<<16;	//Disp_RD_Clr();
@@ -37,7 +45,7 @@ unsigned char Read_Disp_Data(void)
 	return (GPIOA->PDIR&0x0000FF00)>>8;	//leo port
 }
 //----------------------------------------------------------------------
-void Init_Lcd_Pins(void)
+void Init_Lcd_Pins(void)/*{{{*/
 {
     	CLOCK_EnableClock	(kCLOCK_PortA); //lo usa el canal de datos
     	CLOCK_EnableClock	(kCLOCK_PortC); //lo usan pines de seleccion
@@ -77,8 +85,7 @@ void Init_Lcd_Pins(void)
     	PORT_SetPinMux		(PORTA, 14, kPORT_MuxAsGpio);	//
     	PORT_SetPinMux		(PORTA, 15, kPORT_MuxAsGpio);	//
 	GPIO_Port_As_Out	(GPIOA,0x0000FF00); 
-}
-
+}/*}}}*/
 void Disp_CS_Set	(void)			{GPIO_PortSet	(GPIOE,1<<14);}
 void Disp_CS_Clr	(void)			{GPIO_PortClear	(GPIOE,1<<14);}
 void Disp_DI_Set	(void)			{GPIO_PortSet	(GPIOE,1<< 1);}
@@ -89,22 +96,8 @@ void Disp_WR_Set	(void)			{GPIO_PortSet	(GPIOC,1<< 7);}
 void Disp_WR_Clr	(void)			{GPIO_PortClear	(GPIOC,1<< 7);}
 void Disp_RD_Set	(void)			{GPIO_PortSet	(GPIOA,1<<16);}
 void Disp_RD_Clr	(void)			{GPIO_PortClear	(GPIOA,1<<16);}
-
-
-unsigned char Disp_Data_Read(void)	
-{
-	return (GPIO_PortRead(GPIOA)&0x0000FF00)>>8;
-}
-void Disp_Data_Port2Out(void)
-{
-	GPIO_Port_As_Out(GPIOA,0x0000FF00);
-}
-void Disp_Data_Port2In(void)
-{
-	GPIO_Port_As_In(GPIOA,0x0000FF00);
-}
 //----------------------------------------------------------------------
-void Init_Display_Phisical(void)
+void Init_Display_Phisical(void)/*{{{*/
 {
         Init_Lcd_Pins();
 	Disp_CS_Clr();
@@ -112,187 +105,132 @@ void Init_Display_Phisical(void)
 	Disp_WR_Clr();
 	Disp_Rst_Clr();
         Delay_Useg(1000);
-	Disp_Rst_Set();			//esto es porque podria filtrarse la senial de reset sino.
-        Delay_Useg(120000);		//hay que esperar 120mseg.. ver pag 230 del controlador
+	Disp_Rst_Set();		//esto es porque podria filtrarse la senial de reset sino.
+        Delay_Useg(120000);	//hay que esperar 120mseg.. ver pag 230 del controlador
 
-	Write_Disp_Instr(0x0011);	//exit SLEEP mode  /arranca en sleep in..
-        Delay_Useg(5000);		//esperar 5mseg
+	Write_Disp_Instr(0x11);	//exit SLEEP mode  /arranca en sleep in..
+        Delay_Useg(5000);	//esperar 5mseg
 
-	Write_Disp_Instr(0x00CB);	//Power Control A 
-	Write_Disp_Data(0x0039);	//always 0x39
-	Write_Disp_Data(0x002C);	//always 0x2C 
-	Write_Disp_Data(0x0000);	//always 0x00 
-	Write_Disp_Data(0x0034);	//Vcore = 1.6V 
-	Write_Disp_Data(0x0002);	//DDVDH = 5.6V 
+	Write_Disp_Instr(0xCB);	//Power Control A 
+	Write_Disp_Data(0x39);	//always 0x39
+	Write_Disp_Data(0x2C);	//always 0x2C 
+	Write_Disp_Data(0x00);	//always 0x00 
+	Write_Disp_Data(0x34);	//Vcore = 1.6V 
+	Write_Disp_Data(0x02);	//DDVDH = 5.6V 
 
-	Write_Disp_Instr(0x00CF);	//Power Control B 
-	Write_Disp_Data(0x0000);	//always 0x00 
-	Write_Disp_Data(0x0081);	//PCEQ off 
-	Write_Disp_Data(0x0030);	//ESD protection 
+	Write_Disp_Instr(0xCF);	//Power Control B 
+	Write_Disp_Data(0x00);	//always 0x00 
+	Write_Disp_Data(0x81);	//PCEQ off 
+	Write_Disp_Data(0x30);	//ESD protection 
 
-	Write_Disp_Instr(0x00E8);	//Driver timing control A 
-	Write_Disp_Data(0x0085);	//non‐overlap 
-	Write_Disp_Data(0x0001);	//EQ timing 
-	Write_Disp_Data(0x0079);	//Pre‐charge timing 
+	Write_Disp_Instr(0xE8);	//Driver timing control A 
+	Write_Disp_Data(0x85);	//non‐overlap 
+	Write_Disp_Data(0x01);	//EQ timing 
+	Write_Disp_Data(0x79);	//Pre‐charge timing 
 
-	Write_Disp_Instr(0x00EA);	//Driver timing control B 
-	Write_Disp_Data(0x0000);	//Gate driver timing 
-	Write_Disp_Data(0x0000);	//always 0x00 
+	Write_Disp_Instr(0xEA);	//Driver timing control B 
+	Write_Disp_Data(0x00);	//Gate driver timing 
+	Write_Disp_Data(0x00);	//always 0x00 
 
-	Write_Disp_Instr(0x00ED);	//Power‐On sequence control 
-	Write_Disp_Data(0x0064);	//soft start 
-	Write_Disp_Data(0x0003);	//power on sequence 
-	Write_Disp_Data(0x0012);	//power on sequence 
-	Write_Disp_Data(0x0081);	//DDVDH enhance on 
+	Write_Disp_Instr(0xED);	//Power‐On sequence control 
+	Write_Disp_Data(0x64);	//soft start 
+	Write_Disp_Data(0x03);	//power on sequence 
+	Write_Disp_Data(0x12);	//power on sequence 
+	Write_Disp_Data(0x81);	//DDVDH enhance on 
 
-	Write_Disp_Instr(0x00F7);	//Pump ratio control 
-	Write_Disp_Data(0x0020);	//DDVDH=2xVCI 
+	Write_Disp_Instr(0xF7);	//Pump ratio control 
+	Write_Disp_Data(0x20);	//DDVDH=2xVCI 
 	 
-	Write_Disp_Instr(0x00C0);	//power control 1 
-	Write_Disp_Data(0x0026);
+	Write_Disp_Instr(0xC0);	//power control 1 
+	Write_Disp_Data(0x26);
 	 
-	Write_Disp_Instr(0x00C1);	//power control 2 
-	Write_Disp_Data(0x0011);
+	Write_Disp_Instr(0xC1);	//power control 2 
+	Write_Disp_Data(0x11);
 	 
-	Write_Disp_Instr(0x00C5);	//VCOM control 1 
-	Write_Disp_Data(0x0035);
-	Write_Disp_Data(0x003E);
+	Write_Disp_Instr(0xC5);	//VCOM control 1 
+	Write_Disp_Data(0x35);
+	Write_Disp_Data(0x3E);
 
-	Write_Disp_Instr(0x00C7);	//VCOM control 2 
-	Write_Disp_Data(0x00BE); 
+	Write_Disp_Instr(0xC7);	//VCOM control 2 
+	Write_Disp_Data(0xBE); 
 
-	Write_Disp_Instr(0x0036);	//memory access control = BGR 
-	Write_Disp_Data(0x0088);
+	Write_Disp_Instr(0x36);	//memory access control = BGR 
+	Write_Disp_Data(0x88);
 
-	Write_Disp_Instr(0x00B1);	//frame rate control 
-	Write_Disp_Data(0x0000);
-	Write_Disp_Data(0x0010);
+	Write_Disp_Instr(0xB1);	//frame rate control 
+	Write_Disp_Data(0x00);
+	Write_Disp_Data(0x10);
 
-	Write_Disp_Instr(0x00B6);	//display function control 
-	Write_Disp_Data(0x000A);
-	Write_Disp_Data(0x00A2);
+	Write_Disp_Instr(0xB6);	//display function control 
+	Write_Disp_Data(0x0A);
+	Write_Disp_Data(0xA2);
 
-	Write_Disp_Instr(0x003A);	//pixel format = 16 bit per pixel 
-	Write_Disp_Data(0x0055);
+	Write_Disp_Instr(0x3A);	//pixel format = 16 bit per pixel 
+	Write_Disp_Data(0x55);
 
-	Write_Disp_Instr(0x00F2);	//3G Gamma control 
-	Write_Disp_Data(0x0002);	//off 
+	Write_Disp_Instr(0xF2);	//3G Gamma control 
+	Write_Disp_Data(0x02);	//off 
 
-	Write_Disp_Instr(0x0026);	//Gamma curve 3 
-	Write_Disp_Data(0x0001);
+	Write_Disp_Instr(0x26);	//Gamma curve 3 
+	Write_Disp_Data(0x01);
  
-	Write_Disp_Instr(0x002A);	//column address set 
-	Write_Disp_Data(0x0000);
-	Write_Disp_Data(0);	//start 0x0000 
-	Write_Disp_Data(0x0000);
-	Write_Disp_Data(239);	//end 0x00EF 
-	 
-	Write_Disp_Instr(0x002B);	//page address set 
-	Write_Disp_Data(0x0000);
-	Write_Disp_Data(0x0000);	//start 0x0000 
-	Write_Disp_Data(0x0001);
-	Write_Disp_Data(0x003F);	//end 0x013F 
-
-	Write_Disp_Instr(0x0029);	//display On 
-	Write_Disp_Data(0x0000);	//start 0x0000 
+	Write_Disp_Instr(0x29);	//display On 
+	Write_Disp_Data(0x00);	
 
 	Clear_Lcd();
-}
-
-void Clear_Lcd(void)
+}/*}}}*/
+void Set_Frame_Address(struct Struct_Pic *Pic)
 {
 	Write_Disp_Instr(0x2A);			//column address set 
-	Write_Disp_Data(0);
-	Write_Disp_Data(0);
-	Write_Disp_Data(0);
-	Write_Disp_Data(0xEF);
+	Write_Disp_2Data(Pic->Start_X);
+	Write_Disp_2Data(Pic->End_X);
 	 
-	Write_Disp_Instr(0x002B);		//page address set 
-	Write_Disp_Data(0);
-	Write_Disp_Data(0);
-	Write_Disp_Data(0x1);
-	Write_Disp_Data(0x3F);
-
+	Write_Disp_Instr(0x2B);		//page address set 
+	Write_Disp_2Data(Pic->Start_Y);
+	Write_Disp_2Data(Pic->End_Y);
+}
+void Clear_Lcd(void)
+{
+	struct Struct_Pic Pic={0,239,0,319,0,0,0,NULL,0,NULL};
+	Set_Frame_Address(&Pic);
 	Write_Disp_Instr(0x2C);	
 	for(int j=0;j<320;j++) 
-			for(int i=0;i<240;i++) {
-				Write_Disp_Data(0);
-				Write_Disp_Data(0);	
-			}
+		for(int i=0;i<240;i++) 
+			Write_Disp_2Data(0);
 }
-
-
 //----------------------------------------------------------------------
 uint16_t Invert_Pixel(uint16_t Pixel)
 {
 	uint8_t R=(Pixel&0xF800)>>11;
 	uint8_t G=(Pixel&0x07E0)>>5;
 	uint8_t B=(Pixel&0x001F)>>0;
-	
 	R=0x1F-R;
 	G=0x3F-G;
 	B=0x1F-B;
-
 	return (R<<11 | G<<5 | B);
 }
-
-void Lcd2Pic(struct Struct_Pic *Pic) 
+void Lcd2Pic_Inverted(struct Struct_Pic *Pic) 
 {
-	uint16_t Start_X=Pic->Start_X; 
-	uint16_t End_X=Pic->End_X; 
-	uint16_t Start_Y=Pic->Start_Y; 
-	uint16_t End_Y=Pic->End_Y; 
-	uint32_t Size=(End_X-Start_X+1)*(End_Y-Start_Y+1); 
-	Write_Disp_Instr(0x2A);			//column address set 
-	Write_Disp_Data(Start_X>>8);
-	Write_Disp_Data(Start_X);
-	Write_Disp_Data(End_X>>8);
-	Write_Disp_Data(End_X);
-	 
-	Write_Disp_Instr(0x002B);		//page address set 
-	Write_Disp_Data(Start_Y>>8);
-	Write_Disp_Data(Start_Y);
-	Write_Disp_Data(End_Y>>8);
-	Write_Disp_Data(End_Y);
-
+	uint8_t R,G,B;
+	uint32_t Size=(Pic->End_X-Pic->Start_X+1)*(Pic->End_Y-Pic->Start_Y+1); 
+	Set_Frame_Address(Pic);
 	Write_Disp_Instr(0x2E);			//comando de lectura
 	GPIO_Port_As_In(GPIOA,0x0000FF00);
 	Read_Disp_Data();			//dummy read..
 	for(uint32_t i=0;i<Size;i++) {
-		uint8_t R=Read_Disp_Data();	//WTF??? sip.. le mando de a 2 bytes y me devuelve 3, y solo usa la parte alta del byte
-		uint8_t G=Read_Disp_Data();
-		uint8_t B=Read_Disp_Data();
-		Pic->Data[0][i]=(R|G>>5)<<8;
-		Pic->Data[0][i]|=((G<<3)&0xE0)|B>>3;
-		Pic->Data[0][i]=Invert_Pixel(Pic->Data[0][i]);
+		R=0x1F-(Read_Disp_Data()>>3);	//WTF??? sip.. le mando de a 2 bytes y me devuelve 3, y solo usa la parte alta del byte
+		G=0x3F-(Read_Disp_Data()>>2);
+		B=0x1F-(Read_Disp_Data()>>3);
+		Pic->Data[0][i]=R<<11 | G<<5 | B;
 	}
 	GPIO_Port_As_Out(GPIOA,0x0000FF00);
 }
-
 void Pic2Lcd(struct Struct_Pic *Pic) 
 {
-	uint16_t Start_X=Pic->Start_X; 
-	uint16_t End_X=Pic->End_X; 
-	uint16_t Start_Y=Pic->Start_Y; 
-	uint16_t End_Y=Pic->End_Y; 
-	uint32_t Size=(End_X-Start_X+1)*(End_Y-Start_Y+1); 
-
-	Write_Disp_Instr(0x2A);			//column address set 
-	Write_Disp_Data(Start_X>>8);
-	Write_Disp_Data(Start_X);
-	Write_Disp_Data(End_X>>8);
-	Write_Disp_Data(End_X);
-	 
-	Write_Disp_Instr(0x002B);		//page address set 
-	Write_Disp_Data(Start_Y>>8);
-	Write_Disp_Data(Start_Y);
-	Write_Disp_Data(End_Y>>8);
-	Write_Disp_Data(End_Y);
-
+	uint32_t Size=(Pic->End_X-Pic->Start_X+1)*(Pic->End_Y-Pic->Start_Y+1); 
+	Set_Frame_Address(Pic);
 	Write_Disp_Instr(0x2C);	
-	for(uint32_t i=0;i<Size;i++) {
-		Write_Disp_Data(Pic->Data[0][i]>>8);
-		Write_Disp_Data(Pic->Data[0][i]);
-	}
+	for(uint32_t i=0;i<Size;i++) 
+		Write_Disp_2Data(Pic->Data[0][i]);
 }
 
