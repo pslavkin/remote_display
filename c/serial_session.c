@@ -8,6 +8,7 @@
 #include "rti.h"
 #include "type_conversion.h"
 #include "display_layers.h"
+#include "welcome_pic.h"
 
 State
 	Parsing_Main[],
@@ -43,6 +44,10 @@ unsigned char Layers_Menu[] RODATA=
  "A Actual Layer\r\n"
  "B Layer Modified\r\n"
  "C Layer Used\r\n"
+ "D Update_Read_Pic\r\n"
+ "E Add_Read_Pic\r\n"
+ "F Del_Read_Pic\r\n"
+ "G Move_Read_Pic\r\n"
  "< Back\r\n"
  "? Help\r\n"
 };
@@ -80,7 +85,12 @@ State Parsing_Layers[] RODATA=
 //{'A' 				,Print_Actual_Layers			,Parsing_Layers},
 //{'B' 				,Print_Layer_Modified			,Parsing_Layers},
 //{'C' 				,Print_Layers_Used			,Parsing_Layers},
+{'D' 				,Update_Read_Pic			,Parsing_Layers},
+{'E' 				,Add_Read			,Parsing_Layers},
+{'F' 				,Del_Read			,Parsing_Layers},
+{'G' 				,Move_Read_Pic			,Parsing_Layers},
 {'<' 				,Rien					,Parsing_Main},
+
 {'?' 				,Print_Layers_Menu			,Parsing_Layers},
 { ANY_Event  			,Rien                          		,Parsing_Layers},
 };

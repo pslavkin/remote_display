@@ -30,6 +30,12 @@ void Write_Disp_Data(unsigned char Data)
 	GPIOC->PCOR = 1<<7;	//Disp_WR_Clr();
 	GPIOC->PSOR = 1<<7;	//Disp_WR_Set();
 }
+unsigned char Read_Disp_Data(void)
+{
+	GPIOA->PCOR = 1<<16;	//Disp_RD_Clr();
+	GPIOA->PSOR = 1<<16;	//Disp_RD_Set();
+	return (GPIOA->PDIR&0x0000FF00)>>8;	//leo port
+}
 //----------------------------------------------------------------------
 void Init_Lcd_Pins(void)
 {
@@ -70,14 +76,7 @@ void Init_Lcd_Pins(void)
     	PORT_SetPinMux		(PORTA, 13, kPORT_MuxAsGpio);	//
     	PORT_SetPinMux		(PORTA, 14, kPORT_MuxAsGpio);	//
     	PORT_SetPinMux		(PORTA, 15, kPORT_MuxAsGpio);	//
-	GPIO_PinInit_As_Out	(GPIOA,  8,0);			//
-	GPIO_PinInit_As_Out	(GPIOA,  9,0);			//
-	GPIO_PinInit_As_Out	(GPIOA, 10,0);			//
-	GPIO_PinInit_As_Out	(GPIOA, 11,0);			//
-	GPIO_PinInit_As_Out	(GPIOA, 12,0);			//
-	GPIO_PinInit_As_Out	(GPIOA, 13,0);			//
-	GPIO_PinInit_As_Out	(GPIOA, 14,0);			//
-	GPIO_PinInit_As_Out	(GPIOA, 15,0);			//
+	GPIO_Port_As_Out	(GPIOA,0x0000FF00); 
 }
 
 void Disp_CS_Set	(void)			{GPIO_PortSet	(GPIOE,1<<14);}
@@ -223,32 +222,60 @@ void Clear_Lcd(void)
 }
 
 
-unsigned char Img [] RODATA  =
-{
-//	#include "img.txt"
-//	#include "img2.txt"
-//	#include "yellow.txt"
-};
-
-void Write_Next(void)
-{
-	static int j=0;
-	if(j==0)	
-		Write_Disp_Instr(0x2C);	
-	for(int i=0;i<240;i++) {
-		Write_Disp_Data(Img[(j*240+i)*2]);
-		Write_Disp_Data(Img[(j*240+i)*2+1]);
-	}
-	if(++j>=(sizeof(Img)/480)) j=0;
-}
 //----------------------------------------------------------------------
+uint16_t Invert_Pixel(uint16_t Pixel)
+{
+	uint8_t R=(Pixel&0xF800)>>11;
+	uint8_t G=(Pixel&0x07E0)>>5;
+	uint8_t B=(Pixel&0x001F)>>0;
+	
+	R=0x1F-R;
+	G=0x3F-G;
+	B=0x1F-B;
+
+	return (R<<11 | G<<5 | B);
+}
+
+void Lcd2Pic(struct Struct_Pic *Pic) 
+{
+	uint16_t Start_X=Pic->Start_X; 
+	uint16_t End_X=Pic->End_X; 
+	uint16_t Start_Y=Pic->Start_Y; 
+	uint16_t End_Y=Pic->End_Y; 
+	uint32_t Size=(End_X-Start_X+1)*(End_Y-Start_Y+1); 
+	Write_Disp_Instr(0x2A);			//column address set 
+	Write_Disp_Data(Start_X>>8);
+	Write_Disp_Data(Start_X);
+	Write_Disp_Data(End_X>>8);
+	Write_Disp_Data(End_X);
+	 
+	Write_Disp_Instr(0x002B);		//page address set 
+	Write_Disp_Data(Start_Y>>8);
+	Write_Disp_Data(Start_Y);
+	Write_Disp_Data(End_Y>>8);
+	Write_Disp_Data(End_Y);
+
+	Write_Disp_Instr(0x2E);			//comando de lectura
+	GPIO_Port_As_In(GPIOA,0x0000FF00);
+	Read_Disp_Data();			//dummy read..
+	for(uint32_t i=0;i<Size;i++) {
+		uint8_t R=Read_Disp_Data();	//WTF??? sip.. le mando de a 2 bytes y me devuelve 3, y solo usa la parte alta del byte
+		uint8_t G=Read_Disp_Data();
+		uint8_t B=Read_Disp_Data();
+		Pic->Data[0][i]=(R|G>>5)<<8;
+		Pic->Data[0][i]|=((G<<3)&0xE0)|B>>3;
+		Pic->Data[0][i]=Invert_Pixel(Pic->Data[0][i]);
+	}
+	GPIO_Port_As_Out(GPIOA,0x0000FF00);
+}
+
 void Pic2Lcd(struct Struct_Pic *Pic) 
 {
- uint16_t Start_X=Pic->Start_X; 
- uint16_t End_X=Pic->End_X; 
- uint16_t Start_Y=Pic->Start_Y; 
- uint16_t End_Y=Pic->End_Y; 
- uint32_t Size=(End_X-Start_X+1)*(End_Y-Start_Y+1); 
+	uint16_t Start_X=Pic->Start_X; 
+	uint16_t End_X=Pic->End_X; 
+	uint16_t Start_Y=Pic->Start_Y; 
+	uint16_t End_Y=Pic->End_Y; 
+	uint32_t Size=(End_X-Start_X+1)*(End_Y-Start_Y+1); 
 
 	Write_Disp_Instr(0x2A);			//column address set 
 	Write_Disp_Data(Start_X>>8);
@@ -263,7 +290,9 @@ void Pic2Lcd(struct Struct_Pic *Pic)
 	Write_Disp_Data(End_Y);
 
 	Write_Disp_Instr(0x2C);	
-	for(uint32_t i=0;i<Size*2;i++) 
-		Write_Disp_Data(Pic->Data[i]);
+	for(uint32_t i=0;i<Size;i++) {
+		Write_Disp_Data(Pic->Data[0][i]>>8);
+		Write_Disp_Data(Pic->Data[0][i]);
+	}
 }
 

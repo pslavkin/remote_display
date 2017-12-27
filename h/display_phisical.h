@@ -24,7 +24,7 @@ struct Struct_Pic
  unsigned char ECount;				//numero de eventos
  struct Struct_Pic_Events* Events; 		//
  unsigned char PCount;				//Pic count, numero de pics.... usualmente 1, pero mas de uno para strings.
- unsigned char* Data;				//
+ uint16_t **Data;				//
 };
 
 //---------------------------------------------------
@@ -41,6 +41,7 @@ extern void 		Write_Custom_Char		(unsigned char Pos,unsigned char* Pic);
 extern void 		Write_Custom_Bank		(unsigned char Length,unsigned char* Bank); 
 extern void 		Clear_Lcd			(void);
 extern void 		Pic2Lcd				(struct Struct_Pic *Pic);
+extern void 		Lcd2Pic				(struct Struct_Pic *Pic);
 //---------------------------------------------------
 extern void 		Disp_CS_Set			(void);
 extern void 		Disp_CS_Clr			(void);

@@ -178,8 +178,8 @@ void Init_Actual_Layer_And_Clear_Lcd		(void)	{Init_Actual_Layer();Clear_Lcd();}
 //-------------------------------------------------------------------------------------
 static State Idle[] RODATA =
 {
-{ Info_Modified_Event		,Init_Actual_Layer_And_Clear_Lcd		,Updating},
-{ Structure_Modified_Event	,Init_Actual_Layer_And_Clear_Lcd		,Updating},
+{ Info_Modified_Event		,Init_Actual_Layer				,Updating},
+{ Structure_Modified_Event	,Init_Actual_Layer				,Updating},
 { ANY_Event			,Rien						,Idle},
 };
 static State Updating[] RODATA =
