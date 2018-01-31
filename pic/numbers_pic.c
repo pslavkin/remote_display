@@ -41,6 +41,18 @@ uint16_t Number_Space_Raw[] RODATA= {
 	#include "number_space.raw" 
 };/*}}}*/
 uint8_t Actual_Digit=0;
+uint16_t *Psw[8] RODATA=
+{
+	Number1_Raw,
+	Number2_Raw,
+	Number3_Raw,
+	Number4_Raw,
+	Number5_Raw,
+	Number6_Raw,
+	Number7_Raw,
+	Number8_Raw,
+};
+
 uint16_t *Numbers[8]=
 {
 	Number__Raw,
@@ -51,6 +63,16 @@ struct Struct_Pic Numbers_Pic=
 };
 void Add_Numbers(void) 	{Add_Pic_On_Top(&Numbers_Pic);}
 void Del_Numbers(void) 	{Del_Pic(&Numbers_Pic);}
+
+void Reset_Numbers(void)
+{
+	Actual_Digit=0;
+	Numbers_Pic.PCount=1;
+	Numbers[0]=Number__Raw;
+	Layer_Structure_Modified();
+}
+
+
 void Add_Digit(uint16_t *Digit) 
 {
 	if(Actual_Digit<8) {
@@ -83,3 +105,14 @@ void Del_Digit(void)
 		Layer_Structure_Modified();
 	}
 }
+unsigned char Psw_Compare(void)
+{
+	uint8_t i=0;
+	if(Actual_Digit==8) 
+		for(;i<8 && Psw[i]==Numbers[i];i++) 
+			;
+	return i==8;
+} 
+
+
+

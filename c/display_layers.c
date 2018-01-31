@@ -38,10 +38,11 @@ void Cap_Hole(unsigned char Hole)
 {
  if(Hole<Pic_Layers_Used)
  {
-  Pic_Layers[Hole].Pic->Events->Handler[2]();   														//Se puede dar recursividad si la funcion de "destroy" es tambien un Cap_Hole!! pero funca.. mientras no colapse el stack...
+  void (*F)(void)= Pic_Layers[Hole].Pic->Events->Handler[2];  
   Pic_Layers_Used--;
   String_Copy_Forward((unsigned char*)&Pic_Layers[Hole+1],(unsigned char*)&Pic_Layers[Hole],((Pic_Layers_Used-Hole)*sizeof(struct Struct_Pic_Layer)));		//mara-villa. copia usando string copy todo de una,, un casillero...
   Layer_Structure_Modified();
+  F();						//se ejecuta la funcion destructor al fina porque sino corrompe todo
  }
 }
 void Move_Layer2Down(unsigned char Layer)	//mueve el layer una posicino hacia abajo...

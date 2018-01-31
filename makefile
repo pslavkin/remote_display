@@ -84,8 +84,10 @@ ${BINDIR}/app.axf: ${OBJDIR}/buzzer.o
 ${BINDIR}/app.axf: ${OBJDIR}/tpm.o
 #../pics
 ${BINDIR}/app.axf: ${OBJDIR}/welcome_pic.o
+${BINDIR}/app.axf: ${OBJDIR}/keyb_pic.o
 ${BINDIR}/app.axf: ${OBJDIR}/mask_pic.o
 ${BINDIR}/app.axf: ${OBJDIR}/numbers_pic.o
+${BINDIR}/app.axf: ${OBJDIR}/accept_reject_pic.o
 
 #../board
 #${BINDIR}/app.axf: ${OBJDIR}/board.o

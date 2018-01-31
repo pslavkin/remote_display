@@ -10,6 +10,7 @@
 #include "display_layers.h"
 #include "welcome_pic.h"
 #include "mask_pic.h"
+#include "accept_reject_pic.h"
 
 State
 	Parsing_Main[],
@@ -57,6 +58,7 @@ unsigned char Layers_Menu[] RODATA=
  "9 Mask9\r\n"
  "D Mask Del\r\n"
  "E Mask Enter\r\n"
+ "F Reboot\r\n"
  "< Back\r\n"
  "? Help\r\n"
 };
@@ -106,6 +108,7 @@ State Parsing_Layers[] RODATA=
 {'9' 				,Add_Mask9				,Parsing_Layers},
 {'D' 				,Add_Mask_Delete			,Parsing_Layers},
 {'E' 				,Add_Mask_Enter				,Parsing_Layers},
+{'F' 				,Clear_All_And_Add_Welcome		,Parsing_Layers},
 {'<' 				,Rien					,Parsing_Main},
 {'?' 				,Print_Layers_Menu			,Parsing_Layers},
 { ANY_Event  			,Rien                          		,Parsing_Layers},

@@ -2,8 +2,10 @@
 #include "type_conversion.h"
 #include "display_layers.h"
 #include "stdint.h"
+#include "schedule.h"
 #include "mask_pic.h"
 #include "numbers_pic.h"
+#include "accept_reject_pic.h"
 
 //------------------------------------------------------
 uint16_t Mask_Raw[100*100] =
@@ -14,6 +16,7 @@ uint16_t *Mask[] RODATA=
 {
 	Mask_Raw,
 };
+//---------------Functions---------------------------------------
 struct Struct_Pic Mask_Pic=
 {
  0,0,0,0,0,0,1,Rien_Events,1,Mask
@@ -34,10 +37,11 @@ void Resize_Mask_Pic(uint16_t Start_X,uint16_t Width,uint16_t Start_Y,uint16_t H
 	Mask_Pic.Start_Y=Start_Y;
 	Mask_Pic.Height =Height;
 	Layer_Structure_Modified();
+	Update_Or_New_None_Periodic_Func_Schedule(10,Del_Mask);
 }
 void Add_Mask_Delete(void) 	{Resize_Mask_Pic(  4,73,  5,53);Del_Digit();}
 void Add_Mask0(void) 		{Resize_Mask_Pic( 83,73,  5,53);Add_Digit0();}
-void Add_Mask_Enter(void) 	{Resize_Mask_Pic(161,73,  5,53);}
+void Add_Mask_Enter(void) 	{/*Resize_Mask_Pic(161,73,  5,53);*/Add_Accept_Or_Reject();}
 void Add_Mask1(void) 		{Resize_Mask_Pic(  4,73,183,53);Add_Digit1();}
 void Add_Mask2(void) 		{Resize_Mask_Pic( 83,73,183,53);Add_Digit2();}
 void Add_Mask3(void) 		{Resize_Mask_Pic(161,73,183,53);Add_Digit3();}

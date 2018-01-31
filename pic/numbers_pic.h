@@ -16,5 +16,7 @@ extern void 			Add_Digit7		(void);
 extern void 			Add_Digit8		(void);
 extern void 			Add_Digit9		(void);
 extern void 			Del_Digit		(void);
+extern unsigned char 		Psw_Compare		(void);
+extern void 			Reset_Numbers		(void);
 //------------------------------------------------------
 #endif
