@@ -15,6 +15,7 @@
 #include "display_phisical.h"
 #include "display_layers.h"
 #include "type_conversion.h"
+#include "dma.h"
 
 State   
         Free_State1[],
@@ -37,6 +38,7 @@ void 		Init_Everythings	(void)
 	Init_Leds_Session();
 	Init_Display_Phisical();
 	Init_Display_Layers();
+	Init_Dma();
 }	
 State** 	Everythings		(void) 			{return &Everythings_Sm;} 			//devuelve la direccion de la maquina de estados Everythings para poder mandarle mensajes.
 void 		Everythings_Rti		(void)			{Send_Event(ANY_Event,Everythings());}		//manda mensajes ANY a tiempos predefinidos...

@@ -7,11 +7,14 @@
 #include "serial_tx.h"
 #include "mask_pic.h"
 #include "numbers_pic.h"
+#include "debug.h"
 
 //--------------Pics Data----------------------------------
 uint16_t Accept_Data_Raw[] RODATA=
 {
+#ifdef PICS_ENABLED
 	#include "accepted.raw"
+#endif
 };
 uint16_t *Accept_Data[] RODATA=
 {
@@ -43,7 +46,9 @@ void Del_Accept				(void)	{Del_Pic(&Accept_Pic);}
 //--------------Pics Data----------------------------------
 uint16_t Reject_Data_Raw[] RODATA=
 {
+#ifdef PICS_ENABLED
 	#include "rejected.raw"
+#endif
 };
 uint16_t *Reject_Data[] RODATA=
 {

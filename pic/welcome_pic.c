@@ -8,11 +8,14 @@
 #include "mask_pic.h"
 #include "numbers_pic.h"
 #include "keyb_pic.h"
+#include "debug.h"
 
 //--------------Pics Data----------------------------------
 uint16_t Welcome_Data_Raw[] RODATA=
 {
+#ifdef PICS_ENABLED
 	#include "pointer_logo.raw"
+#endif
 };
 uint16_t *Welcome_Data[] RODATA=
 {

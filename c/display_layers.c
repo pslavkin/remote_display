@@ -9,7 +9,8 @@
 #include "everythings.h"
 #include "welcome_pic.h"
 #include "mask_pic.h"
-
+#include "debug.h"
+//
 static State 
 	Idle[],
 	Updating[],

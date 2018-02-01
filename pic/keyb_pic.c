@@ -7,11 +7,14 @@
 #include "serial_tx.h"
 #include "mask_pic.h"
 #include "numbers_pic.h"
+#include "debug.h"
 
 //--------------Pics Data----------------------------------
 uint16_t Keyb_Data_Raw[] RODATA=
 {
+#ifdef PICS_ENABLED
 	#include "keyb.raw"
+#endif
 };
 uint16_t *Keyb_Data[] RODATA=
 {

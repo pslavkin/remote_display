@@ -11,11 +11,13 @@
 #include "welcome_pic.h"
 #include "mask_pic.h"
 #include "accept_reject_pic.h"
+#include "dma.h"
 
 State
 	Parsing_Main[],
 	Parsing_Working[],
-	Parsing_Layers[];
+	Parsing_Layers[],
+	Parsing_Dma[];
 
 State* Serial_Session_Sm;
 //---------------------------------------------------------------------
@@ -30,6 +32,7 @@ unsigned char Main_Menu[] RODATA=
  "B Buzzer\r\n"
  "C Info\r\n"
  "D Layers\r\n"
+ "E Dma\r\n"
  "R Reset\r\n"
  ". About\r\n"
  "? Help\r\n"
@@ -62,12 +65,21 @@ unsigned char Layers_Menu[] RODATA=
  "< Back\r\n"
  "? Help\r\n"
 };
+unsigned char Dma_Menu[] RODATA=
+{
+ "Dma menu\r\n"
+ "A Print Destin\r\n"
+ "B Request DM\r\n"
+ "< Back\r\n"
+ "? Help\r\n"
+};
 //
 //---------------------------------------------------------------------
 void Print_About_Menu			(void)	{Send_NVData2Serial(sizeof(About_Menu)-1,(unsigned char*)About_Menu);}
 void Print_Main_Menu			(void)	{Send_NVData2Serial(sizeof(Main_Menu)-1,(unsigned char*)Main_Menu);}
 void Print_Layers_Menu			(void)	{Send_NVData2Serial(sizeof(Layers_Menu)-1,(unsigned char*)Layers_Menu);}
 void Print_Working_Menu			(void)	{Send_NVData2Serial(sizeof(Working_Menu)-1,(unsigned char*)Working_Menu);}
+void Print_Dma_Menu			(void)	{Send_NVData2Serial(sizeof(Dma_Menu)-1,(unsigned char*)Dma_Menu);}
 //--------------------------------------------------------------------
 State** 	Serial_Session		(void) 	{return &Serial_Session_Sm;} 
 void 		Init_Serial_Session	(void)
@@ -81,6 +93,7 @@ State Parsing_Main[] RODATA=
 {
 { 'A' 				,Rien                          		,Parsing_Working},
 { 'D' 				,Print_Layers_Menu            		,Parsing_Layers},
+{ 'E' 				,Print_Dma_Menu            		,Parsing_Dma},
 { '.' 				,Print_About_Menu              		,Parsing_Main},
 { '?' 				,Print_Main_Menu			,Parsing_Main},
 { ANY_Event  			,Rien                          		,Parsing_Main},
@@ -112,5 +125,13 @@ State Parsing_Layers[] RODATA=
 {'<' 				,Rien					,Parsing_Main},
 {'?' 				,Print_Layers_Menu			,Parsing_Layers},
 { ANY_Event  			,Rien                          		,Parsing_Layers},
+};
+State Parsing_Dma[] RODATA=
+{
+{'A' 				,Print_Destin			,Parsing_Dma},
+{'B' 				,Dma_Request			,Parsing_Dma},
+{'<' 				,Rien				,Parsing_Main},
+{'?' 				,Print_Dma_Menu			,Parsing_Dma},
+{ ANY_Event  			,Rien				,Parsing_Dma},
 };
 //------------------------------------------------------------------------------

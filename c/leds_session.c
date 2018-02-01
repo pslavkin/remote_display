@@ -8,15 +8,15 @@
 #include "leds_session.h"
 #include "type_conversion.h"
 
-static  State 
+static  State
 	Off[];
 
 State *Leds_Session_Sm;
 //-------------------------------------------------------------------
 void Init_Leds(void)
-{	
-    	CLOCK_EnableClock(kCLOCK_PortE);
-    	PORT_SetPinMux(PORTE, 12U, kPORT_MuxAsGpio);
+{
+	CLOCK_EnableClock(kCLOCK_PortE);
+	PORT_SetPinMux(PORTE, 12U, kPORT_MuxAsGpio);
 	GPIO_PinInit_As_Out(GPIOE,12U,0);
 }
 void Led_Run_On		(void) {GPIO_PortSet	(GPIOE,1<<12);}
@@ -33,7 +33,7 @@ void Set_Led_Effect		(unsigned char Led,unsigned int Effect)		{Led_Effects[Led].
 void Set_Temp_Led_Effect	(unsigned char Led,unsigned int Effect)		{Led_Effects[Led].Temp_Effect=Effect;}
 void Set_Toogle_Led_Effect	(unsigned char Led)				{Led_Effects[Led].Temp_Effect&0x01?Led_Effects[Led].Off_Function():Led_Effects[Led].On_Function();}
 void Set_Fixed_Led_Effect	(unsigned char Led,unsigned int Effect)		{Led_Effects[Led].Effect=Effect;}
-void Led_Effects_Func		(void)										
+void Led_Effects_Func		(void)
 {
  unsigned char Actual_Led;
  for(Actual_Led=0;Actual_Led<sizeof(Led_Effects)/sizeof(struct Led_Effect_Struct);Actual_Led++)
@@ -48,11 +48,11 @@ void Init_Leds_Session(void)
 	Leds_Session_Sm=Off;
 	Init_Leds();
 }
-State** 	Leds_Session		(void) 			{return &Leds_Session_Sm;}
-void 		Leds_Session_Rti	(void) 			{Led_Effects_Func();}
+State** 	Leds_Session		(void)		{return &Leds_Session_Sm;}
+void 		Leds_Session_Rti	(void)		{Led_Effects_Func();}
 //-------------------------------------------------------------------
 static State Off[] RODATA =
 {
- {ANY_Event                      ,Rien			 	,Off},
+ {ANY_Event		,Rien		,Off},
 };
 //-------------------------------------------------------------------------------

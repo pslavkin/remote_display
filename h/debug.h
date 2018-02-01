@@ -1,5 +1,8 @@
 //se definen constantes para habilitar o deshabilitar ciertas partes del codigo encapsuladas con #ifdef
 
+//#define PICS_ENABLED
+
+
 //#define DEBUG_ONE_WIRE_TRANSPORT
 //#define DEBUG_ONE_WIRE_NETWORK		
 #define DEBUG_STATE_MACHINE

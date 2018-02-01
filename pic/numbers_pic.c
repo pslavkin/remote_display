@@ -5,40 +5,64 @@
 #include "numbers_pic.h"
 //------------------------------------------------------
 uint16_t Number0_Raw[] RODATA= {/*{{{*/
+#ifdef PICS_ENABLED
 	#include "number0.raw"
+#endif
 };
 uint16_t Number1_Raw[] RODATA= {
+#ifdef PICS_ENABLED
 	#include "number1.raw"
+#endif
 };
 uint16_t Number2_Raw[] RODATA= {
+#ifdef PICS_ENABLED
 	#include "number2.raw"
+#endif
 };
 uint16_t Number3_Raw[] RODATA= {
+#ifdef PICS_ENABLED
 	#include "number3.raw"
+#endif
 };
 uint16_t Number4_Raw[] RODATA= { 
+#ifdef PICS_ENABLED
 	#include "number4.raw" 
+#endif
 };
 uint16_t Number5_Raw[] RODATA= { 
+#ifdef PICS_ENABLED
 	#include "number5.raw" 
+#endif
 };
 uint16_t Number6_Raw[] RODATA= { 
+#ifdef PICS_ENABLED
 	#include "number6.raw" 
+#endif
 };
 uint16_t Number7_Raw[] RODATA= { 
+#ifdef PICS_ENABLED
 	#include "number7.raw" 
+#endif
 };
 uint16_t Number8_Raw[] RODATA= { 
+#ifdef PICS_ENABLED
 	#include "number8.raw" 
+#endif
 };
 uint16_t Number9_Raw[] RODATA= { 
+#ifdef PICS_ENABLED
 	#include "number9.raw" 
+#endif
 };
 uint16_t Number__Raw[] RODATA= { 
+#ifdef PICS_ENABLED
 	#include "number_.raw" 
+#endif
 };
 uint16_t Number_Space_Raw[] RODATA= { 
+#ifdef PICS_ENABLED
 	#include "number_space.raw" 
+#endif
 };/*}}}*/
 uint8_t Actual_Digit=0;
 uint16_t *Psw[8] RODATA=
