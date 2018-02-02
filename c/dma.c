@@ -24,22 +24,36 @@ void Init_Dma(void)
 	Dma_Sm=Off;
 	CLOCK_EnableClock(kCLOCK_Dmamux0);
 	CLOCK_EnableClock(kCLOCK_Dma0);
-	DMAMUX->CHCFG[0]=60;		//configura el source del canal cero como la fuente cero que es siempre enable
-
+	
+	DMAMUX->CHCFG[0]=0;		//configura el source del canal cero como la fuente cero que es siempre enable
 	DMA0->TCD[0].SADDR=(uint32_t)Source;
-	DMA0->TCD[0].SOFF=1;
+	DMA0->TCD[0].SOFF=3;
 	DMA0->TCD[0].ATTR=0;
-	DMA0->TCD[0].NBYTES_MLNO=2;
+	DMA0->TCD[0].NBYTES_MLNO=1;
 	DMA0->TCD[0].SLAST=0;
 	DMA0->TCD[0].DADDR=(uint32_t)Destin;
-	DMA0->TCD[0].DOFF=1;
-	DMA0->TCD[0].CITER_ELINKNO=4;
-	DMA0->TCD[0].BITER_ELINKNO=4;
+	DMA0->TCD[0].DOFF=3;
+	DMA0->TCD[0].CITER_ELINKNO=DMA0->TCD[0].BITER_ELINKNO=0x8200|3;
 	DMA0->TCD[0].DLAST_SGA=0;
-
+	DMA0->TCD[0].CSR=0x0000;		//
 	DMAMUX->CHCFG[0]|=0x80;		//con este bit prendo 
-	//DMA0->ERQ|=0x0001;		//este es el que activa el request
-	//New_Periodic_Func_Schedule(10,Dma_Request);
+	DMA0->ERQ|=0x0001;		//este es el que activa el request
+
+	DMAMUX->CHCFG[1]=0;		//configura el source del canal cero como la fuente cero que es siempre enable
+	DMA0->TCD[1].SADDR=(uint32_t)(Source+1);
+	DMA0->TCD[1].SOFF=1;
+	DMA0->TCD[1].ATTR=0;
+	DMA0->TCD[1].NBYTES_MLNO=2;
+	DMA0->TCD[1].SLAST=1;
+	DMA0->TCD[1].DADDR=(uint32_t)(Destin+1);
+	DMA0->TCD[1].DOFF=1;
+	DMA0->TCD[1].CITER_ELINKNO=DMA0->TCD[1].BITER_ELINKNO=0x0000|1;
+	DMA0->TCD[1].DLAST_SGA=1;
+	DMA0->TCD[1].CSR=0x0020;		//
+	DMAMUX->CHCFG[1]|=0x80;		//con este bit prendo 
+	DMA0->ERQ|=0x0002;		//este es el que activa el request
+
+	New_Periodic_Func_Schedule(10,Dma_Request);
 }
 void Dma_Clear(void)
 {
@@ -47,8 +61,8 @@ void Dma_Clear(void)
 }
 void Dma_Request(void)
 {
-	//DMA0->SSRT=0;		//activa el canal cero, es equivalente a DMA0->TCD[0].CSR|=1;
-	DMA0->ERQ|=0x0001;		//este es el que activa el request
+	DMA0->SSRT=0;		//activa el canal cero, es equivalente a DMA0->TCD[0].CSR|=1;
+	//DMA0->ERQ|=0x0001;		//este es el que activa el request
 }
 
 void Print_Destin(void)
