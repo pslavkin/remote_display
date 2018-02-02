@@ -69,7 +69,8 @@ unsigned char Dma_Menu[] RODATA=
 {
  "Dma menu\r\n"
  "A Print Destin\r\n"
- "B Request DM\r\n"
+ "B Request DMA\r\n"
+ "C Clear DMA\r\n"
  "< Back\r\n"
  "? Help\r\n"
 };
@@ -130,6 +131,7 @@ State Parsing_Dma[] RODATA=
 {
 {'A' 				,Print_Destin			,Parsing_Dma},
 {'B' 				,Dma_Request			,Parsing_Dma},
+{'C' 				,Dma_Clear			,Parsing_Dma},
 {'<' 				,Rien				,Parsing_Main},
 {'?' 				,Print_Dma_Menu			,Parsing_Dma},
 { ANY_Event  			,Rien				,Parsing_Dma},
