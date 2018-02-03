@@ -83,6 +83,7 @@ ${BINDIR}/app.axf: ${OBJDIR}/rotary.o
 ${BINDIR}/app.axf: ${OBJDIR}/buzzer.o
 ${BINDIR}/app.axf: ${OBJDIR}/tpm.o
 ${BINDIR}/app.axf: ${OBJDIR}/dma.o
+${BINDIR}/app.axf: ${OBJDIR}/ftm.o
 #../pics
 ${BINDIR}/app.axf: ${OBJDIR}/welcome_pic.o
 ${BINDIR}/app.axf: ${OBJDIR}/keyb_pic.o

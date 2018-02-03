@@ -12,11 +12,13 @@
 #include "mask_pic.h"
 #include "accept_reject_pic.h"
 #include "dma.h"
+#include "ftm.h"
 
 State
 	Parsing_Main[],
 	Parsing_Working[],
 	Parsing_Layers[],
+	Parsing_Ftm[],
 	Parsing_Dma[];
 
 State* Serial_Session_Sm;
@@ -33,6 +35,7 @@ unsigned char Main_Menu[] RODATA=
  "C Info\r\n"
  "D Layers\r\n"
  "E Dma\r\n"
+ "F Ftm\r\n"
  "R Reset\r\n"
  ". About\r\n"
  "? Help\r\n"
@@ -74,12 +77,20 @@ unsigned char Dma_Menu[] RODATA=
  "< Back\r\n"
  "? Help\r\n"
 };
-//
+unsigned char Ftm_Menu[] RODATA=
+{
+ "Ftm menu\r\n"
+ "A Clear OVF\r\n"
+ "B Print OVF\r\n"
+ "< Back\r\n"
+ "? Help\r\n"
+};
 //---------------------------------------------------------------------
 void Print_About_Menu			(void)	{Send_NVData2Serial(sizeof(About_Menu)-1,(unsigned char*)About_Menu);}
 void Print_Main_Menu			(void)	{Send_NVData2Serial(sizeof(Main_Menu)-1,(unsigned char*)Main_Menu);}
 void Print_Layers_Menu			(void)	{Send_NVData2Serial(sizeof(Layers_Menu)-1,(unsigned char*)Layers_Menu);}
 void Print_Working_Menu			(void)	{Send_NVData2Serial(sizeof(Working_Menu)-1,(unsigned char*)Working_Menu);}
+void Print_Ftm_Menu			(void)	{Send_NVData2Serial(sizeof(Ftm_Menu)-1,(unsigned char*)Ftm_Menu);}
 void Print_Dma_Menu			(void)	{Send_NVData2Serial(sizeof(Dma_Menu)-1,(unsigned char*)Dma_Menu);}
 //--------------------------------------------------------------------
 State** 	Serial_Session		(void) 	{return &Serial_Session_Sm;} 
@@ -95,6 +106,7 @@ State Parsing_Main[] RODATA=
 { 'A' 				,Rien                          		,Parsing_Working},
 { 'D' 				,Print_Layers_Menu            		,Parsing_Layers},
 { 'E' 				,Print_Dma_Menu            		,Parsing_Dma},
+{ 'F' 				,Print_Ftm_Menu            		,Parsing_Ftm},
 { '.' 				,Print_About_Menu              		,Parsing_Main},
 { '?' 				,Print_Main_Menu			,Parsing_Main},
 { ANY_Event  			,Rien                          		,Parsing_Main},
@@ -135,5 +147,13 @@ State Parsing_Dma[] RODATA=
 {'<' 				,Rien				,Parsing_Main},
 {'?' 				,Print_Dma_Menu			,Parsing_Dma},
 { ANY_Event  			,Rien				,Parsing_Dma},
+};
+State Parsing_Ftm[] RODATA=
+{
+{'A' 				,Ftm_Clear			,Parsing_Ftm},
+{'B' 				,Ftm_Print			,Parsing_Ftm},
+{'<' 				,Rien				,Parsing_Main},
+{'?' 				,Print_Ftm_Menu			,Parsing_Ftm},
+{ ANY_Event  			,Rien				,Parsing_Ftm},
 };
 //------------------------------------------------------------------------------

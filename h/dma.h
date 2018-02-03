@@ -14,5 +14,6 @@ extern void 	Dma_Request	(void);
 extern void 	Print_Destin	(void);
 extern void 	Dma_Clear	(void);
 //----------------------------------------------------
+extern struct Struct_Pic Data_Pic;
 #endif
 
