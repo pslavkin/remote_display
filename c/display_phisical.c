@@ -18,23 +18,23 @@
 void Write_Disp_Instr(unsigned char Instr)
 {
 	GPIOE->PCOR = 1<<1;	//Disp_DI_Clr();
-	GPIOA->PDOR=(GPIOA->PDOR&0xFFFF00FF)|(Instr<<8);
+	*((uint8_t *)(&GPIOA->PDOR)+1)=(uint8_t)(Instr);
 	GPIOC->PCOR = 1<<7;	//Disp_WR_Clr();
 	GPIOC->PSOR = 1<<7;	//Disp_WR_Set();
 	GPIOE->PSOR = 1<<1;	//Disp_DI_Set();	//ya lo dejo en modo data.. que es lo que mas se usa..
 }
 void Write_Disp_Data(unsigned char Data)
 {
-	GPIOA->PDOR=(GPIOA->PDOR&0xFFFF00FF)|(Data<<8);
+	*((uint8_t *)(&GPIOA->PDOR)+1)=(uint8_t)(Data);
 	GPIOC->PCOR = 1<<7;	//Disp_WR_Clr();
 	GPIOC->PSOR = 1<<7;	//Disp_WR_Set();
 }
 void Write_Disp_2Data(uint16_t Data)
 {
-	GPIOA->PDOR=(GPIOA->PDOR&0xFFFF00FF)|(Data&0xFF00);
+	*((uint8_t *)(&GPIOA->PDOR)+1)=(uint8_t)(Data>>8);
 	GPIOC->PCOR = 1<<7;	//Disp_WR_Clr();
 	GPIOC->PSOR = 1<<7;	//Disp_WR_Set();
-	GPIOA->PDOR=(GPIOA->PDOR&0xFFFF00FF)|((Data&0x00FF)<<8);
+	*((uint8_t *)(&GPIOA->PDOR)+1)=(uint8_t)(Data);
 	GPIOC->PCOR = 1<<7;	//Disp_WR_Clr();
 	GPIOC->PSOR = 1<<7;	//Disp_WR_Set();
 }
