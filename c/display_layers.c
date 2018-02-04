@@ -162,7 +162,7 @@ void 		Init_Display_Layers	(void)
  Add_Welcome();
 }
 //-------------------------------------------------------------------------------------
-void Next_Layer2Display		(void)
+void Next_Layer		(void)
 {
 	for(;Actual_Layer<Pic_Layers_Used && !Pic_Layers[Actual_Layer].Blink_State;Actual_Layer++)	//salteo los que estan deshabilitados.
 		;
@@ -170,38 +170,47 @@ void Next_Layer2Display		(void)
 	       Pic2Lcd(Pic_Layers[Actual_Layer].Pic);
 	       Actual_Layer++;
 	}
-	else  
-	  Atomic_Send_Event(All_Updated_Event,Display_Layers());
+	else
+		Atomic_Send_Event(All_Updated_Event,Display_Layers());
 }
-
 void Mask2Lcd(void)
 {
 	       Pic2Lcd(Read_Mask_Pic());
 }
 //-------------------------------------------------------------------------------------
-void Init_Actual_Layer		(void)	{Actual_Layer=Layer_Modified=0;}
+void Send_Next_Layer_Event	(void) {Atomic_Send_Event(Next_Layer_Event,Display_Layers());}	
+void Idle_Info_Modified		(void)	
+{
+	Actual_Layer=Layer_Modified=0;
+	Send_Next_Layer_Event();	
+}
 void All_Displayed		(void)	{Atomic_Send_Event(All_Displayed_Event,Display_Layers());}
 //-------------------------------------------------------------------------------------
 void Mask2Lcd_And_Does_Layer_Modified(void)	{Mask2Lcd();Does_Layer_Modified();}
+void Update_Mask_Pic_And_Send_Next_Layer_Event(void)	{Update_Mask_Pic();Send_Next_Layer_Event();}
 //-------------------------------------------------------------------------------------
 static State Idle[] RODATA =
 {
-{ Info_Modified_Event		,Init_Actual_Layer				,Updating},
-{ Structure_Modified_Event	,Init_Actual_Layer				,Updating},
+{ Info_Modified_Event		,Idle_Info_Modified				,Updating},
+{ Structure_Modified_Event	,Idle_Info_Modified				,Updating},
 { ANY_Event			,Rien						,Idle},
 };
 static State Updating[] RODATA =
 {
-{ All_Updated_Event		,Update_Mask_Pic				,Masking},
+{ All_Updated_Event		,Does_Layer_Modified				,Idle},
+//{ All_Updated_Event		,Update_Mask_Pic_And_Send_Next_Layer_Event	,Masking},
 { Info_Modified_Event		,Rien						,Updating},
 { Structure_Modified_Event	,Rien						,Updating},
-{ ANY_Event			,Next_Layer2Display				,Updating},
+{ Next_Sub_Pic_Event		,Sub_Pic2Lcd					,Updating},
+{ Next_Layer_Event		,Next_Layer					,Updating},
+{ ANY_Event			,Rien						,Updating},
 };
 static State Masking[] RODATA =
 {
 { Info_Modified_Event		,Rien						,Masking},
 { Structure_Modified_Event	,Rien						,Masking},
-{ ANY_Event			,Mask2Lcd_And_Does_Layer_Modified		,Idle},
+{ Next_Layer_Event		,Mask2Lcd_And_Does_Layer_Modified		,Idle},
+{ ANY_Event			,Rien						,Masking},
 };
 //-------------------------------------------------------------------------------------
 

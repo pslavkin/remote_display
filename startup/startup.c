@@ -2,6 +2,7 @@
 #include "everythings.h"
 #include "serial_phisical.h"
 #include "ftm.h"
+#include "dma.h"
 
 #if defined (__cplusplus)
 // The entry point for the C++ library startup
@@ -132,7 +133,7 @@ WEAK void Reserved83_IRQHandler(void);
 WEAK void PDB1_IRQHandler(void);
 WEAK void FLEXIO_IRQHandler(void);
 WEAK void CMP2_IRQHandler(void);
-//WEAK void FTM3_IRQHandler(void);
+WEAK void FTM3_IRQHandler(void);
 WEAK void Reserved88_IRQHandler(void);
 WEAK void ADC1_IRQHandler(void);
 WEAK void ADC2_IRQHandler(void);
@@ -796,9 +797,9 @@ WEAK void CMP2_IRQHandler(void)
 {   CMP2_DriverIRQHandler();
 }
 
-//WEAK void FTM3_IRQHandler(void)
-//{   FTM3_DriverIRQHandler();
-//}
+WEAK void FTM3_IRQHandler(void)
+{   FTM3_DriverIRQHandler();
+}
 
 WEAK void Reserved88_IRQHandler(void)
 {   Reserved88_DriverIRQHandler();

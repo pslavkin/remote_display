@@ -2087,7 +2087,7 @@ typedef struct {
   __IO uint8_t DCHPRI13;                           /**< Channel n Priority Register, offset: 0x10E */
   __IO uint8_t DCHPRI12;                           /**< Channel n Priority Register, offset: 0x10F */
        uint8_t RESERVED_7[3824];
-  struct {                                         /* offset: 0x1000, array step: 0x20 */
+  struct TCD_Struct{                                         /* offset: 0x1000, array step: 0x20 */
     __IO uint32_t SADDR;                             /**< TCD Source Address, array offset: 0x1000, array step: 0x20 */
     __IO uint16_t SOFF;                              /**< TCD Signed Source Address Offset, array offset: 0x1004, array step: 0x20 */
     __IO uint16_t ATTR;                              /**< TCD Transfer Attributes, array offset: 0x1006, array step: 0x20 */

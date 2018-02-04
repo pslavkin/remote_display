@@ -7,10 +7,12 @@
 //---------------------------------------------------------
 enum Display_Layers_Event_Code
  {
-  Info_Modified_Event		=0,
-  Structure_Modified_Event	=1,
-  All_Updated_Event		=2,
-  All_Displayed_Event		=3
+	Info_Modified_Event		=0,
+	Structure_Modified_Event	=1,
+	All_Updated_Event		=2,
+	All_Displayed_Event		=3,
+	Next_Layer_Event		=4,
+	Next_Sub_Pic_Event		=5
  };
 
 //---------------------------------------------------------
@@ -61,6 +63,7 @@ extern void 		Move_Pic_Bits2Left	(unsigned char Bits,	struct Struct_Pic* Pic);
 extern void 		All_Displayed		(void);
 extern unsigned char 	Disp_Bank_Updated	(void);
 //---------------------------------------------------------
+extern void 		Send_Next_Layer_Event	(void);
 	
 #endif
 

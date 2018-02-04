@@ -11,7 +11,9 @@
 #include "leds_session.h"
 #include "display_phisical.h"
 #include "display_pics.h"
+#include "display_layers.h"
 #include "str.h"
+#include "dma.h"
 #include <stdint.h>
 #include "type_conversion.h"
 //---------------------------------------------------------------------
@@ -225,16 +227,26 @@ void Lcd2Pic_Inverted(struct Struct_Pic *Pic)
 	}
 	GPIO_Port_As_Out(GPIOA,0x0000FF00);
 }
+
+
+uint8_t Actual_Sub_Pic_Index;
+struct Struct_Pic Actual_Sub_Pic;
+
 void Pic2Lcd(struct Struct_Pic *Pic) 
 {
-	struct Struct_Pic P=*Pic;
-	uint32_t Size=Pic->Width*Pic->Height; 
-	for(uint8_t j=0;j<P.PCount;j++) {
-		Set_Frame_Address(&P);
+	Actual_Sub_Pic=*Pic;
+	Actual_Sub_Pic_Index=0;
+	Sub_Pic2Lcd();
+}
+void Sub_Pic2Lcd(void) 
+{
+	if(Actual_Sub_Pic_Index<Actual_Sub_Pic.PCount) {
+		Set_Frame_Address(&Actual_Sub_Pic);
 		Write_Disp_Instr(0x2C);	
-		for(uint32_t i=0;i<Size;i++) 
-			Write_Disp_2Data(P.Data[j][i]);
-		P.Start_X+=P.Width;
-	}
+		Pic2TCD(&Actual_Sub_Pic,Actual_Sub_Pic_Index);
+		Actual_Sub_Pic.Start_X+=Actual_Sub_Pic.Width;
+		Actual_Sub_Pic_Index++;
+	} else 
+		Atomic_Send_Event(Next_Layer_Event,Display_Layers());
 }
 

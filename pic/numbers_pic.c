@@ -3,6 +3,7 @@
 #include "display_layers.h"
 #include "stdint.h"
 #include "numbers_pic.h"
+#include "debug.h"
 //------------------------------------------------------
 uint16_t Number0_Raw[] RODATA= {/*{{{*/
 #ifdef PICS_ENABLED
@@ -95,7 +96,6 @@ void Reset_Numbers(void)
 	Numbers[0]=Number__Raw;
 	Layer_Structure_Modified();
 }
-
 
 void Add_Digit(uint16_t *Digit) 
 {

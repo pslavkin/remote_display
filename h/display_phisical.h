@@ -34,6 +34,7 @@ extern void 		Init_Lcd_Pins			(void);
 //---------------------------------------------------
 extern void 		Clear_Lcd			(void);
 extern void 		Pic2Lcd				(struct Struct_Pic *Pic);
+extern void 		Sub_Pic2Lcd			(void);
 extern void 		Lcd2Pic_Inverted		(struct Struct_Pic *Pic);
 extern void 		Set_Frame_Address		(struct Struct_Pic *Pic);
 extern void 		Write_Disp_Instr		(unsigned char Instr);

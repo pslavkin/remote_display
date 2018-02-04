@@ -2,6 +2,7 @@
 #include "fsl_port.h"
 #include "fsl_gpio.h"
 #include "everythings.h"
+#include "leds_session.h"
 #include "state_machine.h"
 #include "events.h"
 #include "schedule.h"
@@ -11,30 +12,51 @@
 #include "serial_tx.h"
 #include "display_phisical.h"
 #include "display_pics.h"
+#include "display_layers.h"
 #include "welcome_pic.h"
 
 static  State
 	Off[];
 
 State *Dma_Sm;
-
-const unsigned char Source[9]="hola dma";
-unsigned char Destin[9]="";
-const unsigned char Toogle_WR=0x80;
-
-uint16_t Data_Raw[] RODATA=
-{
-	#include "number1.raw"
-};
-uint16_t *Data_Raw_Data[] RODATA=
-{
-	Data_Raw,
-};
-struct Struct_Pic Data_Pic RODATA=
-{
- 8,28,257,34,0,0,1,Rien_Events,1,Data_Raw_Data
-};
 //-------------------------------------------------------------------
+struct TCD_Struct TCD[6] __attribute__((aligned (32)));
+
+void Pic2TCD(struct Struct_Pic *Pic,uint8_t Index)
+{
+	uint32_t Pic_Size=(Pic->Width+1)*(Pic->Height+1)*2;
+	uint32_t Pos=0;
+	uint16_t TCD_Size;
+	for(uint8_t i=0; i<6 && Pic_Size>0 ;i++) {
+		TCD[i].SADDR=(uint32_t)(((uint8_t *)(Pic->Data[Index]))+Pos);
+		TCD[i].SOFF=1;
+		TCD[i].ATTR=0;
+		TCD[i].NBYTES_MLNO=1;
+		TCD[i].SLAST=0;
+		TCD[i].DADDR=(uint32_t) ((uint8_t *)(&GPIOA->PDOR)+1);
+		TCD[i].DOFF=0;
+		if(Pic_Size>0x7FFF) {
+			TCD_Size=0x7FFF;
+			Pic_Size-=0x7FFF;
+			TCD[i].CSR=0x0010;		//
+		}
+		else {
+			TCD_Size=Pic_Size;
+			Pic_Size=0;
+			TCD[i].CSR=0x000A;		//
+		}
+		Pos+=TCD_Size;
+		TCD[i].DLAST_SGA=(uint32_t)&TCD[i+1];
+		TCD[i].CITER_ELINKNO=TCD[i].BITER_ELINKNO=TCD_Size;
+	}
+	DMA0->TCD[0].CSR&=~0x0080;		//tip! hay que borrar el bit DONE de un previo dma complete para que me acepte escribir datos en este registro... sino no lo hace y no me linkea los TCD 
+	DMA0->TCD[0]=TCD[0];
+	DMA0->SSRT=0;			//what? arranco la primera adquisizion para que haya algun dato valido en el bus ANTES de que se mueve WR y meta fruta....
+	for(uint8_t i=0;i<255;i++);	//probando haciendo tiempo a ver si esto me permite esperar a que se procese la 1era llamada a la dma, aunque no se si ese es el problema que estoy teniendo....ya vere
+	FTM3->CNT=0;
+	DMA0->ERQ|=0x0001;		//este es el que activa el request
+    	PORT_SetPinMux		(PORTC, 7, kPORT_MuxAlt4);	//write active low
+}
 void Init_Dma(void)
 {
 	Dma_Sm=Off;
@@ -42,51 +64,25 @@ void Init_Dma(void)
 	CLOCK_EnableClock(kCLOCK_Dma0);
 	
 	DMAMUX->CHCFG[0]=35;		//configura el source del canal cero como la fuente cero que es siempre enable
-	DMA0->TCD[0].SADDR=(uint32_t)Data_Raw;
-	DMA0->TCD[0].SOFF=1;
-	DMA0->TCD[0].ATTR=0;
-	DMA0->TCD[0].NBYTES_MLNO=1;
-	DMA0->TCD[0].SLAST=-2030;
-	DMA0->TCD[0].DADDR=(uint32_t) ((uint8_t *)(&GPIOA->PDOR)+1);
-	DMA0->TCD[0].DOFF=0;
-	DMA0->TCD[0].CITER_ELINKNO=DMA0->TCD[0].BITER_ELINKNO=2030;
-	DMA0->TCD[0].DLAST_SGA=0;
-	DMA0->TCD[0].CSR=0x0000;		//
 	DMAMUX->CHCFG[0]|=0x80;		//con este bit prendo 
-//	DMA0->ERQ|=0x0001;		//este es el que activa el request
-
-//	DMAMUX->CHCFG[1]=0;		//configura el source del canal cero como la fuente cero que es siempre enable
-//	DMA0->TCD[1].SADDR=(uint32_t)&Toogle_WR;
-//	DMA0->TCD[1].SOFF=0;
-//	DMA0->TCD[1].ATTR=0;
-//	DMA0->TCD[1].NBYTES_MLNO=2;
-//	DMA0->TCD[1].SLAST=0;
-//	DMA0->TCD[1].DADDR=(uint32_t)&GPIOC->PCOR;
-//	DMA0->TCD[1].DOFF=-4;
-//	DMA0->TCD[1].CITER_ELINKNO=DMA0->TCD[1].BITER_ELINKNO=0x0000|1;
-//	DMA0->TCD[1].DLAST_SGA=8;
-//	DMA0->TCD[1].CSR=0x0020;		//
-//	DMAMUX->CHCFG[1]|=0x80;		//con este bit prendo 
-//	DMA0->ERQ|=0x0002;		//este es el que activa el request
-
-	//New_Periodic_Func_Schedule(10,Dma_Request);
+	NVIC_EnableIRQ(DMA0_IRQn);
 }
 
 void Dma_Clear(void)
 {
-	String_Fill(Destin,'-',sizeof(Destin));
 }
 void Dma_Request(void)
 {
-//	Set_Frame_Address(&Welcome_Pic);
-//	Write_Disp_Instr(0x2C);	
-	DMA0->SSRT=0;		//activa el canal cero, es equivalente a DMA0->TCD[0].CSR|=1;
-	//DMA0->ERQ|=0x0001;		//este es el que activa el request
 }
-
+void DMA0_IRQHandler(void)
+{
+	DMA0->CINT=0;
+    	PORT_SetPinMux		(PORTC, 7, kPORT_MuxAsGpio);	//write active low
+	Set_Temp_Led_Effect(Led_Run,0xFFFF);
+	Send_Event(Next_Sub_Pic_Event,Display_Layers());
+}
 void Print_Destin(void)
 {
-	Send_NVData2Serial(sizeof(Destin),Destin);
 }
 State** 	Dma		(void)		{return &Dma_Sm;}
 void 		Dma_Rti		(void)		{}
