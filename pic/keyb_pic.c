@@ -38,6 +38,7 @@ struct Struct_Pic_Events Keyb_Events[] RODATA=
 //
 struct Struct_Pic Keyb_Pic RODATA=
 {
+// 0,2,0,2,0,0,1,Keyb_Events,1,Keyb_Data
  0,239,0,319,0,0,1,Keyb_Events,1,Keyb_Data
 };
 void Add_Keyb				(void)	{Add_Pic_On_Bottom(&Keyb_Pic);}

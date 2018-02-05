@@ -38,7 +38,7 @@ struct Struct_Pic_Events Accept_Events[] RODATA=
 //
 struct Struct_Pic Accept_Pic RODATA=
 {
- 0,240,0,242,10,0,1,Accept_Events,1,Accept_Data
+ 0,239,0,241,10,0,1,Accept_Events,1,Accept_Data
 };
 void Add_Accept				(void)	{Add_Pic_On_Top(&Accept_Pic);}
 void Del_Accept				(void)	{Del_Pic(&Accept_Pic);}
@@ -71,7 +71,7 @@ struct Struct_Pic_Events Reject_Events[] RODATA=
 //
 struct Struct_Pic Reject_Pic RODATA=
 {
- 0,240,0,242,10,0,1,Reject_Events,1,Reject_Data
+ 0,239,0,241,10,0,1,Reject_Events,1,Reject_Data
 };
 void Add_Reject				(void)	{Add_Pic_On_Top(&Reject_Pic);}
 void Del_Reject				(void)	{Del_Pic(&Reject_Pic);}

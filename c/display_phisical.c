@@ -106,12 +106,15 @@ void Init_Display_Phisical(void)/*{{{*/
 	Disp_RD_Set();
 	Disp_WR_Clr();
 	Disp_Rst_Clr();
+	Write_Disp_Instr(0x28);	//display Off  	//testing
+	Write_Disp_Data(0x00);			//testing
         Delay_Useg(1000);
 	Disp_Rst_Set();		//esto es porque podria filtrarse la senial de reset sino.
         Delay_Useg(120000);	//hay que esperar 120mseg.. ver pag 230 del controlador
 
 	Write_Disp_Instr(0x11);	//exit SLEEP mode  /arranca en sleep in..
         Delay_Useg(5000);	//esperar 5mseg
+
 
 	Write_Disp_Instr(0xCB);	//Power Control A 
 	Write_Disp_Data(0x39);	//always 0x39
@@ -176,10 +179,12 @@ void Init_Display_Phisical(void)/*{{{*/
 	Write_Disp_Instr(0x26);	//Gamma curve 3 
 	Write_Disp_Data(0x01);
  
+	Clear_Lcd();
+
 	Write_Disp_Instr(0x29);	//display On 
 	Write_Disp_Data(0x00);	
 
-	Clear_Lcd();
+	///Clear_Lcd();
 }/*}}}*/
 void Set_Frame_Address(struct Struct_Pic *Pic)
 {

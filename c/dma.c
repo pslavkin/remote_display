@@ -24,7 +24,7 @@ struct TCD_Struct TCD[6] __attribute__((aligned (32)));
 
 void Pic2TCD(struct Struct_Pic *Pic,uint8_t Index)
 {
-	uint32_t Pic_Size=(Pic->Width+1)*(Pic->Height+1)*2;
+	uint32_t Pic_Size=(Pic->Width+1)*(Pic->Height+1)*2+2;	//mas uno al ancho y al largo porque estan definidas asi, de 0 a ese valor. y el +2 al final, es porque se arega 2 byte extra, uno porque como el primer byte lo cargo con disparo manual no tiene asociado un disparo de ftm propio, y el otro es porque el ultimo byte no entra ya que cuando termina de cargar el ultimo byte, corto el FTM...
 	uint32_t Pos=0;
 	uint16_t TCD_Size;
 	for(uint8_t i=0; i<6 && Pic_Size>0 ;i++) {
@@ -51,12 +51,13 @@ void Pic2TCD(struct Struct_Pic *Pic,uint8_t Index)
 	}
 	DMA0->TCD[0].CSR&=~0x0080;		//tip! hay que borrar el bit DONE de un previo dma complete para que me acepte escribir datos en este registro... sino no lo hace y no me linkea los TCD 
 	DMA0->TCD[0]=TCD[0];
-	DMA0->SSRT=0;			//what? arranco la primera adquisizion para que haya algun dato valido en el bus ANTES de que se mueve WR y meta fruta....
-	for(uint16_t i=0;i<1;i++);	//hay que esperar un poquito para darle tiempo a que cargue el dato el primer tiro de DMA
-	FTM3->CONTROLS[3].CnSC&=~0x00000080;
+
+	DMA0->SERQ=0x00;		//este es el que activa el request
 	FTM3->CNT=0;
 	PORTC->PCR[7]=0x00000400;	// para no llamar a una funcion que tarda mucho como:	PORT_SetPinMux		(PORTC, 7, kPORT_MuxAlt4);	//write active low
-	DMA0->ERQ|=0x0001;		//este es el que activa el request
+	FTM3->CNT=0;
+	FTM3->CNT=0;
+	FTM3->CNT=0;
 }
 void Init_Dma(void)
 {

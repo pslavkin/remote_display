@@ -16,4 +16,10 @@ in procedure 'ocd_bouncer'
 
 target halted due to debug-request, current mode: Thread 
 xPSR: 0x01000000 pc: 0x1c0001b0 msp: 0x20000748
+Info : SWD DPIDR 0x2ba01477
+Error: Failed to read memory at 0x00ffff04
+Info : SWD DPIDR 0x2ba01477
+Error: Failed to read memory at 0x00ffff04
+Info : SWD DPIDR 0x2ba01477
+Error: Failed to read memory at 0x00ffff08
 Info : dropped 'gdb' connection
