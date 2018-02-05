@@ -12,7 +12,7 @@
 //--------------Pics Data----------------------------------
 uint16_t Accept_Data_Raw[] RODATA=
 {
-#ifdef PICS_ENABLED
+#ifdef PICS_ENABLED2
 	#include "accepted.raw"
 #endif
 };
@@ -46,7 +46,7 @@ void Del_Accept				(void)	{Del_Pic(&Accept_Pic);}
 //--------------Pics Data----------------------------------
 uint16_t Reject_Data_Raw[] RODATA=
 {
-#ifdef PICS_ENABLED
+#ifdef PICS_ENABLED2
 	#include "rejected.raw"
 #endif
 };

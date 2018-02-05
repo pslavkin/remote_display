@@ -52,10 +52,11 @@ void Pic2TCD(struct Struct_Pic *Pic,uint8_t Index)
 	DMA0->TCD[0].CSR&=~0x0080;		//tip! hay que borrar el bit DONE de un previo dma complete para que me acepte escribir datos en este registro... sino no lo hace y no me linkea los TCD 
 	DMA0->TCD[0]=TCD[0];
 	DMA0->SSRT=0;			//what? arranco la primera adquisizion para que haya algun dato valido en el bus ANTES de que se mueve WR y meta fruta....
-	for(uint8_t i=0;i<255;i++);	//probando haciendo tiempo a ver si esto me permite esperar a que se procese la 1era llamada a la dma, aunque no se si ese es el problema que estoy teniendo....ya vere
+	for(uint16_t i=0;i<1;i++);	//hay que esperar un poquito para darle tiempo a que cargue el dato el primer tiro de DMA
+	FTM3->CONTROLS[3].CnSC&=~0x00000080;
 	FTM3->CNT=0;
+	PORTC->PCR[7]=0x00000400;	// para no llamar a una funcion que tarda mucho como:	PORT_SetPinMux		(PORTC, 7, kPORT_MuxAlt4);	//write active low
 	DMA0->ERQ|=0x0001;		//este es el que activa el request
-    	PORT_SetPinMux		(PORTC, 7, kPORT_MuxAlt4);	//write active low
 }
 void Init_Dma(void)
 {

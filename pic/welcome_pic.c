@@ -13,7 +13,7 @@
 //--------------Pics Data----------------------------------
 uint16_t Welcome_Data_Raw[] RODATA=
 {
-#ifdef PICS_ENABLED
+#ifdef PICS_ENABLED2
 	#include "pointer_logo.raw"
 #endif
 };
