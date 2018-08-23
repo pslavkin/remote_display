@@ -14,30 +14,30 @@
 
 void Wdog_Refresh(void)
 {
-	WDOG->CNT =  WDOG_REFRESH_KEY;
+   WDOG->CNT =  WDOG_REFRESH_KEY;
 }
 void Wdog_Disable(void)
 {
-	WDOG->CNT = WDOG_UPDATE_KEY;
-	WDOG->TOVAL = 0xFFFF;
-	WDOG->CS = (uint32_t) ((WDOG->CS) & ~WDOG_CS_EN_MASK) | WDOG_CS_UPDATE_MASK;
+   WDOG->CNT = WDOG_UPDATE_KEY;
+   WDOG->TOVAL = 0xFFFF;
+   WDOG->CS = (uint32_t) ((WDOG->CS) & ~WDOG_CS_EN_MASK) | WDOG_CS_UPDATE_MASK;
 }
 void Wdog_Enable(void)
 {
-	WDOG->CNT = WDOG_UPDATE_KEY;
-	WDOG->TOVAL = 0xFFFF;
-	WDOG->CS = (uint32_t) ((WDOG->CS) | WDOG_CS_EN_MASK) | WDOG_CS_UPDATE_MASK;
+   WDOG->CNT = WDOG_UPDATE_KEY;
+   WDOG->TOVAL = 0xFFFF;
+   WDOG->CS = (uint32_t) ((WDOG->CS) | WDOG_CS_EN_MASK) | WDOG_CS_UPDATE_MASK;
 }
 
 int main(void) {
-	BOARD_InitBootClocks();
-	Wdog_Disable();
-	Init_Events();
-	Init_Serial_Session();
-	Init_Everythings();
-	Init_Rti();
-	Enable_Irq();
-	for(;;Wdog_Refresh()) 
-		State_Machine();
+   BOARD_InitBootClocks ( );
+   Wdog_Disable         ( );
+   Init_Events          ( );
+   Init_Serial_Session  ( );
+   Init_Everythings     ( );
+   Init_Rti             ( );
+   Enable_Irq           ( );
+   for(;;Wdog_Refresh())
+      State_Machine();
     return 0 ;
 }

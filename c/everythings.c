@@ -20,69 +20,69 @@
 
 State   
         Free_State1[],
-	Free_State2[],
-	Free_State3[],
-	Free_State4[],
-	Free_State5[],
-	Free_State6[],
-	Free_State7[],
-	Free_State8[],
-	Free_State9[],
-	Free_State10[];
+   Free_State2[],
+   Free_State3[],
+   Free_State4[],
+   Free_State5[],
+   Free_State6[],
+   Free_State7[],
+   Free_State8[],
+   Free_State9[],
+   Free_State10[];
 
-State* Everythings_Sm;				//variable que lleva cuenta del estado de la maquina de estados de "detodo un poco"...
+State* Everythings_Sm;           //variable que lleva cuenta del estado de la maquina de estados de "detodo un poco"...
 //----------------------------------------------------------------------------------------------------
-void 		Init_Everythings	(void) 			
+void     Init_Everythings  (void)         
 { 
-	Everythings_Sm=Free_State1;
-	Init_Schedule();
-	Init_Leds_Session();
-	Init_Display_Phisical();
-	Init_Display_Layers();
-	Init_Dma();
-	Init_Ftm3C3();
-}	
-State** 	Everythings		(void) 			{return &Everythings_Sm;} 			//devuelve la direccion de la maquina de estados Everythings para poder mandarle mensajes.
-void 		Everythings_Rti		(void)			{Send_Event(ANY_Event,Everythings());}		//manda mensajes ANY a tiempos predefinidos...
+   Everythings_Sm=Free_State1;
+   Init_Schedule         ( );
+   Init_Leds_Session     ( );
+   Init_Display_Phisical ( );
+   Init_Display_Layers   ( );
+   Init_Dma              ( );
+   Init_Ftm3C3           ( );
+}  
+State**  Everythings    (void)         {return &Everythings_Sm;}        //devuelve la direccion de la maquina de estados Everythings para poder mandarle mensajes.
+void     Everythings_Rti      (void)         {Send_Event(ANY_Event,Everythings());}    //manda mensajes ANY a tiempos predefinidos...
 //----------------------------------------------------------------------------------------------------
-State Free_State1 [] RODATA  =
+State Free_State1 [ ] RODATA  =
 {
-{ANY_Event			,Rien 					,Free_State2},
+{ANY_Event ,Rien             ,Free_State2} ,
 };
-State Free_State2[] RODATA  =
+State Free_State2 [ ] RODATA  =
 {{
- ANY_Event			,Rien					,Free_State3,
+ ANY_Event ,Rien             ,Free_State3  ,
 }};
-State Free_State3[] RODATA  =
+State Free_State3 [ ] RODATA  =
 {{
- ANY_Event			,Rien			,Free_State4,
+ ANY_Event ,Rien             ,Free_State4  ,
 }};
-State Free_State4[] RODATA  =
+State Free_State4 [ ] RODATA  =
 {{
- ANY_Event			,Rien				,Free_State5,
+ ANY_Event ,Rien             ,Free_State5  ,
 }};
-State Free_State5[] RODATA  =
+State Free_State5 [ ] RODATA  =
 {{
- ANY_Event			,Rien 				,Free_State6,
+ ANY_Event ,Rien             ,Free_State6  ,
 }};
-State Free_State6[] RODATA  =
+State Free_State6 [ ] RODATA  =
 {{
- ANY_Event			,Schedule	 			,Free_State7,
+ ANY_Event ,Schedule         ,Free_State7  ,
 }};
-State Free_State7[] RODATA  =
+State Free_State7 [ ] RODATA  =
 {{
- ANY_Event			,Rien				,Free_State8,
+ ANY_Event ,Rien             ,Free_State8  ,
 }};
-State Free_State8[] RODATA  =
+State Free_State8 [ ] RODATA  =
 {{
- ANY_Event			,Led_Effects_Func			,Free_State9,
+ ANY_Event ,Led_Effects_Func ,Free_State9  ,
 }};
-State Free_State9[] RODATA  =
+State Free_State9 [ ] RODATA  =
 {{
- ANY_Event			,Rien	 			,Free_State10,
+ ANY_Event ,Rien             ,Free_State10 ,
 }};
-State Free_State10[] RODATA  =
+State Free_State10[ ] RODATA  =
 {{
- ANY_Event			,Rien				,Free_State1,
+ ANY_Event ,Rien             ,Free_State1  ,
 }};
 //-------------------------------------------------------------------------------

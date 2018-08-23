@@ -16,10 +16,34 @@ in procedure 'ocd_bouncer'
 
 target halted due to debug-request, current mode: Thread 
 xPSR: 0x01000000 pc: 0x1c0001b0 msp: 0x20000748
+invalid command name "kinetis_ke"
+in procedure 'reset' 
+in procedure 'ocd_bouncer' 
+in procedure 'ocd_process_reset' 
+in procedure 'ocd_process_reset_inner' called at file "embedded:startup.tcl", line 248
+in procedure 'kl.cpu' called at file "embedded:startup.tcl", line 299
+in procedure 'ocd_bouncer'
+
+target halted due to debug-request, current mode: Thread 
+xPSR: 0x01000000 pc: 0x1c0001b0 msp: 0x20000748
+Warn : target kl.cpu is not halted
+Polling target kl.cpu failed, trying to reexamine
+Error: Could not initialize the debug port
+Examination failed, GDB will be halted. Polling again in 100ms
+Warn : target not halted
 Info : SWD DPIDR 0x2ba01477
-Error: Failed to read memory at 0x00ffff04
-Info : SWD DPIDR 0x2ba01477
-Error: Failed to read memory at 0x00ffff04
-Info : SWD DPIDR 0x2ba01477
-Error: Failed to read memory at 0x00ffff08
+Polling target kl.cpu failed, trying to reexamine
+Info : kl.cpu: hardware has 6 breakpoints, 4 watchpoints
+invalid command name "kinetis_ke"
+
+Warn : target kl.cpu is not halted
+Error: can't add breakpoint: target running
+invalid command name "kinetis_ke"
+in procedure 'reset' 
+in procedure 'ocd_bouncer' 
+in procedure 'ocd_process_reset' 
+in procedure 'ocd_process_reset_inner' called at file "embedded:startup.tcl", line 248
+in procedure 'kl.cpu' called at file "embedded:startup.tcl", line 299
+in procedure 'ocd_bouncer'
+
 Info : dropped 'gdb' connection
