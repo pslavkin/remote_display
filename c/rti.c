@@ -36,17 +36,17 @@ void Func5(void)
 //---------------------------------------------------
 void Init_Rti(void)
 {
-	Rti=Func1;			//arranca ejecutando func1...
-	SysTick->LOAD  = 240000;       //120Mhz / 500hz = 2mseg sisi, 120 Mhz.. I repeat....
-	SysTick->VAL   = 0UL;                              /* Load the SysTick Counter Value */
-	SysTick->CTRL  = 	SysTick_CTRL_CLKSOURCE_Msk	|
-				SysTick_CTRL_TICKINT_Msk	|
-				SysTick_CTRL_ENABLE_Msk;          /* Enable SysTick IRQ and SysTick Timer */
+   Rti=Func1;                                 // arranca ejecutando func1...
+   SysTick->LOAD  = 240000;                   // 120Mhz / 500hz = 2mseg sisi, 120 Mhz.. I repeat....
+   SysTick->VAL   = 0UL;                      /* Load the SysTick Counter Value */
+   SysTick->CTRL  =  SysTick_CTRL_CLKSOURCE_Msk |
+                     SysTick_CTRL_TICKINT_Msk   |
+                     SysTick_CTRL_ENABLE_Msk; /* Enable SysTick IRQ and SysTick Timer */
 }
 
 void SysTick_Handler(void)
 {
-	Rti();
+   Rti();
 }
 
 

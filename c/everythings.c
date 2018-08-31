@@ -18,32 +18,32 @@
 #include "ftm.h"
 #include "dma.h"
 
-State   
-        Free_State1[],
-   Free_State2[],
-   Free_State3[],
-   Free_State4[],
-   Free_State5[],
-   Free_State6[],
-   Free_State7[],
-   Free_State8[],
-   Free_State9[],
-   Free_State10[];
+State
+   Free_State1 [ ],
+   Free_State2 [ ],
+   Free_State3 [ ],
+   Free_State4 [ ],
+   Free_State5 [ ],
+   Free_State6 [ ],
+   Free_State7 [ ],
+   Free_State8 [ ],
+   Free_State9 [ ],
+   Free_State10[ ];
 
 State* Everythings_Sm;           //variable que lleva cuenta del estado de la maquina de estados de "detodo un poco"...
 //----------------------------------------------------------------------------------------------------
 void     Init_Everythings  (void)         
 { 
    Everythings_Sm=Free_State1;
-   Init_Schedule         ( );
-   Init_Leds_Session     ( );
-   Init_Display_Phisical ( );
-   Init_Display_Layers   ( );
-   Init_Dma              ( );
-   Init_Ftm3C3           ( );
+   Init_Schedule              ( );
+   Init_Leds_Session          ( );
+   Init_Display_Phisical_7789 ( );
+   Init_Display_Layers        ( );
+   Init_Dma                   ( );
+   Init_Ftm3C0                ( );
 }  
-State**  Everythings    (void)         {return &Everythings_Sm;}        //devuelve la direccion de la maquina de estados Everythings para poder mandarle mensajes.
-void     Everythings_Rti      (void)         {Send_Event(ANY_Event,Everythings());}    //manda mensajes ANY a tiempos predefinidos...
+State**  Everythings     ( void ) { return &Everythings_Sm             ;} // devuelve la direccion de la maquina de estados Everythings para poder mandarle mensajes.
+void     Everythings_Rti ( void ) { Send_Event(ANY_Event,Everythings());} // manda mensajes ANY a tiempos predefinidos...
 //----------------------------------------------------------------------------------------------------
 State Free_State1 [ ] RODATA  =
 {

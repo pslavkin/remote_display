@@ -30,8 +30,8 @@ State* Buttons_Sm;
 //-------------------------------------------------------------------------------------
 void 		Init_Buttons		(void) 	
 {
-	Buttons_Sm=Button_Any_Pressed;
-	INIT_BUTTONS();
+	Buttons_Sm=Button_Disabled;
+//	INIT_BUTTONS();
 }
 State** 	Buttons			(void)	{return &Buttons_Sm;}
 void		Buttons_Rti		(void)	{Atomic_Send_Event(READ_ALL_BUTTONS(),Buttons());}

@@ -20,20 +20,20 @@ static  State
 
 State *Dma_Sm;
 //-------------------------------------------------------------------
-struct TCD_Struct TCD[6] __attribute__((aligned (32)));
+struct TCD_Struct TCD[3] __attribute__((aligned (32))); //320*240=76800 words de 16b. cada TCD puede guard 0x7FFF=32767 => con 3=98301 entre la pic mas grande
 
 void Pic2TCD(struct Struct_Pic *Pic,uint8_t Index)
 {
-   uint32_t Pic_Size=(Pic->Width+1)*(Pic->Height+1)*2+2; //mas uno al ancho y al largo porque estan definidas asi, de 0 a ese valor. y el +2 al final, es porque se arega 2 byte extra, uno porque como el primer byte lo cargo con disparo manual no tiene asociado un disparo de ftm propio, y el otro es porque el ultimo byte no entra ya que cuando termina de cargar el ultimo byte, corto el FTM...
+   uint32_t Pic_Size=(Pic->Width+1)*(Pic->Height+1)*1+1; //mas uno al ancho y al largo porque estan definidas asi, de 0 a ese valor. y el +2 al final, es porque se arega 2 byte extra, uno porque como el primer byte lo cargo con disparo manual no tiene asociado un disparo de ftm propio, y el otro es porque el ultimo byte no entra ya que cuando termina de cargar el ultimo byte, corto el FTM...
    uint32_t Pos=0;
    uint16_t TCD_Size;
    for(uint8_t i=0; i<6 && Pic_Size>0 ;i++) {
-      TCD[i].SADDR       = (uint32_t)(((uint8_t *)(Pic->Data[Index]))+Pos);
-      TCD[i].SOFF        = 1;
-      TCD[i].ATTR        = 0;
-      TCD[i].NBYTES_MLNO = 1;
+      TCD[i].SADDR       = (uint32_t)(Pic->Data[Index]+Pos);
+      TCD[i].SOFF        = 2;
+      TCD[i].ATTR        = 0x0101; //16 bits transfer
+      TCD[i].NBYTES_MLNO = 2;
       TCD[i].SLAST       = 0;
-      TCD[i].DADDR       = (uint32_t) ((uint8_t *)(&GPIOA->PDOR)+1);
+      TCD[i].DADDR       = (uint32_t)(&GPIOB->PDOR);
       TCD[i].DOFF        = 0;
       if(Pic_Size>0x7FFF) {
          TCD_Size    = 0x7FFF;
@@ -52,9 +52,10 @@ void Pic2TCD(struct Struct_Pic *Pic,uint8_t Index)
    DMA0->TCD[0].CSR &= ~0x0080   ; // tip! hay que borrar el bit DONE de un previo dma complete para que me acepte escribir datos en este registro... sino no lo hace y no me linkea los TCD
    DMA0->TCD[0]      = TCD[0]    ;
 
-   DMA0->SERQ        = 0x00      ; // este es el que activa el request
    FTM3->CNT         = 0         ;
-   PORTC->PCR[7]     = 0x00000400; // para no llamar a una funcion que tarda mucho como: PORT_SetPinMux    (PORTC, 7, kPORT_MuxAlt4); //write active low
+   DMA0->SERQ        = 0x00      ; // este es el que activa el request
+   PORTA->PCR[2]     = 0x00000200;
+// PORT_SetPinMux    (PORTA, 2, kPORT_MuxAlt2); //write active low
    FTM3->CNT         = 0         ;
    FTM3->CNT         = 0         ;
    FTM3->CNT         = 0         ;
@@ -65,7 +66,7 @@ void Init_Dma(void)
    CLOCK_EnableClock ( kCLOCK_Dmamux0 );
    CLOCK_EnableClock ( kCLOCK_Dma0    );
 
-   DMAMUX->CHCFG[0]  = 35;   // configura el source del canal cero como la fuente 35 que es el FTM3
+   DMAMUX->CHCFG[0]  = 32;   // configura el source del canal cero como la fuente 32 que es el FTM3CH0
    DMAMUX->CHCFG[0] |= 0x80; // con este bit prendo (se podria haber puesto en una sola instruccion.. probar)
    NVIC_EnableIRQ(DMA0_IRQn); //la iRQ salta cuando termina de transferir todo el pic y recien ahi agpgo el ftm y aviso con un evento
 }
@@ -79,7 +80,7 @@ void Dma_Request(void)
 void DMA0_IRQHandler(void)
 {
    DMA0->CINT=0;
-   PORT_SetPinMux      ( PORTC, 7, kPORT_MuxAsGpio          ) ; //paso el pin como gipo en vez de ftm3 
+   PORT_SetPinMux      ( PORTA, 2, kPORT_MuxAsGpio          ) ; //paso el pin como gipo en vez de ftm3 
    Set_Temp_Led_Effect ( Led_Run,0xFFFF                     ) ;
    Send_Event          ( Next_Sub_Pic_Event,Display_Layers( ));
 }

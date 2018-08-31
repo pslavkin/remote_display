@@ -6,13 +6,26 @@
 #include "dma.h"
 #include "serial_tx.h"
 //-------------------------------------------------------------------
-void Init_Ftm3C3(void)
+//    WR     ____     ______________     ______________     ____________
+//              |     |            |     |            |     |
+//              |_____|            |_____|            |_____|
+//
+//                                 |--12-|
+//                    |------40----------|
+//                                       <------| en este instante se latchea el dato. justo antes de que DMA ponga el nuevo
+//DMA                              |
+//                                 |
+//Data                              <------| esto e slo que tarde entre que salta IRQ/DMA de ftm hasta que el DMA pone el dato nuevo
+//          _______________________________
+//                                         |
+//                                         |___________
+void Init_Ftm3C0(void)
 {
    CLOCK_EnableClock(kCLOCK_Ftm3);
-   FTM3->CONTROLS[3].CnSC = 0x00000069;
-   FTM3->MOD              = 40;
-   FTM3->CONTROLS[3].CnV  = FTM3->MOD-12; // con 12 de subi baja evito que la llamada de dma entre dentro de esa ventana
-   FTM3->SC               = 0x00080008;
+   FTM3->CONTROLS[0].CnSC = 0x00000069;      //habilita irq pero no para que salte sino para que funcione DMA. tiene que estar los dos en 1.
+   FTM3->MOD              = 30;
+   FTM3->CONTROLS[0].CnV  = FTM3->MOD-3;
+   FTM3->SC               = 0x00010008;
 }
 
 void Ftm_Print(void)
