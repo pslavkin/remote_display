@@ -14,8 +14,8 @@
 //--------------Pics Data----------------------------------
 uint16_t Welcome_Data_Raw[] RODATA=
 {
-//#ifdef PICS_ENABLED
-#ifdef PICS_ENABLED_TEST
+#ifdef PICS_ENABLED
+//#ifdef PICS_ENABLED_TEST
    #include "pointer_logo.raw"
 #endif
 };
@@ -41,7 +41,7 @@ struct Struct_Pic_Events Welcome_Events[] RODATA=
 //
 struct Struct_Pic Welcome_Pic RODATA=
 {
- 16,207,100,125,0,0,1,Welcome_Events,1,Welcome_Data
+ 16,207,100,125,10,0,1,Welcome_Events,1,Welcome_Data
 };
 void Add_Welcome               ( void ) { Add_Pic_On_Bottom(&Welcome_Pic);}
 void Del_Welcome               ( void ) { Del_Pic(&Welcome_Pic)          ;}
@@ -64,7 +64,7 @@ void Test_Pic_Constr(void)
 void Test_Pic_Destr(void)
 {
 //   New_Periodic_Func_Schedule(2,Clear_Lcd);
-   New_None_Periodic_Func_Schedule(2,Add_Test_Pic);
+//   New_None_Periodic_Func_Schedule(2,Add_Test_Pic);
 }
 //--------------Events----------------------------------
 struct Struct_Pic_Events Test_Pic_Events[] RODATA=
@@ -75,7 +75,7 @@ struct Struct_Pic_Events Test_Pic_Events[] RODATA=
 //
 struct Struct_Pic Test_Pic_Pic RODATA=
 {
- 0,239,0,319,2,0,1,Test_Pic_Events,1,Test_Pic_Data
+ 0,5,0,319,0,0,1,Test_Pic_Events,1,Test_Pic_Data
 };
 void Add_Test_Pic               ( void ) { Add_Pic_On_Bottom(&Test_Pic_Pic);}
 void Del_Test_Pic               ( void ) { Del_Pic(&Test_Pic_Pic)          ;}

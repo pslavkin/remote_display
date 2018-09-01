@@ -16,6 +16,7 @@
 #include "dma.h"
 #include <stdint.h>
 #include "type_conversion.h"
+#include "serial_tx.h"
 //---------------------------------------------------------------------
 void Write_Disp_Instr(uint8_t Instr)
 {
@@ -51,7 +52,7 @@ uint16_t Read_Disp_Data(void)
 {
    GPIOA->PCOR = 1<< 3; //Disp_RD_Clr();
    GPIOA->PSOR = 1<< 3; //Disp_RD_Set();
-   return GPIOB->PDIR; //leo port
+   return (uint16_t) (GPIOB->PDIR&0x0000FFFF); //leo port
 }
 //----------------------------------------------------------------------
 void Init_Lcd_Pins(void)/*{{{*/
@@ -309,6 +310,33 @@ void Set_Frame_Address(struct Struct_Pic *Pic)
    Write_Disp_16b_Param ( Pic->Start_Y             );
    Write_Disp_16b_Param ( Pic->Start_Y+Pic->Height );
 }
+void Red_Lcd(void)
+{
+   struct Struct_Pic Pic={0,239,0,319,0,0,0,NULL,0,NULL};
+   Set_Frame_Address ( &Pic );
+   Write_Disp_Instr  ( 0x2C );
+   for ( int j=0;j<320;j++ )
+      for ( int i=0;i<240;i++ )
+         Write_Disp_16b_Data ( 0xF800 );
+}
+void Green_Lcd(void)
+{
+   struct Struct_Pic Pic={0,239,0,319,0,0,0,NULL,0,NULL};
+   Set_Frame_Address ( &Pic );
+   Write_Disp_Instr  ( 0x2C );
+   for ( int j=0;j<320;j++ )
+      for ( int i=0;i<240;i++ )
+         Write_Disp_16b_Data ( 0x07E0 );
+}
+void Blue_Lcd(void)
+{
+   struct Struct_Pic Pic={0,239,0,319,0,0,0,NULL,0,NULL};
+   Set_Frame_Address ( &Pic );
+   Write_Disp_Instr  ( 0x2C );
+   for ( int j=0;j<320;j++ )
+      for ( int i=0;i<240;i++ )
+         Write_Disp_16b_Data ( 0x001F );
+}
 void Clear_Lcd(void)
 {
    struct Struct_Pic Pic={0,239,0,319,0,0,0,NULL,0,NULL};
@@ -316,7 +344,8 @@ void Clear_Lcd(void)
    Write_Disp_Instr  ( 0x2C );
    for ( int j=0;j<320;j++ )
       for ( int i=0;i<240;i++ )
-         Write_Disp_16b_Data ( 0 );
+         Write_Disp_16b_Data ( 0x0000 );
+//         Write_Disp_16b_Data ( 0xA183 );
 }
 //----------------------------------------------------------------------
 uint16_t Invert_Pixel(uint16_t Pixel)
@@ -329,21 +358,71 @@ uint16_t Invert_Pixel(uint16_t Pixel)
    B=0x1F-B;
    return (R<<11 | G<<5 | B);
 }
+
+void Init_Dump_Lcd(void)
+{
+   struct Struct_Pic Pic2={0,239,0,319,0,0,0,NULL,0,NULL};
+   Write_Disp_Instr    ( 0x3A             );
+   Write_Disp_8b_Param ( 0x66             ); // COLMOD: Interface Pixel format
+   Set_Frame_Address   ( &Pic2            );
+   Write_Disp_Instr    ( 0x2E             ); // comando de lectura
+   GPIO_Port_As_In     ( GPIOB,0x0000FFFF );
+   Read_Disp_Data      (                  ); // dummy read..
+}
+void End_Dump_Lcd(void)
+{
+  GPIO_Port_As_Out(GPIOB,0x0000FFFF);
+  Write_Disp_Instr    ( 0x3A   );
+  Write_Disp_8b_Param ( 0x55   ); //  COLMOD: Interface Pixel format
+}
+void Dump_Lcd(void)
+{
+   uint16_t D1,D2,D3;
+   unsigned char Buf[20];
+   D1=Read_Disp_Data();
+   D2=Read_Disp_Data();
+   D3=Read_Disp_Data();
+   Int2Hex_Bcd(Buf,D1);
+   Buf[4] = '-';
+   Int2Hex_Bcd(Buf+5 ,D2);
+   Buf[9] = '-';
+   Int2Hex_Bcd(Buf+10 ,D3);
+   Buf[14] = '|';
+   Buf[15] = '\r';
+   Buf[16] = '\n';
+   Send_VData2Serial(17,Buf);
+}
 void Lcd2Pic_Inverted(struct Struct_Pic *Pic)
 {
-   uint8_t R,G,B;
-   uint32_t Size=Pic->Width*Pic->Height;
+   //es un bolonki porque cada 3 lecturas me levanda 2 bytes... me complica toda la logica la mierd.. 
+   Write_Disp_Instr    ( 0x3A   );
+   Write_Disp_8b_Param ( 0x66   ); //  COLMOD: Interface Pixel format
+   uint32_t Size=((Pic->Width+2)*(Pic->Height+2))/2; //deberia sumar 1,pero sumo 2 para que lee un poco mas por el kilombo de los pares e impares.. 
+
    Set_Frame_Address ( Pic              );
    Write_Disp_Instr  ( 0x2E             ); // comando de lectura
    GPIO_Port_As_In   ( GPIOB,0x0000FFFF );
    Read_Disp_Data    (                  ); // dummy read..
    for(uint32_t i=0;i<Size;i++) {
-      R=0x1F- ( Read_Disp_Data( )>>3);     // WTF??? sip.. le mando de a 2 bytes y me devuelve 3, y solo usa la parte alta del byte
-      G=0x3F- ( Read_Disp_Data( )>>2);
-      B=0x1F- ( Read_Disp_Data( )>>3);
-      Pic->Data[0][i]=R<<11 | G<<5 | B;
+      uint16_t R,G,B;
+      uint16_t D1,D2,D3;
+      D1=Read_Disp_Data();
+      D2=Read_Disp_Data();
+      D3=Read_Disp_Data();
+
+      R=0x1F- ( (D1&0x7E00 )>>10);
+      G=0x3F- ( (D1&0x00FC )>>2 );
+      B=0x1F- ( (D2&0x7E00 )>>10);
+      Pic->Data[0][2*i+0]=R<<11 | G<<5 | B;
+
+      R=0x1F- ((D2&0x00FC)>>3);
+      G=0x3F- ((D3&0x7E00)>>9);
+      B=0x1F- ((D3&0x00FC)>>3);
+      Pic->Data[0][2*i+1]=R<<11 | G<<5 | B;
    }
    GPIO_Port_As_Out(GPIOB,0x0000FFFF);
+   Write_Disp_Instr    ( 0x3A   );
+   Write_Disp_8b_Param ( 0x55   ); //  COLMOD: Interface Pixel format
 }
 
 

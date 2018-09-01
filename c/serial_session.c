@@ -65,6 +65,12 @@ unsigned char Layers_Menu[] RODATA=
  "D Mask Del\r\n"
  "E Mask Enter\r\n"
  "F Reboot\r\n"
+ "G Init Dump\r\n"
+ "H Dump\r\n"
+ "I End Dump\r\n"
+ "J Red\r\n"
+ "K Green\r\n"
+ "L Blue\r\n"
  "< Back\r\n"
  "? Help\r\n"
 };
@@ -119,25 +125,31 @@ State Parsing_Working[ ] RODATA=
 };
 State Parsing_Layers [ ] RODATA=
 {
-// {'A'     ,Print_Actual_Layers       ,Parsing_Layers}  ,
-// {'B'     ,Print_Layer_Modified      ,Parsing_Layers}  ,
-// {'C'     ,Print_Layers_Used         ,Parsing_Layers}  ,
-{ '0'       ,Add_Mask0                 ,Parsing_Layers}  ,
-{ '1'       ,Add_Mask1                 ,Parsing_Layers}  ,
-{ '2'       ,Add_Mask2                 ,Parsing_Layers}  ,
-{ '3'       ,Add_Mask3                 ,Parsing_Layers}  ,
-{ '4'       ,Add_Mask4                 ,Parsing_Layers}  ,
-{ '5'       ,Add_Mask5                 ,Parsing_Layers}  ,
-{ '6'       ,Add_Mask6                 ,Parsing_Layers}  ,
-{ '7'       ,Add_Mask7                 ,Parsing_Layers}  ,
-{ '8'       ,Add_Mask8                 ,Parsing_Layers}  ,
-{ '9'       ,Add_Mask9                 ,Parsing_Layers}  ,
-{ 'D'       ,Add_Mask_Delete           ,Parsing_Layers}  ,
-{ 'E'       ,Add_Mask_Enter            ,Parsing_Layers}  ,
-{ 'F'       ,Clear_All_And_Add_Welcome ,Parsing_Layers}  ,
-{ '<'       ,Rien                      ,Parsing_Main}    ,
-{ '?'       ,Print_Layers_Menu         ,Parsing_Layers}  ,
-{ ANY_Event ,Rien                      ,Parsing_Layers}  ,
+// {'A'     ,Print_Actual_Layers       ,Parsing_Layers} ,
+// {'B'     ,Print_Layer_Modified      ,Parsing_Layers} ,
+// {'C'     ,Print_Layers_Used         ,Parsing_Layers} ,
+{ '0'       ,Add_Mask0                 ,Parsing_Layers} ,
+{ '1'       ,Add_Mask1                 ,Parsing_Layers} ,
+{ '2'       ,Add_Mask2                 ,Parsing_Layers} ,
+{ '3'       ,Add_Mask3                 ,Parsing_Layers} ,
+{ '4'       ,Add_Mask4                 ,Parsing_Layers} ,
+{ '5'       ,Add_Mask5                 ,Parsing_Layers} ,
+{ '6'       ,Add_Mask6                 ,Parsing_Layers} ,
+{ '7'       ,Add_Mask7                 ,Parsing_Layers} ,
+{ '8'       ,Add_Mask8                 ,Parsing_Layers} ,
+{ '9'       ,Add_Mask9                 ,Parsing_Layers} ,
+{ 'D'       ,Add_Mask_Delete           ,Parsing_Layers} ,
+{ 'E'       ,Add_Mask_Enter            ,Parsing_Layers} ,
+{ 'F'       ,Clear_All_And_Add_Welcome ,Parsing_Layers} ,
+{ 'G'       ,Init_Dump_Lcd             ,Parsing_Layers} ,
+{ 'H'       ,Dump_Lcd                  ,Parsing_Layers} ,
+{ 'I'       ,End_Dump_Lcd              ,Parsing_Layers} ,
+{ 'J'       ,Red_Lcd                   ,Parsing_Layers} ,
+{ 'K'       ,Green_Lcd                 ,Parsing_Layers} ,
+{ 'L'       ,Blue_Lcd                  ,Parsing_Layers} ,
+{ '<'       ,Rien                      ,Parsing_Main}   ,
+{ '?'       ,Print_Layers_Menu         ,Parsing_Layers} ,
+{ ANY_Event ,Rien                      ,Parsing_Layers} ,
 };
 State Parsing_Dma    [ ] RODATA=
 {

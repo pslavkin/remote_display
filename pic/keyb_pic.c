@@ -13,18 +13,18 @@
 uint16_t Keyb_Data_Raw[] RODATA=
 {
 #ifdef PICS_ENABLED
-	#include "keyb.raw"
+   #include "keyb.raw"
 #endif
 };
 uint16_t *Keyb_Data[] RODATA=
 {
-	Keyb_Data_Raw,
+   Keyb_Data_Raw,
 };
 
 //---------------Functions---------------------------------------
 void Keyb_Constr(void)
 {
-	Add_Numbers();
+   Add_Numbers();
 }
 void Keyb_Destr(void)
 {
@@ -32,15 +32,14 @@ void Keyb_Destr(void)
 //--------------Events----------------------------------
 struct Struct_Pic_Events Keyb_Events[] RODATA=
 {
-{  0,  0,  0,  0, 	0,	{Keyb_Constr,		Rien,		Keyb_Destr},}			//On_Create
+{  0,  0,  0,  0,    0, {Keyb_Constr,     Rien,    Keyb_Destr},}        //On_Create
 };
 //--------------Pics Info----------------------------------
 //
 struct Struct_Pic Keyb_Pic RODATA=
 {
-// 0,2,0,2,0,0,1,Keyb_Events,1,Keyb_Data
  0,239,0,319,0,0,1,Keyb_Events,1,Keyb_Data
 };
-void Add_Keyb				(void)	{Add_Pic_On_Bottom(&Keyb_Pic);}
-void Del_Keyb				(void)	{Del_Pic(&Keyb_Pic);}
+void Add_Keyb ( void ) { Add_Pic_On_Bottom(&Keyb_Pic);}
+void Del_Keyb ( void ) { Del_Pic(&Keyb_Pic)          ;}
 //------------------------------------------------------

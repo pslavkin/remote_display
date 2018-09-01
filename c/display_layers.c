@@ -160,7 +160,7 @@ void     Init_Display_Layers ( void )
  Display_Layers_Sm = Idle;
  New_Periodic_Func_Schedule(5,Blink);
  Add_Welcome();
- Add_Test_Pic();
+//: Add_Test_Pic();
  
 }
 //-------------------------------------------------------------------------------------
@@ -188,8 +188,8 @@ void Idle_Info_Modified    (void)
 }
 void All_Displayed      (void)   {Atomic_Send_Event(All_Displayed_Event,Display_Layers());}
 //-------------------------------------------------------------------------------------
-void Mask2Lcd_And_Does_Layer_Modified(void)  {Mask2Lcd();Does_Layer_Modified();}
-void Update_Mask_Pic_And_Send_Next_Layer_Event(void)  {Update_Mask_Pic();Send_Next_Layer_Event();}
+void Mask2Lcd_And_Does_Layer_Modified          ( void ) { Mask2Lcd()       ;Does_Layer_Modified()  ;}
+void Update_Mask_Pic_And_Send_Next_Layer_Event ( void ) { Update_Mask_Pic();Send_Next_Layer_Event();}
 //-------------------------------------------------------------------------------------
 static State Idle[] RODATA =
 {
@@ -199,8 +199,8 @@ static State Idle[] RODATA =
 };
 static State Updating[] RODATA =
 {
-{ All_Updated_Event        ,Does_Layer_Modified                       ,Idle}     ,
-//{ All_Updated_Event      ,Update_Mask_Pic_And_Send_Next_Layer_Event ,Masking}  ,
+//{ All_Updated_Event        ,Does_Layer_Modified                       ,Idle}     ,
+{ All_Updated_Event        ,Update_Mask_Pic_And_Send_Next_Layer_Event ,Masking}  ,
 { Info_Modified_Event      ,Rien                                      ,Updating} ,
 { Structure_Modified_Event ,Rien                                      ,Updating} ,
 { Next_Sub_Pic_Event       ,Sub_Pic2Lcd                               ,Updating} ,

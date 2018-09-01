@@ -139,9 +139,13 @@ unsigned char* Char2Hex_Bcd(unsigned char* Bcd,unsigned char Bin) //convierte un
  for(i=0;i<2;i++) Bcd[i]+=(Bcd[i]>9)?('A'-10):'0';
  return Bcd;
 }
-unsigned char* Int2Hex_Bcd(unsigned char* Bcd,unsigned int Bin)   
+unsigned char* Int2Hex_Bcd(unsigned char* Bcd,uint16_t Bin)
 {
-   return String2Hex_Bcd(Bcd,(unsigned char*)&Bin,2);
+   char Aux=Bin>>9;
+   Char2Hex_Bcd(Bcd,Aux);
+   Aux=Bin;
+   Char2Hex_Bcd(Bcd+2,Aux);
+   return Bcd;
 }
 //----------------------------------------------------------------
 unsigned char* Replace_Zero2Space(unsigned char* Buf,unsigned char Length)
