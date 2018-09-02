@@ -45,7 +45,6 @@ void GPIO_PinInit_As_Out(GPIO_Type *base, uint32_t pin,uint8_t value)
         base->PDDR |= (1U << pin);
 }
 
-
 uint32_t GPIO_PortGetInterruptFlags(GPIO_Type *base)
 {
     uint8_t instance;

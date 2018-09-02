@@ -78,12 +78,12 @@ ${BINDIR}/app.axf: ${OBJDIR}/leds_session.o
 ${BINDIR}/app.axf: ${OBJDIR}/display_phisical.o
 ${BINDIR}/app.axf: ${OBJDIR}/display_pics.o
 ${BINDIR}/app.axf: ${OBJDIR}/display_layers.o
-${BINDIR}/app.axf: ${OBJDIR}/buttons.o
-${BINDIR}/app.axf: ${OBJDIR}/rotary.o
 ${BINDIR}/app.axf: ${OBJDIR}/buzzer.o
 ${BINDIR}/app.axf: ${OBJDIR}/tpm.o
 ${BINDIR}/app.axf: ${OBJDIR}/dma.o
 ${BINDIR}/app.axf: ${OBJDIR}/ftm.o
+${BINDIR}/app.axf: ${OBJDIR}/tpanel.o
+${BINDIR}/app.axf: ${OBJDIR}/adc.o
 #../pics
 ${BINDIR}/app.axf: ${OBJDIR}/welcome_pic.o
 ${BINDIR}/app.axf: ${OBJDIR}/keyb_pic.o

@@ -35,7 +35,6 @@ struct Struct_Pic_Events Keyb_Events[] RODATA=
 {  0,  0,  0,  0,    0, {Keyb_Constr,     Rien,    Keyb_Destr},}        //On_Create
 };
 //--------------Pics Info----------------------------------
-//
 struct Struct_Pic Keyb_Pic RODATA=
 {
  0,239,0,319,0,0,1,Keyb_Events,1,Keyb_Data

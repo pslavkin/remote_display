@@ -13,13 +13,15 @@
 #include "accept_reject_pic.h"
 #include "dma.h"
 #include "ftm.h"
+#include "adc.h"
 
 State
    Parsing_Main[],
    Parsing_Working[],
    Parsing_Layers[],
    Parsing_Ftm[],
-   Parsing_Dma[];
+   Parsing_Dma[],
+   Parsing_Adc[];
 
 State* Serial_Session_Sm;
 //---------------------------------------------------------------------
@@ -36,6 +38,7 @@ unsigned char Main_Menu[] RODATA=
  "D Layers\r\n"
  "E Dma\r\n"
  "F Ftm\r\n"
+ "G Adc\r\n"
  "R Reset\r\n"
  ". About\r\n"
  "? Help\r\n"
@@ -91,6 +94,13 @@ unsigned char Ftm_Menu[] RODATA=
  "< Back\r\n"
  "? Help\r\n"
 };
+unsigned char Adc_Menu[] RODATA=
+{
+ "Adc menu\r\n"
+ "A Read Channel 12\r\n"
+ "< Back\r\n"
+ "? Help\r\n"
+};
 //---------------------------------------------------------------------
 void Print_About_Menu   ( void ) { Send_NVData2Serial(sizeof(About_Menu)-1   ,(unsigned char*)About_Menu)  ;}
 void Print_Main_Menu    ( void ) { Send_NVData2Serial(sizeof(Main_Menu)-1    ,(unsigned char*)Main_Menu)   ;}
@@ -98,6 +108,7 @@ void Print_Layers_Menu  ( void ) { Send_NVData2Serial(sizeof(Layers_Menu)-1  ,(u
 void Print_Working_Menu ( void ) { Send_NVData2Serial(sizeof(Working_Menu)-1 ,(unsigned char*)Working_Menu);}
 void Print_Ftm_Menu     ( void ) { Send_NVData2Serial(sizeof(Ftm_Menu)-1     ,(unsigned char*)Ftm_Menu)    ;}
 void Print_Dma_Menu     ( void ) { Send_NVData2Serial(sizeof(Dma_Menu)-1     ,(unsigned char*)Dma_Menu)    ;}
+void Print_Adc_Menu     ( void ) { Send_NVData2Serial(sizeof(Adc_Menu)-1     ,(unsigned char*)Adc_Menu)    ;}
 //--------------------------------------------------------------------
 State**  Serial_Session    (void)   {return &Serial_Session_Sm;} 
 void     Init_Serial_Session  (void)
@@ -113,6 +124,7 @@ State Parsing_Main   [ ] RODATA=
 { 'D'       ,Print_Layers_Menu         ,Parsing_Layers}  ,
 { 'E'       ,Print_Dma_Menu            ,Parsing_Dma}     ,
 { 'F'       ,Print_Ftm_Menu            ,Parsing_Ftm}     ,
+{ 'G'       ,Print_Adc_Menu            ,Parsing_Adc}     ,
 { '.'       ,Print_About_Menu          ,Parsing_Main}    ,
 { '?'       ,Print_Main_Menu           ,Parsing_Main}    ,
 { ANY_Event ,Rien                      ,Parsing_Main}    ,
@@ -167,5 +179,12 @@ State Parsing_Ftm    [ ] RODATA=
 { '<'       ,Rien                      ,Parsing_Main}    ,
 { '?'       ,Print_Ftm_Menu            ,Parsing_Ftm}     ,
 { ANY_Event ,Rien                      ,Parsing_Ftm}     ,
+};
+State Parsing_Adc    [ ] RODATA=
+{
+{ 'A'       ,Print_Adc12              ,Parsing_Adc}     ,
+{ '<'       ,Rien                      ,Parsing_Main}    ,
+{ '?'       ,Print_Adc_Menu            ,Parsing_Adc}     ,
+{ ANY_Event ,Rien                      ,Parsing_Adc}     ,
 };
 //------------------------------------------------------------------------------

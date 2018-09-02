@@ -132,6 +132,14 @@ static inline void PORT_SetPinConfig(PORT_Type *base, uint32_t pin, const port_p
     uint32_t addr = (uint32_t)&base->PCR[pin];
     *(volatile uint16_t *)(addr) = *((const uint16_t *)config);
 }
+static inline void PORT_Pullup_Disable(PORT_Type *base, uint32_t pin)
+{
+    base->PCR[pin]&=~0x00000003;
+}
+static inline void PORT_Pullup_Enable(PORT_Type *base, uint32_t pin)
+{
+    base->PCR[pin]|=0x00000003;
+}
 
 /*!
  * @brief Sets the port PCR register for multiple pins.

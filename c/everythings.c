@@ -17,6 +17,8 @@
 #include "type_conversion.h"
 #include "ftm.h"
 #include "dma.h"
+#include "tpanel.h"
+#include "adc.h"
 
 State
    Free_State1 [ ],
@@ -32,8 +34,8 @@ State
 
 State* Everythings_Sm;           //variable que lleva cuenta del estado de la maquina de estados de "detodo un poco"...
 //----------------------------------------------------------------------------------------------------
-void     Init_Everythings  (void)         
-{ 
+void     Init_Everythings  (void)
+{
    Everythings_Sm=Free_State1;
    Init_Schedule              ( );
    Init_Leds_Session          ( );
@@ -41,6 +43,8 @@ void     Init_Everythings  (void)
    Init_Display_Layers        ( );
    Init_Dma                   ( );
    Init_Ftm3C0                ( );
+   Init_Tpanel                ( );
+   Init_Adc                   ( );
 }  
 State**  Everythings     ( void ) { return &Everythings_Sm             ;} // devuelve la direccion de la maquina de estados Everythings para poder mandarle mensajes.
 void     Everythings_Rti ( void ) { Send_Event(ANY_Event,Everythings());} // manda mensajes ANY a tiempos predefinidos...

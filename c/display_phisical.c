@@ -225,7 +225,7 @@ void Init_Display_Phisical_7789(void) /*  {{{*/
    Delay_Useg          ( 5000   ); //  esperar 5mseg
 
    Write_Disp_Instr    ( 0x36   );
-   Write_Disp_8b_Param ( 0x80   ); //  MADCTL: memory data access control
+   Write_Disp_8b_Param ( 0x00   ); //  MADCTL: memory data access control
    Write_Disp_Instr    ( 0x3A   );
    Write_Disp_8b_Param ( 0x55   ); //  COLMOD: Interface Pixel format
    Write_Disp_Instr    ( 0xB2   );

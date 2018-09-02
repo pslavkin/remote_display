@@ -16,8 +16,8 @@ extern "C" {
 #endif
 
 // @brief Initializes a GPIO pin used by the board.
-void GPIO_PinInit_As_Int(GPIO_Type *base, uint32_t pin);
-void GPIO_PinInit_As_Out(GPIO_Type *base, uint32_t pin,uint8_t value);
+void GPIO_PinInit_As_In      ( GPIO_Type *base, uint32_t pin               );
+void GPIO_PinInit_As_Out     ( GPIO_Type *base, uint32_t pin,uint8_t value );
 
 
 

@@ -161,7 +161,6 @@ void     Init_Display_Layers ( void )
  New_Periodic_Func_Schedule(5,Blink);
  Add_Welcome();
 //: Add_Test_Pic();
- 
 }
 //-------------------------------------------------------------------------------------
 void Next_Layer      (void)
