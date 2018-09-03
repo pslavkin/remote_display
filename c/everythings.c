@@ -19,6 +19,7 @@
 #include "dma.h"
 #include "tpanel.h"
 #include "adc.h"
+#include "tpanel.h"
 
 State
    Free_State1 [ ],
@@ -43,8 +44,8 @@ void     Init_Everythings  (void)
    Init_Display_Layers        ( );
    Init_Dma                   ( );
    Init_Ftm3C0                ( );
-   Init_Tpanel                ( );
    Init_Adc                   ( );
+   Init_Tpanel                ( );
 }  
 State**  Everythings     ( void ) { return &Everythings_Sm             ;} // devuelve la direccion de la maquina de estados Everythings para poder mandarle mensajes.
 void     Everythings_Rti ( void ) { Send_Event(ANY_Event,Everythings());} // manda mensajes ANY a tiempos predefinidos...
@@ -63,7 +64,7 @@ State Free_State3 [ ] RODATA  =
 }};
 State Free_State4 [ ] RODATA  =
 {{
- ANY_Event ,Rien             ,Free_State5  ,
+ ANY_Event ,Tpanel_Rti             ,Free_State5  ,
 }};
 State Free_State5 [ ] RODATA  =
 {{

@@ -30,6 +30,14 @@ struct Struct_Pic* Read_Mask_Pic(void)
 {
    return &Mask_Pic;
 }
+void Set_Mask_Pic(uint16_t Left_X,uint16_t Upper_Y,uint16_t Right_X,uint16_t Lower_Y)
+{
+   Mask_Pic.Start_X = Start_X        ;
+   Mask_Pic.Width   = Right_X-Left_X ;
+   Mask_Pic.Start_Y = Upper_Y        ;
+   Mask_Pic.Height  = Lower_Y-Upper_Y;
+   Layer_Info_Modified();
+}
 void Resize_Mask_Pic(uint16_t Start_X,uint16_t Width,uint16_t Start_Y,uint16_t Height)
 {
    Mask_Pic.Start_X=Start_X;

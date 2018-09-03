@@ -120,11 +120,11 @@ void Add_Digit7(void) {Add_Digit(Number7_Raw);}
 void Add_Digit8(void) {Add_Digit(Number8_Raw);}
 void Add_Digit9(void) {Add_Digit(Number9_Raw);}
 
-void Del_Digit(void)  
+void Del_Digit(void)
 {
    if(Actual_Digit>0) {
       Actual_Digit--;
-      Numbers_Pic.PCount=Actual_Digit+1; 
+      Numbers_Pic.PCount=Actual_Digit+1;
       Numbers[Actual_Digit]=Number__Raw;
       Layer_Structure_Modified();
    }
@@ -132,8 +132,8 @@ void Del_Digit(void)
 unsigned char Psw_Compare(void)
 {
    uint8_t i=0;
-   if(Actual_Digit==8) 
-      for(;i<8 && Psw[i]==Numbers[i];i++) 
+   if(Actual_Digit==8)
+      for(;i<8 && Psw[i]==Numbers[i];i++)
          ;
    return i==8;
 } 

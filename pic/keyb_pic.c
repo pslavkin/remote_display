@@ -8,6 +8,7 @@
 #include "mask_pic.h"
 #include "numbers_pic.h"
 #include "debug.h"
+#include "tpanel.h"
 
 //--------------Pics Data----------------------------------
 uint16_t Keyb_Data_Raw[] RODATA=
@@ -32,7 +33,8 @@ void Keyb_Destr(void)
 //--------------Events----------------------------------
 struct Struct_Pic_Events Keyb_Events[] RODATA=
 {
-{  0,  0,  0,  0,    0, {Keyb_Constr,     Rien,    Keyb_Destr},}        //On_Create
+   { 0  ,0   ,0   ,0  ,Invalid_Button ,0 ,{Keyb_Constr ,Rien ,Keyb_Destr} } ,// On_Create
+   { 83 ,261 ,156 ,53 ,Invalid_Button ,1 ,{Add_Digit0  ,Rien ,Rien}       } ,
 };
 //--------------Pics Info----------------------------------
 struct Struct_Pic Keyb_Pic RODATA=

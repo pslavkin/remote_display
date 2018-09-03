@@ -2,15 +2,17 @@
 #define DISPLAY_PHISICAL
 
 #include <stdint.h>
+#include <stdbool.h>
 
 struct Struct_Pic_Events
 {
- uint16_t Upper_X;
- uint16_t Upper_Y;
- uint16_t Lower_X;
- uint16_t Lower_Y;
- unsigned char Button;
- void (* Handler[3]) (void);
+ uint16_t Left_X            ;
+ uint16_t Upper_Y           ;
+ uint16_t Right_X           ;
+ uint16_t Lower_Y           ;
+ uint8_t Button             ;
+ bool Draw_Box              ; // si es 1 se dibuja un box alrededor de la zona delimitada por el touch
+ void ( * Handler[3] )(void);
 };
 
 struct Struct_Pic
