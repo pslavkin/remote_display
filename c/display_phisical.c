@@ -302,17 +302,17 @@ void Init_Display_Phisical_7789(void) /*  {{{*/
 }                                  /*  }}}*/
 void Set_Frame_Address(struct Struct_Pic *Pic)
 {
-   Write_Disp_Instr     ( 0x2A                   ); // column address set
-   Write_Disp_16b_Param ( Pic->Start_X             );
-   Write_Disp_16b_Param ( Pic->Start_X+Pic->Width  );
+   Write_Disp_Instr     ( 0x2A        ); // column address set
+   Write_Disp_16b_Param ( Pic->Pos.XL );
+   Write_Disp_16b_Param ( Pic->Pos.XR );
 
-   Write_Disp_Instr     ( 0x2B                   ); // page address set
-   Write_Disp_16b_Param ( Pic->Start_Y             );
-   Write_Disp_16b_Param ( Pic->Start_Y+Pic->Height );
+   Write_Disp_Instr     ( 0x2B        ); // page address set
+   Write_Disp_16b_Param ( Pic->Pos.YU );
+   Write_Disp_16b_Param ( Pic->Pos.YL );
 }
 void Red_Lcd(void)
 {
-   struct Struct_Pic Pic={0,239,0,319,0,0,0,NULL,0,NULL};
+   struct Struct_Pic Pic={{0,239,0,319},0,0,0,NULL,0,NULL};
    Set_Frame_Address ( &Pic );
    Write_Disp_Instr  ( 0x2C );
    for ( int j=0;j<320;j++ )
@@ -321,7 +321,7 @@ void Red_Lcd(void)
 }
 void Green_Lcd(void)
 {
-   struct Struct_Pic Pic={0,239,0,319,0,0,0,NULL,0,NULL};
+   struct Struct_Pic Pic={{0,239,0,319},0,0,0,NULL,0,NULL};
    Set_Frame_Address ( &Pic );
    Write_Disp_Instr  ( 0x2C );
    for ( int j=0;j<320;j++ )
@@ -330,7 +330,7 @@ void Green_Lcd(void)
 }
 void Blue_Lcd(void)
 {
-   struct Struct_Pic Pic={0,239,0,319,0,0,0,NULL,0,NULL};
+   struct Struct_Pic Pic={{0,239,0,319},0,0,0,NULL,0,NULL};
    Set_Frame_Address ( &Pic );
    Write_Disp_Instr  ( 0x2C );
    for ( int j=0;j<320;j++ )
@@ -339,7 +339,7 @@ void Blue_Lcd(void)
 }
 void Clear_Lcd(void)
 {
-   struct Struct_Pic Pic={0,239,0,319,0,0,0,NULL,0,NULL};
+   struct Struct_Pic Pic={{0,239,0,319},0,0,0,NULL,0,NULL};
    Set_Frame_Address ( &Pic );
    Write_Disp_Instr  ( 0x2C );
    for ( int j=0;j<320;j++ )
@@ -361,7 +361,7 @@ uint16_t Invert_Pixel(uint16_t Pixel)
 
 void Init_Dump_Lcd(void)
 {
-   struct Struct_Pic Pic2={0,239,0,319,0,0,0,NULL,0,NULL};
+   struct Struct_Pic Pic2={{0,239,0,319},0,0,0,NULL,0,NULL};
    Write_Disp_Instr    ( 0x3A             );
    Write_Disp_8b_Param ( 0x66             ); // COLMOD: Interface Pixel format
    Set_Frame_Address   ( &Pic2            );
@@ -392,12 +392,24 @@ void Dump_Lcd(void)
    Buf[16] = '\n';
    Send_VData2Serial(17,Buf);
 }
+uint16_t Pic_Width(struct Struct_Pic *Pic)
+{
+   return Pic->Pos.XR-Pic->Pos.XL+1;
+}
+uint16_t Pic_Hight(struct Struct_Pic *Pic)
+{
+   return Pic->Pos.YL-Pic->Pos.YU+1;
+}
+uint32_t Pic_Area(struct Struct_Pic *Pic)
+{
+   return Pic_Width(Pic)*Pic_Hight(Pic);
+}
 void Lcd2Pic_Inverted(struct Struct_Pic *Pic)
 {
    //es un bolonki porque cada 3 lecturas me levanda 2 bytes... me complica toda la logica la mierd.. 
-   Write_Disp_Instr    ( 0x3A   );
-   Write_Disp_8b_Param ( 0x66   ); //  COLMOD: Interface Pixel format
-   uint32_t Size=((Pic->Width+2)*(Pic->Height+2))/2; //deberia sumar 1,pero sumo 2 para que lee un poco mas por el kilombo de los pares e impares.. 
+   Write_Disp_Instr       ( 0x3A );
+   Write_Disp_8b_Param    ( 0x66 ); // COLMOD: Interface Pixel format
+   uint32_t Size=Pic_Area ( Pic  ); // deberia sumar 1,pero sumo 2 para que lee un poco mas por el kilombo de los pares e impares..
 
    Set_Frame_Address ( Pic              );
    Write_Disp_Instr  ( 0x2E             ); // comando de lectura
@@ -441,7 +453,9 @@ void Sub_Pic2Lcd(void)
       Set_Frame_Address(&Actual_Sub_Pic);
       Write_Disp_Instr(0x2C);
       Pic2TCD(&Actual_Sub_Pic,Actual_Sub_Pic_Index);
-      Actual_Sub_Pic.Start_X+=Actual_Sub_Pic.Width;
+      uint16_t Width=Pic_Width(&Actual_Sub_Pic);
+      Actual_Sub_Pic.Pos.XL+=Width;
+      Actual_Sub_Pic.Pos.XR+=Width;
       Actual_Sub_Pic_Index++;
    } else
       Atomic_Send_Event(Next_Layer_Event,Display_Layers());

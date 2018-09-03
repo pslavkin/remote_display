@@ -32,13 +32,13 @@ void Accept_Destr(void)
 //--------------Events----------------------------------
 struct Struct_Pic_Events Accept_Events[] RODATA=
 {
-{  0 ,0 ,0 ,0 ,0 ,{Accept_Constr ,Del_Accept ,Accept_Destr} ,}         //On_Create
+{ { 0 ,0 ,0 ,0 },0 , 0, {Accept_Constr ,Del_Accept ,Accept_Destr} ,}         //On_Create
 };
 //--------------Pics Info----------------------------------
 //
 struct Struct_Pic Accept_Pic RODATA=
 {
- 0 ,239 ,79 ,240 ,10 ,0 ,1 ,Accept_Events ,1 ,Accept_Data
+   {0 ,239 ,79 ,319 },10 ,0 ,1 ,Accept_Events ,1 ,Accept_Data
 };
 void Add_Accept ( void ) { Add_Pic_On_Top(&Accept_Pic);}
 void Del_Accept ( void ) { Del_Pic(&Accept_Pic)       ;}
@@ -65,13 +65,13 @@ void Reject_Destr(void)
 //--------------Events----------------------------------
 struct Struct_Pic_Events Reject_Events[] RODATA=
 {
-{  0,  0,  0,  0,    0, {Reject_Constr,      Del_Reject,    Reject_Destr},}         //On_Create
+   { { 0 ,0 ,0 ,0 },0 , 0, {Reject_Constr ,Del_Reject ,Reject_Destr} ,} // On_Create
 };
 //--------------Pics Info----------------------------------
 //
 struct Struct_Pic Reject_Pic RODATA=
 {
- 0,239,79,240,10,0,1,Reject_Events,1,Reject_Data
+   {0,239,79,319},10,0,1,Reject_Events,1,Reject_Data
 };
 void Add_Reject            (void)   {Add_Pic_On_Top(&Reject_Pic);}
 void Del_Reject            (void)   {Del_Pic(&Reject_Pic);}

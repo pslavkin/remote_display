@@ -3,6 +3,7 @@
 #include "mke18f16.h"
 #include "fsl_clock.h"
 #include "display_phisical.h"
+#include "tpanel.h"
 //---------------------------------------------------
 void Func1(void);
 void Func2(void);
@@ -23,6 +24,7 @@ void Func2(void)
 }
 void Func3(void)
 {
+ Tpanel_Rti();
  Rti=Func4;
 }
 void Func4(void)

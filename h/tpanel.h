@@ -23,10 +23,10 @@
 //---------------------------------------
 // valores por defecto para LCD 240x320 cinta angosta
 
-#define  TP_MAX_Y 224
-#define  TP_MIN_Y 32
-#define  TP_MAX_X 190
-#define  TP_MIN_X 64
+#define  TP_MAX_Y 3300
+#define  TP_MIN_Y 870
+#define  TP_MAX_X 3330
+#define  TP_MIN_X 840
 
 #define DELAY_BEFORE_DRAG_FILTER 8
 //------------------------------------------------------------------------------
@@ -35,9 +35,9 @@ enum Buttons_Event_Code {
    Any_Button         = 0x80,
    Invalid_Button     = 0x81,
    None_Touched_Event = 0x00,
-   Click_Event        = 0x01,
-   Drag_Event         = 0x02,
-   Released_Event     = 0x03
+   Click_Event        = 0x01, //tp.Touched = 1 cuando detecta la 1er pulsada
+   Released_Event     = 0x02, //tp.touched = 2 cuando libera
+   Drag_Event         = 0x03  //tp.Touched = 3 cando detecta por segunda o mas veces
 };
 
 struct TPanel_Struct

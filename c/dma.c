@@ -24,7 +24,7 @@ struct TCD_Struct TCD[3] __attribute__((aligned (32))); //320*240=76800 words de
 
 void Pic2TCD(struct Struct_Pic *Pic,uint8_t Index)
 {
-   uint32_t Pic_Size=(Pic->Width+1)*(Pic->Height+1)+1; //mas uno al ancho y al largo porque estan definidas asi, de 0 a ese valor. y el +1 al final, es porque se arega 2 byte extra, uno porque como el primer byte lo cargo con disparo manual no tiene asociado un disparo de ftm propio, y el otro es porque el ultimo byte no entra ya que cuando termina de cargar el ultimo byte, corto el FTM...
+   uint32_t Pic_Size=Pic_Area(Pic); //mas uno al ancho y al largo porque estan definidas asi, de 0 a ese valor. y el +1 al final, es porque se arega 2 byte extra, uno porque como el primer byte lo cargo con disparo manual no tiene asociado un disparo de ftm propio, y el otro es porque el ultimo byte no entra ya que cuando termina de cargar el ultimo byte, corto el FTM...
    uint32_t Pos=0;
    uint16_t TCD_Size;
    for(uint8_t i=0; i<6 && Pic_Size>0 ;i++) {

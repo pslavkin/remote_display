@@ -4,8 +4,7 @@
 #include <stdint.h>
 
 extern void                Update_Mask_Pic ( void                                                               );
-extern void                Resize_Mask_Pic ( uint16_t Start_X,uint16_t Width,uint16_t Start_Y,uint16_t Height   );
-extern void                Set_Mask_Pic    ( uint16_t Left_X,uint16_t Upper_Y,uint16_t Right_X,uint16_t Lower_Y );
+extern void Set_Mask_Pic(struct Struct_Pic_Pos *Pos);
 extern struct Struct_Pic*  Read_Mask_Pic   ( void                                                               );
 extern void                Add_Mask0       ( void                                                               );
 extern void                Add_Mask1       ( void                                                               );

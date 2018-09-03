@@ -66,7 +66,7 @@ void Move_Layer2Up(unsigned char Layer)       // muevo el layer una posicion hac
  Layer++;                                     // es un truco para que no salte C_reg en la comparacion siguiente
  if(Pic_Layers_Used>Layer)                    // debera haber al menos un pic extra que el solicitado...
   {
-
+   struct Struct_Pic_Layer Aux1_Pic,Aux2_Pic; // auxiliares para simplificar al compilador...
    Aux1_Pic            = Pic_Layers[Layer];
    Aux2_Pic            = Pic_Layers[Layer-1];
    Pic_Layers[Layer]   = Aux2_Pic;            // arriba lo de abajo...
@@ -83,13 +83,13 @@ bool Find_Event_Handler ( uint8_t Button,uint16_t X,uint16_t Y,uint8_t Handler )
       Events=Pic_Layers[Layer].Pic->Events+1;
       for(Count=Pic_Layers[Layer].Pic->ECount;--Count;Events++) {                                               // desreferencia la lista de eventos, y compara mientras count indique que hay mas eventos OJO SE SALTEA el primer evento, porque esta reservado para "On_Create", arranca desde el 2do. Todas las pics deberan tener al menos 1 evento que se ejecuta al crearse, pero aca no se lo considera... que procesar, pasado eso termina y pasa al layer inferior...
          if( Button==Events->Button ||
-            (X>=Events->Left_X &&
-             X<=Events->Right_X &&
-             Y>=Events->Upper_Y &&
-             Y<=Events->Lower_Y)
+            (X>=Events->Pos.XL &&
+             X<=Events->Pos.XR &&
+             Y>=Events->Pos.YU &&
+             Y<=Events->Pos.YL)
             || Events->Button==Any_Button) {                                                              // si apreto el boton esperado OOOO si apunto dentro de la zona indicada por el evento OOOOO se esperaba que aprete cualquier boton...,
              if(Events->Draw_Box==true)
-                Set_Mask_Pic(Events->Left_X,Events->Upper_Y,Events->Right_X,Events->Lower_Y);                //solo se dibuja en recuadro si asi lo pidiera el evento...
+                Set_Mask_Pic(&Events->Pos);                //solo se dibuja en recuadro si asi lo pidiera el evento...
              Events->Handler[Handler]();
              return Events->Handler[Handler]!=Rien;
          }                                                                                                      // ejecuta el handler en funcion si es on,drag o release y sale inmediatamente. Solo se ejecuta una funcion por cada apuntada.maximo..minimo ninguna...
@@ -151,21 +151,21 @@ void Move_Pic2Low   ( unsigned char Bits, struct Struct_Pic* Pic ) { }          
 void Move_Pic2Rigth ( unsigned char Bits, struct Struct_Pic* Pic ) { }                                                                                   // Pic_Layers[Search_Pic_Pos(Pic)].Pic->Left_X+=Bits;Layer_Info_Modified();}
 void Move_Pic2Left  ( unsigned char Bits, struct Struct_Pic* Pic ) { }                                                                                   // Pic_Layers[Search_Pic_Pos(Pic)].Pic->Left_X-=Bits;Layer_Info_Modified();}
                                                                                                                                                          // -------------------------------------------------------------------------------------
-void Move_Pic2Up              ( struct Struct_Pic* Pic                     ) { Move_Layer2Up  (Search_Pic_Pos(Pic))                                                                   ;}
-void Move_Pic2Down            ( struct Struct_Pic* Pic                     ) { Move_Layer2Down(Search_Pic_Pos(Pic))                                                                   ;}
-void Move_Pic2Top             ( struct Struct_Pic* Pic                     ) { Del_Pic(Pic)                                                                                           ;Add_Pic_On_Top(Pic)                                         ;}
-void Move_Pic2Bottom          ( struct Struct_Pic* Pic                     ) { Del_Pic(Pic)                                                                                           ;Add_Pic_On_Bottom(Pic)                                      ;}
-void Add_Pic_On_Top           ( struct Struct_Pic* Pic                     ) { Set_Pic_In_Hole(Pic_Layers_Used,Pic)                                                                   ;}
-void Add_Pic_On_Bottom        ( struct Struct_Pic* Pic                     ) { Set_Pic_In_Hole(0,Pic)                                                                                 ;}
-void Add_Pic_On_Layer         ( struct Struct_Pic* Pic,unsigned char Layer ) { Set_Pic_In_Hole(Layer,Pic)                                                                             ;}
-void Del_Pic                  ( struct Struct_Pic* Pic                     ) { Cap_Hole(Search_Pic_Pos(Pic))                                                                          ;}
-void Del_All_Layers           ( void                                       ) { Pic_Layers_Used=0                                                                                      ;Layer_Structure_Modified()                                  ;}
-void Layer_Structure_Modified ( void                                       ) { if( Layer_Modified!=0x02) {Layer_Modified=0x02                                                         ;Atomic_Send_Event(Structure_Modified_Event,Display_Layers());};}
-void Layer_Info_Modified      ( void                                       ) { if(!Layer_Modified)       {Layer_Modified=0x01                                                         ;Atomic_Send_Event(Info_Modified_Event,Display_Layers())     ;}}
-void Does_Layer_Modified      ( void                                       ) { if( Layer_Modified)                             Atomic_Send_Event(Info_Modified_Event,Display_Layers());}
+void Move_Pic2Up              ( struct Struct_Pic* Pic                     ) { Move_Layer2Up  (Search_Pic_Pos(Pic))                                        ;}
+void Move_Pic2Down            ( struct Struct_Pic* Pic                     ) { Move_Layer2Down(Search_Pic_Pos(Pic))                                        ;}
+void Move_Pic2Top             ( struct Struct_Pic* Pic                     ) { Del_Pic(Pic)                                                                ;Add_Pic_On_Top(Pic)                                         ;}
+void Move_Pic2Bottom          ( struct Struct_Pic* Pic                     ) { Del_Pic(Pic)                                                                ;Add_Pic_On_Bottom(Pic)                                      ;}
+void Add_Pic_On_Top           ( struct Struct_Pic* Pic                     ) { Set_Pic_In_Hole(Pic_Layers_Used,Pic)                                        ;}
+void Add_Pic_On_Bottom        ( struct Struct_Pic* Pic                     ) { Set_Pic_In_Hole(0,Pic)                                                      ;}
+void Add_Pic_On_Layer         ( struct Struct_Pic* Pic,unsigned char Layer ) { Set_Pic_In_Hole(Layer,Pic)                                                  ;}
+void Del_Pic                  ( struct Struct_Pic* Pic                     ) { Cap_Hole(Search_Pic_Pos(Pic))                                               ;}
+void Del_All_Layers           ( void                                       ) { Pic_Layers_Used=0                                                           ;Layer_Structure_Modified()                                  ;}
+void Layer_Structure_Modified ( void                                       ) { if( Layer_Modified!=0x02) {Layer_Modified=0x02                              ;Atomic_Send_Event(Structure_Modified_Event,Display_Layers());};}
+void Layer_Info_Modified      ( void                                       ) { if(!Layer_Modified)       {Layer_Modified=0x01                              ;Atomic_Send_Event(Info_Modified_Event,Display_Layers())     ;}}
+void Does_Layer_Modified      ( void                                       ) { if( Layer_Modified)  Atomic_Send_Event(Info_Modified_Event,Display_Layers());}
 unsigned char Layer_Used   (void)                  {return Pic_Layers_Used;}
                                                                                                                                                          // -------------------------------------------------------------------------------------
-State**     Display_Layers   ( void ) { return &Display_Layers_Sm                    ;}                                                                  // devuelve la direccion de la maquina de estados Everythings para poder mandarle mensajes.
+State**  Display_Layers      ( void ) { return &Display_Layers_Sm                    ;} // devuelve la direccion de la maquina de estados Everythings para poder mandarle mensajes.
 void     Display_Layers_Rti  ( void ) { Atomic_Send_Event(ANY_Event,Display_Layers());}
 void     Init_Display_Layers ( void )
 {
@@ -174,7 +174,6 @@ void     Init_Display_Layers ( void )
  Display_Layers_Sm = Idle;
  New_Periodic_Func_Schedule(5,Blink);
  Add_Welcome();
-                                                                                                                                                         // : Add_Test_Pic();
 }
                                                                                                                                                          // -------------------------------------------------------------------------------------
 void Next_Layer      (void)
@@ -212,7 +211,6 @@ static State Idle[] RODATA =
 };
 static State Updating[] RODATA =
 {
-                                                                                                                                                         // { All_Updated_Event        ,Does_Layer_Modified                       ,Idle}     ,
 { All_Updated_Event        ,Update_Mask_Pic_And_Send_Next_Layer_Event ,Masking}  ,
 { Info_Modified_Event      ,Rien                                      ,Updating} ,
 { Structure_Modified_Event ,Rien                                      ,Updating} ,

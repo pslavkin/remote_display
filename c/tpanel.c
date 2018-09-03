@@ -16,6 +16,7 @@
 #include "buzzer.h"
 #include "adc.h"
 #include "tpanel.h"
+#include "mask_pic.h"
 
 State
    Initializing   [ ],
@@ -36,31 +37,36 @@ State*               TPanel_Sm        ;//variable que lleva cuenta del estado de
 unsigned char        Delay_Before_Drag;
 struct TPanel_Struct Tp               ;
 
-State**  Tpanel    ( void ) { return &TPanel_Sm           ;}
-void     Tpanel_Rti( void ) { Atomic_Send_Event(Tp.Touched,&TPanel_Sm);}
+State**  Tpanel ( void ) { return &TPanel_Sm;}
+
+void     Tpanel_Rti( void ) { Send_Event(Tp.Touched,&TPanel_Sm); }
 //--------------------------------------------------------------
 void     Print_TPanel_Raw  (void)
 {
    unsigned char *T=Serial_Tx_As_PChar(0);
-   Char2Bcd(T+0 ,Tp.X);
-   Char2Bcd(T+4 ,Tp.Y);
-   Char2Bcd(T+8 ,Tp.X_Scaled);
-   Char2Bcd(T+12,Tp.Y_Scaled);
-   Char2Bcd(T+16,Tp.Touched);
-   T[3 ]=' ';
-   T[7 ]=' ';
-   T[11]=' ';
-   T[15]=' ';
-   T[19]=' ';
-   T[20]='\r';
-   T[21]='\n';
-   Send_NVData2Serial(22,T);
+   Int2Bcd(T+0 ,Tp.X);
+   Int2Bcd(T+6 ,Tp.Y);
+   Int2Bcd(T+12 ,Tp.X_Scaled);
+   Int2Bcd(T+18,Tp.Y_Scaled);
+   Char2Bcd(T+24,Tp.Touched);
+   T[5 ]=' ';
+   T[11 ]=' ';
+   T[17]=' ';
+   T[23]=' ';
+   T[27]=' ';
+   T[28]='\r';
+   T[29]='\n';
+   Send_NVData2Serial(30,T);
 }
 //--------------------------------------------------------------
 void Test_Touched      (void)
 {
-  Tp.Touched=Tp.Touched << 1 |
-             (Tp.X<=TPanel_Limits.Max_X && Tp.X>=TPanel_Limits.Min_X && Tp.Y<=TPanel_Limits.Max_Y && Tp.Y>=TPanel_Limits.Min_Y)?0x01:0x00;
+  Tp.Touched=( Tp.Touched<<1 |                           // con esto me acuerdo de donde vengo
+             ((Tp.X<=TPanel_Limits.Max_X &&              // busco a ver si estoy apretando
+               Tp.X>=TPanel_Limits.Min_X &&
+               Tp.Y<=TPanel_Limits.Max_Y &&
+               Tp.Y>=TPanel_Limits.Min_Y)?0x01:0x00)) &
+               0x03;                                     // solo me quedo con 2 bits
 }
 unsigned char TPanel_Scaled_X( void ) { return Tp.X_Scaled;}
 unsigned char TPanel_Scaled_Y( void ) { return Tp.Y_Scaled;}
@@ -83,7 +89,7 @@ void On_Click        (void)            //escala y busca algun handler
  Scale_X ( );
  Scale_Y ( );
  Delay_Before_Drag=DELAY_BEFORE_DRAG_FILTER                    ;
- Find_Event_Handler(Invalid_Button,Tp.X_Scaled,Tp.Y_Scaled,0 );
+ Find_Event_Handler(None_Button,Tp.X_Scaled,Tp.Y_Scaled,0 );
 }
 void On_Drag         (void)            //escala y busca un handler
 {
@@ -92,14 +98,15 @@ void On_Drag         (void)            //escala y busca un handler
   {
    Scale_X ( );
    Scale_Y ( );
-   Find_Event_Handler ( Invalid_Button ,Tp.X_Scaled ,Tp.Y_Scaled ,1 );
+   Find_Event_Handler ( None_Button ,Tp.X_Scaled ,Tp.Y_Scaled ,1 );
   }
 }
 void On_Release         (void)
 {
-   if(Find_Event_Handler(Invalid_Button,Tp.X_Scaled,Tp.Y_Scaled,2)) {
+   struct Struct_Pic_Pos P={0};
+   Set_Mask_Pic (&P);
+   if(Find_Event_Handler(None_Button,Tp.X_Scaled,Tp.Y_Scaled,2)) {
       }
-   Set_Mask_Pic ( 0 ,0 ,0 ,0 );
 }
 //--------------------------------------------------------------------
 void Init_Tpanel(void)
@@ -110,48 +117,49 @@ void Init_Tpanel(void)
 
    PORT_SetPinMux           ( PORTA ,0  ,kPORT_MuxAsGpio ); // YU Pull up
    PORT_SetPinDriveStrength ( PORTA ,0  ,1               );
-   GPIO_PinWrite            ( GPIOA ,0  ,0               ); // YU 0v
-   GPIO_Port_As_In          ( GPIOA ,0                   );
+   GPIO_PinInit_As_In       ( GPIOA ,0                   );
    PORT_Pullup_Enable       ( PORTA ,0                   );
 
    PORT_SetPinMux           ( PORTA ,15 ,kPORT_MuxAsGpio ); // YD ADC12
    PORT_SetPinDriveStrength ( PORTA ,15 ,1               );
-   GPIO_PinWrite            ( GPIOA ,15 ,1               ); // YD 5v
-   GPIO_Port_As_Out         ( GPIOA ,15                  );
+   GPIO_PinInit_As_Out      ( GPIOA ,15 ,1               ); // YD 5v
 
    PORT_SetPinMux           ( PORTA ,1  ,kPORT_MuxAsGpio ); // XR Pull up
    PORT_SetPinDriveStrength ( PORTA ,1  ,1               );
-   GPIO_PinWrite            ( GPIOA ,1  ,0               ); // XR 0v
    PORT_Pullup_Enable       ( PORTA ,1                   );
-   GPIO_Port_As_In          ( GPIOA ,1                   );
+   GPIO_PinInit_As_In       ( GPIOA ,1                   );
 
    PORT_SetPinMux           ( PORTA ,16 ,kPORT_MuxAsGpio ); // XL ADC13
    PORT_SetPinDriveStrength ( PORTA ,16 ,1               );
-   GPIO_PinWrite            ( GPIOA ,16 ,1               ); // XL 5v
-   GPIO_Port_As_Out         ( GPIOA ,16                  );
+   GPIO_PinInit_As_Out      ( GPIOA ,16 ,0               ); // XL 0v
+
 }
 
 void Feed_X_And_Free_Y(void)
 {
-   GPIO_Port_As_Out ( GPIOA ,1                             ); // XR pullup -> 0v
-   PORT_SetPinMux   ( PORTA ,16 ,kPORT_MuxAsGpio           ); // XL ADC13  -> 5v
+   //Send_NVData2Serial(16,(unsigned char*)"Feed x free Y \r\n");
 
-   GPIO_Port_As_In  ( GPIOA ,0                             ); // YD 0v -> pullup
-   PORT_SetPinMux   ( PORTA ,15 ,kPORT_PinDisabledOrAnalog ); // YU 5v -> ADC12
+   GPIO_PinInit_As_Out ( GPIOA ,1  ,1                         ); // XR pullup -> 5v
+   PORT_SetPinMux      ( PORTA ,16 ,kPORT_MuxAsGpio           ); // XL ADC13  -> 0v
+
+   GPIO_PinInit_As_In  ( GPIOA ,0                             ); // YU 0v -> pullup
+   PORT_SetPinMux      ( PORTA ,15 ,kPORT_PinDisabledOrAnalog ); // YD 5v -> ADC12
 }
 void Feed_Y_And_Free_X(void)
 {
-   GPIO_Port_As_Out ( GPIOA ,0                             ); // YU pullup -> 0v
-   PORT_SetPinMux   ( PORTA ,15 ,kPORT_MuxAsGpio           ); // YD ADC12  -> 5v
+   //Send_NVData2Serial(16,(unsigned char*) "Feed y free x \r\n");
 
-   GPIO_Port_As_In  ( GPIOA ,1                             ); // XR 0v -> pullup
-   PORT_SetPinMux   ( PORTA ,16 ,kPORT_PinDisabledOrAnalog ); // XL 5v -> ADC13
+   GPIO_PinInit_As_Out ( GPIOA ,0  ,0                         ); // YU pullup -> 0v
+   PORT_SetPinMux      ( PORTA ,15 ,kPORT_MuxAsGpio           ); // YD ADC12  -> 5v
+
+   GPIO_PinInit_As_In  ( GPIOA ,1                             ); // XR 5v -> pullup
+   PORT_SetPinMux      ( PORTA ,16 ,kPORT_PinDisabledOrAnalog ); // XL 5v -> ADC13
 }
-void Read_X ( void ) { Tp.X= Read_Adc(13);}
-void Read_Y ( void ) { Tp.Y= Read_Adc(12);}
+void Read_X ( void ) { Tp.X= Read_Adc(12);} //cuando hago feed de X, leo en el ADC del Y, la coordenada X
+void Read_Y ( void ) { Tp.Y= Read_Adc(13);} //cuando hago feed de Y, leo en el ADC del X, la coordenada Y
 //--------------------------------------------------------------------
-void Read_Y_And_Feed_Y_And_Free_X                  ( void ) { Read_Y();Feed_Y_And_Free_X();}
-void Read_X_And_Test_Touched_And_Feed_X_And_Free_Y ( void ) { Read_X();Test_Touched();Feed_X_And_Free_Y();}
+void Read_X_And_Feed_Y_And_Free_X                  ( void ) { Read_X();Feed_Y_And_Free_X();}
+void Read_Y_And_Test_Touched_And_Feed_X_And_Free_Y ( void ) { Read_Y();Test_Touched();Feed_X_And_Free_Y();}
 //----------------------------------------------------
 State Initializing   [ ]=
 {
@@ -159,18 +167,18 @@ State Initializing   [ ]=
 };
 State Reading_Y      [ ]=
 {
-{ ANY_Event          ,Read_Y_And_Feed_Y_And_Free_X                  ,Reading_X       } ,
+{ ANY_Event          ,Read_X_And_Feed_Y_And_Free_X                  ,Reading_X       } ,
 };
 State Reading_X      [ ]=
 {
-{ ANY_Event          ,Read_X_And_Test_Touched_And_Feed_X_And_Free_Y ,Testing_Touched } ,
+{ ANY_Event          ,Read_Y_And_Test_Touched_And_Feed_X_And_Free_Y ,Testing_Touched } ,
 };
 State Testing_Touched[ ]=
 {
-{ None_Touched_Event ,Read_Y_And_Feed_Y_And_Free_X                  ,Reading_X       } ,
+{ None_Touched_Event ,Read_X_And_Feed_Y_And_Free_X                  ,Reading_X       } ,
 { Click_Event        ,On_Click                                      ,Reading_Y       } ,
 { Drag_Event         ,On_Drag                                       ,Reading_Y       } ,
 { Released_Event     ,On_Release                                    ,Reading_Y       } ,
-{ ANY_Event          ,Read_Y_And_Feed_Y_And_Free_X                  ,Reading_X       } ,
+{ ANY_Event          ,Read_X_And_Feed_Y_And_Free_X                  ,Reading_X       } ,
 };
 //----------------------------------------------------

@@ -84,7 +84,7 @@ uint16_t *Numbers[8]=
 };
 struct Struct_Pic Numbers_Pic=
 {
- 1,29,18,41,0,0,1,Rien_Events,1,Numbers
+   {1,1+29,18,18+41},0,0,1,Rien_Events,1,Numbers
 };
 void Add_Numbers(void)  {Add_Pic_On_Top(&Numbers_Pic);}
 void Del_Numbers(void)  {Del_Pic(&Numbers_Pic);}

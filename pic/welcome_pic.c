@@ -35,13 +35,13 @@ void Welcome_Destr(void)
 //--------------Events----------------------------------
 struct Struct_Pic_Events Welcome_Events[] RODATA=
 {
-{  0 ,0 ,0 ,0 ,0 ,{Welcome_Constr ,Del_Welcome ,Welcome_Destr} ,}       //On_Create
+   {{ 0 ,0 ,0 ,0} ,0 ,0 ,{Welcome_Constr ,Del_Welcome ,Welcome_Destr} ,} // On_Create
 };
 //--------------Pics Info----------------------------------
 //
 struct Struct_Pic Welcome_Pic RODATA=
 {
- 16,207,100,125,10,0,1,Welcome_Events,1,Welcome_Data
+   {16,16+207,100,100+125},10,0,1,Welcome_Events,1,Welcome_Data
 };
 void Add_Welcome               ( void ) { Add_Pic_On_Bottom(&Welcome_Pic);}
 void Del_Welcome               ( void ) { Del_Pic(&Welcome_Pic)          ;}
@@ -69,13 +69,13 @@ void Test_Pic_Destr(void)
 //--------------Events----------------------------------
 struct Struct_Pic_Events Test_Pic_Events[] RODATA=
 {
-{  0 ,0 ,0 ,0 ,0 ,{Test_Pic_Constr ,Del_Test_Pic ,Test_Pic_Destr} ,}       //On_Create
+{ {0 ,0 ,0 ,0 },0 , 0, {Test_Pic_Constr ,Del_Test_Pic ,Test_Pic_Destr} ,} // On_Create
 };
 //--------------Pics Info----------------------------------
 //
 struct Struct_Pic Test_Pic_Pic RODATA=
 {
- 0,5,0,319,0,0,1,Test_Pic_Events,1,Test_Pic_Data
+   {0,5,0,319},0,0,1,Test_Pic_Events,1,Test_Pic_Data
 };
 void Add_Test_Pic               ( void ) { Add_Pic_On_Bottom(&Test_Pic_Pic);}
 void Del_Test_Pic               ( void ) { Del_Pic(&Test_Pic_Pic)          ;}
