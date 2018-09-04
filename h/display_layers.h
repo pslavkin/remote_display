@@ -7,13 +7,13 @@
 //---------------------------------------------------------
 enum Display_Layers_Event_Code
  {
-   Info_Modified_Event      = 0x0001,
-   Structure_Modified_Event = 0x0002,
-   Clear_Lcd_Event          = 0x0003,
-   All_Updated_Event        = 0x0004,
-   All_Displayed_Event      = 0x0005,
-   Next_Layer_Event         = 0x0006,
-   Next_Sub_Pic_Event       = 0x0007
+   Info_Modified_Event      = 0xB001,
+   Structure_Modified_Event = 0xB002,
+   Clear_Lcd_Event          = 0xB003,
+   All_Updated_Event        = 0xB004,
+   All_Displayed_Event      = 0xB005,
+   Next_Layer_Event         = 0xB006,
+   Next_Sub_Pic_Event       = 0xB007
  };
 
 //---------------------------------------------------------

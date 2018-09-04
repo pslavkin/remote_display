@@ -10,8 +10,9 @@
 #include "str.h"
 #include "font_30x42.h"
 //------------------------------------------------------
-uint16_t *Pass_Data[8];
+uint16_t *Pass_Data[9]; //con 8 alcanza
 char Key_String[] RODATA = "12345678";
+char PPass_String[9]      = "";
 char Pass_String[9]      = "";
 
 struct Struct_Pic_Events Pass_Events[] =
@@ -63,7 +64,3 @@ void Add_Pass_Digit6(void) {Add_Pass_Digit('6');}
 void Add_Pass_Digit7(void) {Add_Pass_Digit('7');}
 void Add_Pass_Digit8(void) {Add_Pass_Digit('8');}
 void Add_Pass_Digit9(void) {Add_Pass_Digit('9');}
-
-
-
-

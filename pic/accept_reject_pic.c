@@ -30,7 +30,7 @@ void Accept_Constr(void)
 void Accept_Destr(void)
 {
   Init_Pass();
-//  Del_Bkgd_Black();
+  Del_Bkgd_Black();
   Layer_Clr_Lcd();
 }
 //--------------Events----------------------------------
@@ -66,7 +66,7 @@ void Reject_Constr(void)
 }
 void Reject_Destr(void)
 {
-//   Del_Bkgd_Black();
+   Del_Bkgd_Black();
    Layer_Clr_Lcd();
 }
 //--------------Events----------------------------------
@@ -86,7 +86,7 @@ void Del_Reject            (void)   {Del_Pic(&Reject_Pic);}
 //------------------------------------------------------
 void Add_Accept_Or_Reject(void)
 {
-//   Add_Bkgd_Black();
+   Add_Bkgd_Black();
    if(Psw_Compare())
       Add_Accept();
    else 

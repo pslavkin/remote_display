@@ -21,7 +21,6 @@ uint16_t *Bkgd_Black_Data[] RODATA=
 struct Struct_Pic_Events Bkgd_Black_Events[] RODATA=
 {
 { { 0 ,0 ,0 ,0 } ,0          ,0 ,{Rien ,Rien ,Rien}} ,// On_Create
-{ { 0 ,0 ,0 ,0 } ,Any_Button ,0 ,{Rien ,Rien ,Rien}} ,
 };
 //--------------Pics Info----------------------------------
 struct Struct_Pic Bkgd_Black_Pic RODATA=
@@ -47,7 +46,6 @@ uint16_t *Bkgd_Green_Data[] RODATA=
 struct Struct_Pic_Events Bkgd_Green_Events[] RODATA=
 {
 { { 0 ,0 ,0 ,0 } ,0          ,0 ,{Rien ,Rien ,Rien}} ,// On_Create
-{ { 0 ,0 ,0 ,0 } ,Any_Button ,0 ,{Rien ,Rien ,Rien}} ,
 };
 //--------------Pics Info----------------------------------
 struct Struct_Pic Bkgd_Green_Pic RODATA=

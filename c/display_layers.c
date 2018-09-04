@@ -82,8 +82,8 @@ bool Find_Event_Handler ( uint8_t Button,uint16_t X,uint16_t Y,uint8_t Handler )
    unsigned char Layer=Pic_Layers_Used,Count;                                                                   // auxiliar para contar el numero de layers ocupados y la cantidad de zonas activas que tiene cada pic......
    struct Struct_Pic_Events *Events;                                                                            // auxiiar que apunta a la lista de handlres para no tener que desreferenciar cada vez que se preguna por un campo....se puede pero salta C_reg...
    while(Layer--) {                                                                                             // para todos los layers (pics) empezando por el de mas alto nivel....
-      Events=Pic_Layers[Layer].Pic->Events;
-      for(Count=Pic_Layers[Layer].Pic->ECount;Count;Count--) {                                               // desreferencia la lista de eventos, y compara mientras count indique que hay mas eventos OJO SE SALTEA el primer evento, porque esta reservado para "On_Create", arranca desde el 2do. Todas las pics deberan tener al menos 1 evento que se ejecuta al crearse, pero aca no se lo considera... que procesar, pasado eso termina y pasa al layer inferior...
+      Events=Pic_Layers[Layer].Pic->Events+1;
+      for(Count=Pic_Layers[Layer].Pic->ECount-1;Count;Count--) {                                               // desreferencia la lista de eventos, y compara mientras count indique que hay mas eventos OJO SE SALTEA el primer evento, porque esta reservado para "On_Create", arranca desde el 2do. Todas las pics deberan tener al menos 1 evento que se ejecuta al crearse, pero aca no se lo considera... que procesar, pasado eso termina y pasa al layer inferior...
          if( Button==Events->Button ||
             (X>=Events->Pos.XL &&
              X<=Events->Pos.XR &&
@@ -167,16 +167,22 @@ void Del_All_Layers           ( void                                       ) {
    Layer_Structure_Modified ( );
 }
 void Layer_Clr_Lcd ( void ) {
-   Layer_Modified|=0x04;
-   Atomic_Send_Event ( Clear_Lcd_Event,Display_Layers( ));
+   if(!(Layer_Modified&0x04)) {
+      Atomic_Send_Event ( Clear_Lcd_Event,Display_Layers( ));
+      Layer_Modified|=0x04;
+   }
 };
 void Layer_Structure_Modified ( void ) {
-   Atomic_Send_Event ( Structure_Modified_Event,Display_Layers( ));
-   Layer_Modified|=0x02;
+   if(!(Layer_Modified&0x02)) {
+      Atomic_Send_Event ( Structure_Modified_Event,Display_Layers( ));
+      Layer_Modified|=0x02;
+   }
 };
 void Layer_Info_Modified ( void ) {
-   Atomic_Send_Event ( Info_Modified_Event,Display_Layers( ));
-   Layer_Modified|=0x01;
+   if(!(Layer_Modified&0x01)) {
+      Atomic_Send_Event ( Info_Modified_Event,Display_Layers( ));
+      Layer_Modified|=0x01;
+   }
 }
 void Does_Layer_Modified ( void )
 {
@@ -211,7 +217,7 @@ void Next_Layer      (void)
    else
       Atomic_Send_Event(All_Updated_Event,Display_Layers());
 }
-                                                                                                                                                         // -------------------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------
 void Send_Next_Layer_Event (void) {Atomic_Send_Event(Next_Layer_Event,Display_Layers());} 
 void Idle_Info_Modified    (void)
 {
@@ -236,38 +242,40 @@ void Mask2Lcd(void)
 }
 void All_Displayed      (void)   {Atomic_Send_Event(All_Displayed_Event,Display_Layers());}
                                                                                                                                                          // -------------------------------------------------------------------------------------
-void Mask2Lcd_And_Does_Layer_Modified          ( void ) { Mask2Lcd()       ;Does_Layer_Modified()  ;}
-void Update_Mask_Pic_And_Send_Next_Layer_Event ( void ) { Update_Mask_Pic();Send_Next_Layer_Event();}
+void Mask2Lcd_And_Does_Layer_Modified ( void ) { Mask2Lcd()       ;Does_Layer_Modified();}
+void Update_Mask_Pic_And_Mask2Lcd     ( void ) { Update_Mask_Pic();Mask2Lcd()           ;}
                                                                                                                                                          // -------------------------------------------------------------------------------------
 static State Idle[] RODATA =
 {
-{ Info_Modified_Event      ,Idle_Info_Modified      ,Updating}     ,
-{ Structure_Modified_Event ,Idle_Structure_Modified ,Updating}     ,
-{ Clear_Lcd_Event          ,Idle_Clear_Lcd          ,Clearing_Lcd} ,
-{ ANY_Event                ,Rien                    ,Idle}         ,
+{ Info_Modified_Event      ,Idle_Info_Modified           ,Updating}     ,
+{ Structure_Modified_Event ,Idle_Structure_Modified      ,Updating}     ,
+{ Clear_Lcd_Event          ,Idle_Clear_Lcd               ,Clearing_Lcd} ,
+{ ANY_Event                ,Rien                         ,Idle}         ,
 };
 static State Updating[] RODATA =
 {
-{ All_Updated_Event        ,Update_Mask_Pic_And_Send_Next_Layer_Event ,Masking}  ,
-{ Info_Modified_Event      ,Rien                                      ,Updating} ,
-{ Structure_Modified_Event ,Rien                                      ,Updating} ,
-{ Next_Sub_Pic_Event       ,Sub_Pic2Lcd                               ,Updating} ,
-{ Next_Layer_Event         ,Next_Layer                                ,Updating} ,
-{ ANY_Event                ,Rien                                      ,Updating} ,
+{ All_Updated_Event        ,Update_Mask_Pic_And_Mask2Lcd ,Masking}      ,
+{ Info_Modified_Event      ,Rien                         ,Updating}     ,
+{ Structure_Modified_Event ,Rien                         ,Updating}     ,
+{ Next_Sub_Pic_Event       ,Sub_Pic2Lcd                  ,Updating}     ,
+{ Next_Layer_Event         ,Next_Layer                   ,Updating}     ,
+{ ANY_Event                ,Rien                         ,Updating}     ,
 };
 static State Masking[] RODATA =
 {
-{ Info_Modified_Event      ,Rien                                      ,Masking}  ,
-{ Structure_Modified_Event ,Rien                                      ,Masking}  ,
-{ Next_Layer_Event         ,Mask2Lcd_And_Does_Layer_Modified          ,Idle}     ,
-{ ANY_Event                ,Rien                                      ,Masking}  ,
+{ Info_Modified_Event      ,Rien                         ,Masking}      ,
+{ Structure_Modified_Event ,Rien                         ,Masking}      ,
+{ Next_Sub_Pic_Event       ,Sub_Pic2Lcd                  ,Masking}      ,
+{ Next_Layer_Event         ,Does_Layer_Modified          ,Idle}         ,
+{ ANY_Event                ,Rien                         ,Masking}      ,
 };
 static State Clearing_Lcd[] RODATA =
 {
-{ Info_Modified_Event      ,Rien                ,Clearing_Lcd} ,
-{ Structure_Modified_Event ,Rien                ,Clearing_Lcd} ,
-{ Next_Layer_Event         ,Does_Layer_Modified ,Idle}         ,
-{ ANY_Event                ,Rien                ,Clearing_Lcd} ,
+{ Info_Modified_Event      ,Rien                         ,Clearing_Lcd} ,
+{ Structure_Modified_Event ,Rien                         ,Clearing_Lcd} ,
+{ Next_Sub_Pic_Event       ,Sub_Pic2Lcd                  ,Clearing_Lcd} ,
+{ Next_Layer_Event         ,Idle_Structure_Modified      ,Updating}     ,
+{ ANY_Event                ,Rien                         ,Clearing_Lcd} ,
 };
                                                                                                                                                          // -------------------------------------------------------------------------------------
 
