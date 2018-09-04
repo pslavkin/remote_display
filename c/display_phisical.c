@@ -18,6 +18,9 @@
 #include "type_conversion.h"
 #include "serial_tx.h"
 //---------------------------------------------------------------------
+uint8_t           Actual_Sub_Pic_Index;
+struct Struct_Pic Actual_Sub_Pic;
+//---------------------------------------------------------------------
 void Write_Disp_Instr(uint8_t Instr)
 {
    GPIOD->PCOR = 1<<3;  //Disp_DI_Clr();
@@ -310,33 +313,6 @@ void Set_Frame_Address(struct Struct_Pic *Pic)
    Write_Disp_16b_Param ( Pic->Pos.YU );
    Write_Disp_16b_Param ( Pic->Pos.YL );
 }
-void Red_Lcd(void)
-{
-   struct Struct_Pic Pic={{0,239,0,319},0,0,0,NULL,0,NULL};
-   Set_Frame_Address ( &Pic );
-   Write_Disp_Instr  ( 0x2C );
-   for ( int j=0;j<320;j++ )
-      for ( int i=0;i<240;i++ )
-         Write_Disp_16b_Data ( 0xF800 );
-}
-void Green_Lcd(void)
-{
-   struct Struct_Pic Pic={{0,239,0,319},0,0,0,NULL,0,NULL};
-   Set_Frame_Address ( &Pic );
-   Write_Disp_Instr  ( 0x2C );
-   for ( int j=0;j<320;j++ )
-      for ( int i=0;i<240;i++ )
-         Write_Disp_16b_Data ( 0x07E0 );
-}
-void Blue_Lcd(void)
-{
-   struct Struct_Pic Pic={{0,239,0,319},0,0,0,NULL,0,NULL};
-   Set_Frame_Address ( &Pic );
-   Write_Disp_Instr  ( 0x2C );
-   for ( int j=0;j<320;j++ )
-      for ( int i=0;i<240;i++ )
-         Write_Disp_16b_Data ( 0x001F );
-}
 void Clear_Lcd(void)
 {
    struct Struct_Pic Pic={{0,239,0,319},0,0,0,NULL,0,NULL};
@@ -345,65 +321,8 @@ void Clear_Lcd(void)
    for ( int j=0;j<320;j++ )
       for ( int i=0;i<240;i++ )
          Write_Disp_16b_Data ( 0x0000 );
-//         Write_Disp_16b_Data ( 0xA183 );
 }
 //----------------------------------------------------------------------
-uint16_t Invert_Pixel(uint16_t Pixel)
-{
-   uint8_t R=(Pixel&0xF800)>>11;
-   uint8_t G=(Pixel&0x07E0)>>5;
-   uint8_t B=(Pixel&0x001F)>>0;
-   R=0x1F-R;
-   G=0x3F-G;
-   B=0x1F-B;
-   return (R<<11 | G<<5 | B);
-}
-
-void Init_Dump_Lcd(void)
-{
-   struct Struct_Pic Pic2={{0,239,0,319},0,0,0,NULL,0,NULL};
-   Write_Disp_Instr    ( 0x3A             );
-   Write_Disp_8b_Param ( 0x66             ); // COLMOD: Interface Pixel format
-   Set_Frame_Address   ( &Pic2            );
-   Write_Disp_Instr    ( 0x2E             ); // comando de lectura
-   GPIO_Port_As_In     ( GPIOB,0x0000FFFF );
-   Read_Disp_Data      (                  ); // dummy read..
-}
-void End_Dump_Lcd(void)
-{
-  GPIO_Port_As_Out(GPIOB,0x0000FFFF);
-  Write_Disp_Instr    ( 0x3A   );
-  Write_Disp_8b_Param ( 0x55   ); //  COLMOD: Interface Pixel format
-}
-void Dump_Lcd(void)
-{
-   uint16_t D1,D2,D3;
-   unsigned char Buf[20];
-   D1=Read_Disp_Data();
-   D2=Read_Disp_Data();
-   D3=Read_Disp_Data();
-   Int2Hex_Bcd(Buf,D1);
-   Buf[4] = '-';
-   Int2Hex_Bcd(Buf+5 ,D2);
-   Buf[9] = '-';
-   Int2Hex_Bcd(Buf+10 ,D3);
-   Buf[14] = '|';
-   Buf[15] = '\r';
-   Buf[16] = '\n';
-   Send_VData2Serial(17,Buf);
-}
-uint16_t Pic_Width(struct Struct_Pic *Pic)
-{
-   return Pic->Pos.XR-Pic->Pos.XL+1;
-}
-uint16_t Pic_Hight(struct Struct_Pic *Pic)
-{
-   return Pic->Pos.YL-Pic->Pos.YU+1;
-}
-uint32_t Pic_Area(struct Struct_Pic *Pic)
-{
-   return Pic_Width(Pic)*Pic_Hight(Pic);
-}
 void Lcd2Pic_Inverted(struct Struct_Pic *Pic)
 {
    //es un bolonki porque cada 3 lecturas me levanda 2 bytes... me complica toda la logica la mierd.. 
@@ -432,15 +351,11 @@ void Lcd2Pic_Inverted(struct Struct_Pic *Pic)
       B=0x1F- ((D3&0x00FC)>>3);
       Pic->Data[0][2*i+1]=R<<11 | G<<5 | B;
    }
-   GPIO_Port_As_Out(GPIOB,0x0000FFFF);
-   Write_Disp_Instr    ( 0x3A   );
-   Write_Disp_8b_Param ( 0x55   ); //  COLMOD: Interface Pixel format
+   GPIO_Port_As_Out    ( GPIOB,0x0000FFFF );
+   Write_Disp_Instr    ( 0x3A             );
+   Write_Disp_8b_Param ( 0x55             ); // COLMOD: Interface Pixel format
 }
-
-
-uint8_t Actual_Sub_Pic_Index;
-struct Struct_Pic Actual_Sub_Pic;
-
+//--------------------------------------------------------------------------------
 void Pic2Lcd(struct Struct_Pic *Pic)
 {
    Actual_Sub_Pic       = *Pic;
@@ -452,7 +367,7 @@ void Sub_Pic2Lcd(void)
    if(Actual_Sub_Pic_Index<Actual_Sub_Pic.PCount) {
       Set_Frame_Address(&Actual_Sub_Pic);
       Write_Disp_Instr(0x2C);
-      Pic2TCD(&Actual_Sub_Pic,Actual_Sub_Pic_Index);
+      Pic2TCD_Mod(&Actual_Sub_Pic,Actual_Sub_Pic_Index,Actual_Sub_Pic.Mod);
       uint16_t Width=Pic_Width(&Actual_Sub_Pic);
       Actual_Sub_Pic.Pos.XL+=Width;
       Actual_Sub_Pic.Pos.XR+=Width;

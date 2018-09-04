@@ -11,11 +11,13 @@
 #include "mask_pic.h"
 #include "debug.h"
 #include "tpanel.h"
+#include "bkgd_pic.h"
 //
-static State 
+static State
    Idle[],
    Updating[],
-   Masking[];
+   Masking[],
+   Clearing_Lcd[];
 //------------------------------------------------------------------------------------
 struct Struct_Pic_Layer Pic_Layers[MAX_PICS+1];
 unsigned char           Pic_Layers_Used       ;
@@ -80,8 +82,8 @@ bool Find_Event_Handler ( uint8_t Button,uint16_t X,uint16_t Y,uint8_t Handler )
    unsigned char Layer=Pic_Layers_Used,Count;                                                                   // auxiliar para contar el numero de layers ocupados y la cantidad de zonas activas que tiene cada pic......
    struct Struct_Pic_Events *Events;                                                                            // auxiiar que apunta a la lista de handlres para no tener que desreferenciar cada vez que se preguna por un campo....se puede pero salta C_reg...
    while(Layer--) {                                                                                             // para todos los layers (pics) empezando por el de mas alto nivel....
-      Events=Pic_Layers[Layer].Pic->Events+1;
-      for(Count=Pic_Layers[Layer].Pic->ECount;--Count;Events++) {                                               // desreferencia la lista de eventos, y compara mientras count indique que hay mas eventos OJO SE SALTEA el primer evento, porque esta reservado para "On_Create", arranca desde el 2do. Todas las pics deberan tener al menos 1 evento que se ejecuta al crearse, pero aca no se lo considera... que procesar, pasado eso termina y pasa al layer inferior...
+      Events=Pic_Layers[Layer].Pic->Events;
+      for(Count=Pic_Layers[Layer].Pic->ECount;Count;Count--) {                                               // desreferencia la lista de eventos, y compara mientras count indique que hay mas eventos OJO SE SALTEA el primer evento, porque esta reservado para "On_Create", arranca desde el 2do. Todas las pics deberan tener al menos 1 evento que se ejecuta al crearse, pero aca no se lo considera... que procesar, pasado eso termina y pasa al layer inferior...
          if( Button==Events->Button ||
             (X>=Events->Pos.XL &&
              X<=Events->Pos.XR &&
@@ -93,6 +95,7 @@ bool Find_Event_Handler ( uint8_t Button,uint16_t X,uint16_t Y,uint8_t Handler )
              Events->Handler[Handler]();
              return Events->Handler[Handler]!=Rien;
          }                                                                                                      // ejecuta el handler en funcion si es on,drag o release y sale inmediatamente. Solo se ejecuta una funcion por cada apuntada.maximo..minimo ninguna...
+         Events++;
       }
    }
 return 0;
@@ -159,10 +162,31 @@ void Add_Pic_On_Top           ( struct Struct_Pic* Pic                     ) { S
 void Add_Pic_On_Bottom        ( struct Struct_Pic* Pic                     ) { Set_Pic_In_Hole(0,Pic)                                                      ;}
 void Add_Pic_On_Layer         ( struct Struct_Pic* Pic,unsigned char Layer ) { Set_Pic_In_Hole(Layer,Pic)                                                  ;}
 void Del_Pic                  ( struct Struct_Pic* Pic                     ) { Cap_Hole(Search_Pic_Pos(Pic))                                               ;}
-void Del_All_Layers           ( void                                       ) { Pic_Layers_Used=0                                                           ;Layer_Structure_Modified()                                  ;}
-void Layer_Structure_Modified ( void                                       ) { if( Layer_Modified!=0x02) {Layer_Modified=0x02                              ;Atomic_Send_Event(Structure_Modified_Event,Display_Layers());};}
-void Layer_Info_Modified      ( void                                       ) { if(!Layer_Modified)       {Layer_Modified=0x01                              ;Atomic_Send_Event(Info_Modified_Event,Display_Layers())     ;}}
-void Does_Layer_Modified      ( void                                       ) { if( Layer_Modified)  Atomic_Send_Event(Info_Modified_Event,Display_Layers());}
+void Del_All_Layers           ( void                                       ) {
+   Pic_Layers_Used=0           ;
+   Layer_Structure_Modified ( );
+}
+void Layer_Clr_Lcd ( void ) {
+   Layer_Modified|=0x04;
+   Atomic_Send_Event ( Clear_Lcd_Event,Display_Layers( ));
+};
+void Layer_Structure_Modified ( void ) {
+   Atomic_Send_Event ( Structure_Modified_Event,Display_Layers( ));
+   Layer_Modified|=0x02;
+};
+void Layer_Info_Modified ( void ) {
+   Atomic_Send_Event ( Info_Modified_Event,Display_Layers( ));
+   Layer_Modified|=0x01;
+}
+void Does_Layer_Modified ( void )
+{
+        if(Layer_Modified&0x04)
+           Atomic_Send_Event(Clear_Lcd_Event,Display_Layers());
+   else if(Layer_Modified&0x02)
+           Atomic_Send_Event(Structure_Modified_Event,Display_Layers());
+   else if(Layer_Modified&0x01)
+           Atomic_Send_Event(Info_Modified_Event,Display_Layers());
+}
 unsigned char Layer_Used   (void)                  {return Pic_Layers_Used;}
                                                                                                                                                          // -------------------------------------------------------------------------------------
 State**  Display_Layers      ( void ) { return &Display_Layers_Sm                    ;} // devuelve la direccion de la maquina de estados Everythings para poder mandarle mensajes.
@@ -187,16 +211,28 @@ void Next_Layer      (void)
    else
       Atomic_Send_Event(All_Updated_Event,Display_Layers());
 }
-void Mask2Lcd(void)
-{
-          Pic2Lcd(Read_Mask_Pic());
-}
                                                                                                                                                          // -------------------------------------------------------------------------------------
 void Send_Next_Layer_Event (void) {Atomic_Send_Event(Next_Layer_Event,Display_Layers());} 
 void Idle_Info_Modified    (void)
 {
-   Actual_Layer=Layer_Modified=0;
+   Actual_Layer=0;
+   Layer_Modified&=~0x03;
    Send_Next_Layer_Event();
+}
+void Idle_Structure_Modified    (void)
+{
+   Actual_Layer=0;
+   Layer_Modified&=~0x03;
+   Send_Next_Layer_Event();
+}
+void Idle_Clear_Lcd    (void)
+{
+   Layer_Modified&=~0x04;
+   Pic2Lcd(Read_Bkgd_Black_Pic());
+}
+void Mask2Lcd(void)
+{
+   Pic2Lcd(Read_Mask_Pic());
 }
 void All_Displayed      (void)   {Atomic_Send_Event(All_Displayed_Event,Display_Layers());}
                                                                                                                                                          // -------------------------------------------------------------------------------------
@@ -205,9 +241,10 @@ void Update_Mask_Pic_And_Send_Next_Layer_Event ( void ) { Update_Mask_Pic();Send
                                                                                                                                                          // -------------------------------------------------------------------------------------
 static State Idle[] RODATA =
 {
-{ Info_Modified_Event      ,Idle_Info_Modified                        ,Updating} ,
-{ Structure_Modified_Event ,Idle_Info_Modified                        ,Updating} ,
-{ ANY_Event                ,Rien                                      ,Idle}     ,
+{ Info_Modified_Event      ,Idle_Info_Modified      ,Updating}     ,
+{ Structure_Modified_Event ,Idle_Structure_Modified ,Updating}     ,
+{ Clear_Lcd_Event          ,Idle_Clear_Lcd          ,Clearing_Lcd} ,
+{ ANY_Event                ,Rien                    ,Idle}         ,
 };
 static State Updating[] RODATA =
 {
@@ -224,6 +261,13 @@ static State Masking[] RODATA =
 { Structure_Modified_Event ,Rien                                      ,Masking}  ,
 { Next_Layer_Event         ,Mask2Lcd_And_Does_Layer_Modified          ,Idle}     ,
 { ANY_Event                ,Rien                                      ,Masking}  ,
+};
+static State Clearing_Lcd[] RODATA =
+{
+{ Info_Modified_Event      ,Rien                ,Clearing_Lcd} ,
+{ Structure_Modified_Event ,Rien                ,Clearing_Lcd} ,
+{ Next_Layer_Event         ,Does_Layer_Modified ,Idle}         ,
+{ ANY_Event                ,Rien                ,Clearing_Lcd} ,
 };
                                                                                                                                                          // -------------------------------------------------------------------------------------
 

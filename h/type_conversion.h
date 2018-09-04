@@ -39,15 +39,7 @@ extern unsigned char*   Int2Hex_Bcd       (unsigned char* Bcd,uint16_t  Bin);
 //---------------------------------------------------------------------
 extern unsigned char*   Replace_Zero2Space      (unsigned char* Buf,unsigned char Length);
 //---------------------------------------------------------------------
-extern void Int2Pic     (unsigned int Bin,struct Struct_Pic *Font,struct Struct_Pic *Pic);
-extern void Int2_4Digit_Pic   (unsigned int Bin,struct Struct_Pic *Font,struct Struct_Pic *Pic);
-extern void Int2_3Digit_Pic   (unsigned int Bin,struct Struct_Pic *Font,struct Struct_Pic *Pic);
-extern void Char2Pic    (unsigned char Bin,struct Struct_Pic *Font,struct Struct_Pic *Pic);
-extern void Char2_2Digit_Pic  (unsigned char Bin,struct Struct_Pic *Font,struct Struct_Pic *Pic);
-extern void Insert_String2Pic (unsigned char *String,unsigned char Length,struct Struct_Pic *Font,struct Struct_Pic *Pic,unsigned char Offset);
-extern void String2Pic     (unsigned char *String,unsigned char Length,struct Struct_Pic *Font,struct Struct_Pic *Pic);
-extern void Append_Char2Pic   (unsigned char Char,struct Struct_Pic *Font,struct Struct_Pic *Pic);
-//----------------------------------------------------------------
+
 
 #endif
 

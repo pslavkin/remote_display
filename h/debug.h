@@ -4,9 +4,8 @@
 //#define PICS_ENABLED_TEST
 
 
-
 //#define DEBUG_ONE_WIRE_TRANSPORT
-//#define DEBUG_ONE_WIRE_NETWORK		
+//#define DEBUG_ONE_WIRE_NETWORK
 #define DEBUG_STATE_MACHINE
 //#define DEBUG_SERIAL_RX
 //#define DEBUG_SERIAL_SESSION2
@@ -19,17 +18,17 @@
 //#define DEBUG_FLASH_PHISICAL
 //#define DEBUG_SCHEDULE
 //#define DEBUG_DISPLAY_SESSION
-#define DEBUG_DISPLAY_LAYERS
+//#define DEBUG_DISPLAY_LAYERS
 //#define DEBUG_ESTIM_PHISICAL
-#define DEBUG_POWER_PIC_PHISICAL
-#define DEBUG_WELCOME_PIC_PHISICAL
+//#define DEBUG_POWER_PIC_PHISICAL
+//#define DEBUG_WELCOME_PIC_PHISICAL
 
 //-------------------------------------------------------------------------------
 #ifdef DEBUG_POWER_PIC_PHISICAL
-#define Send_NVDebug_Power_Pic_Data2Serial(Length,Data)		(Send_NVData2Serial(Length,(unsigned char*)Data))
-#define Send_VDebug_Power_Pic_Data2Serial(Length,Data)		(Send_VData2Serial(Length ,(unsigned char*)Data))
-#define Send_NVDebug_Power_Pic_Int_NLine2Serial(Data)		(Send_Int_NLine2Serial(Data))
-#define Send_NVDebug_Power_Pic_Char_NLine2Serial(Data)		(Send_Char_NLine2Serial(Data))
+#define Send_NVDebug_Power_Pic_Data2Serial(Length,Data) ( Send_NVData2Serial(Length,(unsigned char*)Data))
+#define Send_VDebug_Power_Pic_Data2Serial(Length,Data)  ( Send_VData2Serial(Length ,(unsigned char*)Data))
+#define Send_NVDebug_Power_Pic_Int_NLine2Serial(Data)   ( Send_Int_NLine2Serial(Data))
+#define Send_NVDebug_Power_Pic_Char_NLine2Serial(Data)  ( Send_Char_NLine2Serial(Data))
 #else
 #define Send_NVDebug_Power_Pic_Data2Serial(Length,Data)		
 #define Send_VDebug_Power_Pic_Data2Serial(Length,Data)		

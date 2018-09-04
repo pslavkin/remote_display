@@ -155,49 +155,38 @@ unsigned char* Replace_Zero2Space(unsigned char* Buf,unsigned char Length)
    return Buf;
 }
 //----------------------------------------------------------------
-void Int2Pic(unsigned int Bin,struct Struct_Pic *Font,struct Struct_Pic *Pic)
-{
- unsigned char Buf[5];
- Int2Bcd(Buf,Bin);
- String2Pic(Buf,sizeof(Buf),Font,Pic);
-}
-void Int2_4Digit_Pic(unsigned int Bin,struct Struct_Pic *Font,struct Struct_Pic *Pic)
-{
- unsigned char Buf[5];
- Int2Bcd(Buf,Bin);
- String2Pic(Buf+1,sizeof(Buf)-1,Font,Pic);
-}
-void Int2_3Digit_Pic(unsigned int Bin,struct Struct_Pic *Font,struct Struct_Pic *Pic)
-{
- unsigned char Buf[5];
- Int2Bcd(Buf,Bin);
- String2Pic(Buf+1,sizeof(Buf)-2,Font,Pic);
-}
+//void Int2Pic(unsigned int Bin,struct Struct_Pic *Font,struct Struct_Pic *Pic)
+//{
+// unsigned char Buf[5];
+// Int2Bcd(Buf,Bin);
+// String2Pic(Buf,sizeof(Buf),Font,Pic);
+//}
+//void Int2_4Digit_Pic(unsigned int Bin,struct Struct_Pic *Font,struct Struct_Pic *Pic)
+//{
+// unsigned char Buf[5];
+// Int2Bcd(Buf,Bin);
+// String2Pic(Buf+1,sizeof(Buf)-1,Font,Pic);
+//}
+//void Int2_3Digit_Pic(unsigned int Bin,struct Struct_Pic *Font,struct Struct_Pic *Pic)
+//{
+// unsigned char Buf[5];
+// Int2Bcd(Buf,Bin);
+// String2Pic(Buf+1,sizeof(Buf)-2,Font,Pic);
+//}
 //----------------------------------------------------------------
-void Char2Pic(unsigned char Bin,struct Struct_Pic *Font,struct Struct_Pic *Pic)
-{
- unsigned char Buf[3];
- Char2Bcd(Buf,Bin);
- String2Pic(Buf,sizeof(Buf),Font,Pic);
- Layer_Info_Modified();
-}
-void Char2_2Digit_Pic(unsigned char Bin,struct Struct_Pic *Font,struct Struct_Pic *Pic)
-{
- unsigned char Buf[3];
- Char2Bcd(Buf,Bin);
- String2Pic(Buf+1,sizeof(Buf)-1,Font,Pic);
-}
-//----------------------------------------------------------------
-void Insert_String2Pic(unsigned char *String,unsigned char Length,struct Struct_Pic *Font,struct Struct_Pic *Pic,unsigned char Offset)
-{
-// unsigned char** Font_Data=Font->Data;
-// unsigned char** Pic_Data=Pic->Data;
-// Pic_Data+=Offset;
-//// Pic->Height=Length/Pic->Width*Font->Height;
-// while(Length--) Pic_Data[Length]=Font_Data[String[Length]-' '];
+//void Char2Pic(unsigned char Bin,struct Struct_Pic *Font,struct Struct_Pic *Pic)
+//{
+// unsigned char Buf[3];
+// Char2Bcd(Buf,Bin);
+// String2Pic(Buf,sizeof(Buf),Font,Pic);
 // Layer_Info_Modified();
-}
-void String2Pic(unsigned char *String,unsigned char Length,struct Struct_Pic *Font,struct Struct_Pic *Pic)  {Insert_String2Pic(String,Length,Font,Pic,0);}
-void Append_Char2Pic(unsigned char Char,struct Struct_Pic *Font,struct Struct_Pic *Pic)            {Insert_String2Pic(&Char,1,Font,Pic,Pic->PCount++);}
+//}
+//void Char2_2Digit_Pic(unsigned char Bin,struct Struct_Pic *Font,struct Struct_Pic *Pic)
+//{
+// unsigned char Buf[3];
+// Char2Bcd(Buf,Bin);
+// String2Pic(Buf+1,sizeof(Buf)-1,Font,Pic);
+//}
+//----------------------------------------------------------------
 //----------------------------------------------------------------
 

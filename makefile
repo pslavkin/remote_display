@@ -88,8 +88,10 @@ ${BINDIR}/app.axf: ${OBJDIR}/adc.o
 ${BINDIR}/app.axf: ${OBJDIR}/welcome_pic.o
 ${BINDIR}/app.axf: ${OBJDIR}/keyb_pic.o
 ${BINDIR}/app.axf: ${OBJDIR}/mask_pic.o
-${BINDIR}/app.axf: ${OBJDIR}/numbers_pic.o
+${BINDIR}/app.axf: ${OBJDIR}/pass_pic.o
 ${BINDIR}/app.axf: ${OBJDIR}/accept_reject_pic.o
+${BINDIR}/app.axf: ${OBJDIR}/bkgd_pic.o
+${BINDIR}/app.axf: ${OBJDIR}/font_30x42.o
 
 #../board
 #${BINDIR}/app.axf: ${OBJDIR}/board.o

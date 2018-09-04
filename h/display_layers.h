@@ -7,12 +7,13 @@
 //---------------------------------------------------------
 enum Display_Layers_Event_Code
  {
-   Info_Modified_Event      = 0,
-   Structure_Modified_Event = 1,
-   All_Updated_Event        = 2,
-   All_Displayed_Event      = 3,
-   Next_Layer_Event         = 4,
-   Next_Sub_Pic_Event       = 5
+   Info_Modified_Event      = 0x0001,
+   Structure_Modified_Event = 0x0002,
+   Clear_Lcd_Event          = 0x0003,
+   All_Updated_Event        = 0x0004,
+   All_Displayed_Event      = 0x0005,
+   Next_Layer_Event         = 0x0006,
+   Next_Sub_Pic_Event       = 0x0007
  };
 
 //---------------------------------------------------------
@@ -43,12 +44,15 @@ extern void          Move_Pic2Higth           ( unsigned char Bits, struct Struc
 extern void          Move_Pic2Low             ( unsigned char Bits, struct Struct_Pic* Pic           );
 extern void          Move_Pic2Rigth           ( unsigned char Bits, struct Struct_Pic* Pic           );
 extern void          Move_Pic2Left            ( unsigned char Bits, struct Struct_Pic* Pic           );
+extern void          Move_Pic2Top             ( struct Struct_Pic* Pic                               );
+extern void          Move_Pic2Bottom          ( struct Struct_Pic* Pic                               );
 extern void          Add_Pic_On_Top           ( struct Struct_Pic* Pic                               );
 extern void          Add_Pic_On_Bottom        ( struct Struct_Pic* Pic                               );
 extern void          Add_Pic_On_Layer         ( struct Struct_Pic* Pic,unsigned char Layer           );
 extern void          Del_Pic                  ( struct Struct_Pic* Pic                               );
 extern void          Del_All_Layers           ( void                                                 );
 extern bool          Find_Event_Handler       ( uint8_t Button,uint16_t X,uint16_t Y,uint8_t Handler );
+extern void          Layer_Clr_Lcd            ( void                                                 );
 extern void          Layer_Structure_Modified ( void                                                 );
 extern void          Layer_Info_Modified      ( void                                                 );
 extern unsigned char Layer_Used               ( void                                                 );

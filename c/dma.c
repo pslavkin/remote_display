@@ -22,7 +22,11 @@ State *Dma_Sm;
 //-------------------------------------------------------------------
 struct TCD_Struct TCD[3] __attribute__((aligned (32))); //320*240=76800 words de 16b. cada TCD puede guard 0x7FFF=32767 => con 3=98301 entre la pic mas grande
 
-void Pic2TCD(struct Struct_Pic *Pic,uint8_t Index)
+//void Pic2TCD(struct Struct_Pic *Pic,uint8_t Index)
+//{
+//    Pic2TCD_Mod(Pic,Index,0);
+//}
+void Pic2TCD_Mod(struct Struct_Pic *Pic,uint8_t Index,uint8_t Mod)
 {
    uint32_t Pic_Size=Pic_Area(Pic); //mas uno al ancho y al largo porque estan definidas asi, de 0 a ese valor. y el +1 al final, es porque se arega 2 byte extra, uno porque como el primer byte lo cargo con disparo manual no tiene asociado un disparo de ftm propio, y el otro es porque el ultimo byte no entra ya que cuando termina de cargar el ultimo byte, corto el FTM...
    uint32_t Pos=0;
@@ -30,7 +34,7 @@ void Pic2TCD(struct Struct_Pic *Pic,uint8_t Index)
    for(uint8_t i=0; i<6 && Pic_Size>0 ;i++) {
       TCD[i].SADDR       = (uint32_t)(Pic->Data[Index]+Pos);
       TCD[i].SOFF        = 2;
-      TCD[i].ATTR        = 0x0101; //16 bits transfer
+      TCD[i].ATTR        = 0x0101|(Mod<<11); //16 bits transfer
       TCD[i].NBYTES_MLNO = 2;
       TCD[i].SLAST       = 0;
       TCD[i].DADDR       = (uint32_t)(&GPIOB->PDOR);
@@ -45,18 +49,22 @@ void Pic2TCD(struct Struct_Pic *Pic,uint8_t Index)
          Pic_Size   = 0       ;
          TCD[i].CSR = 0x000A  ;
       }
-      Pos                  += TCD_Size                       ;
+      if ( Mod == 0 )
+            Pos += TCD_Size;
       TCD[i].DLAST_SGA      = ( uint32_t )&TCD[i+1]          ;
-      TCD[i].CITER_ELINKNO  = TCD[i].BITER_ELINKNO = TCD_Size;
+      TCD[i].CITER_ELINKNO  = TCD[i].BITER_ELINKNO  = TCD_Size;
    }
-   DMA0->TCD[0].CSR &= ~0x0080     ; // tip! hay que borrar el bit DONE de un previo dma complete para que me acepte escribir datos en este registro... sino no lo hace y no me linkea los TCD
-   DMA0->TCD[0]      = TCD[0]      ;
-   //GPIOB->PDOR       = Pic->Data[0][0];
-   FTM3->CNT         = 0           ;
-   DMA0->SERQ        = 0x00        ; // este es el que activa el request
+
+//   DMA0->CINT=0;
+//   FTM3->CONTROLS[0].CnSC &= ~0x00000080;
+//   *(uint16_t*)&GPIOB->PDOR=Pic->Data[0][0];
+
+   DMA0->TCD[0].CSR       &= ~0x0080     ; // tip! hay que borrar el bit DONE de un previo dma complete para que me acepte escribir datos en este registro... sino no lo hace y no me linkea los TCD
+   DMA0->TCD[0]            = TCD[0]      ;
+   FTM3->CNT               = 0           ;
+
    PORTA->PCR[2]     = 0x00000200  ; // PORT_SetPinMux    (PORTA, 2, kPORT_MuxAlt2); //write active low
-   FTM3->CNT         = 0           ;
-   FTM3->CNT         = 0           ;
+   DMA0->SERQ        = 0x00        ; // este es el que activa el request
    FTM3->CNT         = 0           ;
 }
 void Init_Dma(void)
@@ -69,6 +77,9 @@ void Init_Dma(void)
    DMAMUX->CHCFG[0] |= 0x80; // con este bit prendo (se podria haber puesto en una sola instruccion.. probar)
    NVIC_EnableIRQ(DMA0_IRQn); //la iRQ salta cuando termina de transferir todo el pic y recien ahi agpgo el ftm y aviso con un evento
 
+   CLOCK_EnableClock   ( kCLOCK_PortA              );
+   PORT_SetPinMux      ( PORTA, 2, kPORT_MuxAsGpio );
+   GPIO_PinInit_As_Out ( GPIOA ,2,1                );
 }
 
 void Dma_Clear(void)

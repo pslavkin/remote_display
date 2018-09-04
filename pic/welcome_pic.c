@@ -6,7 +6,7 @@
 #include "welcome_pic.h"
 #include "serial_tx.h"
 #include "mask_pic.h"
-#include "numbers_pic.h"
+#include "pass_pic.h"
 #include "keyb_pic.h"
 #include "debug.h"
 #include "schedule.h"
@@ -41,7 +41,7 @@ struct Struct_Pic_Events Welcome_Events[] RODATA=
 //
 struct Struct_Pic Welcome_Pic RODATA=
 {
-   {16,16+207,100,100+125},10,0,1,Welcome_Events,1,Welcome_Data
+   {16,16+207,100,100+125},4,0,1,Welcome_Events,1,Welcome_Data
 };
 void Add_Welcome               ( void ) { Add_Pic_On_Bottom(&Welcome_Pic);}
 void Del_Welcome               ( void ) { Del_Pic(&Welcome_Pic)          ;}
@@ -50,7 +50,9 @@ void Clear_All_And_Add_Welcome ( void ) { Del_All_Layers()               ;Clear_
 uint16_t Test_Pic_Data_Raw[] RODATA=
 {
 #ifdef PICS_ENABLED_TEST
-   #include "colors.raw"
+   0xF800,0x7E0,0x01F,0x1234,0x4444,0x6666,0x0000,0x0000
+
+//#include "colors.raw"
 #endif
 };
 uint16_t *Test_Pic_Data[] RODATA=
@@ -75,7 +77,7 @@ struct Struct_Pic_Events Test_Pic_Events[] RODATA=
 //
 struct Struct_Pic Test_Pic_Pic RODATA=
 {
-   {0,5,0,319},0,0,1,Test_Pic_Events,1,Test_Pic_Data
+   {0,100,0,100},0,8,1,Test_Pic_Events,1,Test_Pic_Data
 };
 void Add_Test_Pic               ( void ) { Add_Pic_On_Bottom(&Test_Pic_Pic);}
 void Del_Test_Pic               ( void ) { Del_Pic(&Test_Pic_Pic)          ;}

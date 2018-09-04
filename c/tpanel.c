@@ -37,25 +37,24 @@ State*               TPanel_Sm        ;//variable que lleva cuenta del estado de
 unsigned char        Delay_Before_Drag;
 struct TPanel_Struct Tp               ;
 
-State**  Tpanel ( void ) { return &TPanel_Sm;}
-
-void     Tpanel_Rti( void ) { Send_Event(Tp.Touched,&TPanel_Sm); }
+State**  Tpanel     ( void ) { return &TPanel_Sm                ;}
+void     Tpanel_Rti ( void ) { Send_Event(Tp.Touched,&TPanel_Sm);}
 //--------------------------------------------------------------
 void     Print_TPanel_Raw  (void)
 {
    unsigned char *T=Serial_Tx_As_PChar(0);
-   Int2Bcd(T+0 ,Tp.X);
-   Int2Bcd(T+6 ,Tp.Y);
-   Int2Bcd(T+12 ,Tp.X_Scaled);
-   Int2Bcd(T+18,Tp.Y_Scaled);
-   Char2Bcd(T+24,Tp.Touched);
-   T[5 ]=' ';
-   T[11 ]=' ';
-   T[17]=' ';
-   T[23]=' ';
-   T[27]=' ';
-   T[28]='\r';
-   T[29]='\n';
+   Int2Bcd  ( T+0  ,Tp.X        );
+   Int2Bcd  ( T+6  ,Tp.Y        );
+   Int2Bcd  ( T+12 ,Tp.X_Scaled );
+   Int2Bcd  ( T+18 ,Tp.Y_Scaled );
+   Char2Bcd ( T+24 ,Tp.Touched  );
+   T[ 5  ]=' ';
+   T[ 11 ]=' ';
+   T[ 17 ]=' ';
+   T[ 23 ]=' ';
+   T[ 27 ]=' ';
+   T[ 28 ]='\r';
+   T[ 29 ]='\n';
    Send_NVData2Serial(30,T);
 }
 //--------------------------------------------------------------
@@ -88,8 +87,8 @@ void On_Click        (void)            //escala y busca algun handler
 {
  Scale_X ( );
  Scale_Y ( );
- Delay_Before_Drag=DELAY_BEFORE_DRAG_FILTER                    ;
- Find_Event_Handler(None_Button,Tp.X_Scaled,Tp.Y_Scaled,0 );
+ Delay_Before_Drag=DELAY_BEFORE_DRAG_FILTER                  ;
+ Find_Event_Handler ( None_Button,Tp.X_Scaled,Tp.Y_Scaled,0 );
 }
 void On_Drag         (void)            //escala y busca un handler
 {
@@ -104,9 +103,9 @@ void On_Drag         (void)            //escala y busca un handler
 void On_Release         (void)
 {
    struct Struct_Pic_Pos P={0};
-   Set_Mask_Pic (&P);
    if(Find_Event_Handler(None_Button,Tp.X_Scaled,Tp.Y_Scaled,2)) {
       }
+   Set_Mask_Pic (&P);
 }
 //--------------------------------------------------------------------
 void Init_Tpanel(void)
@@ -132,7 +131,6 @@ void Init_Tpanel(void)
    PORT_SetPinMux           ( PORTA ,16 ,kPORT_MuxAsGpio ); // XL ADC13
    PORT_SetPinDriveStrength ( PORTA ,16 ,1               );
    GPIO_PinInit_As_Out      ( GPIOA ,16 ,0               ); // XL 0v
-
 }
 
 void Feed_X_And_Free_Y(void)

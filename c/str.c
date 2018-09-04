@@ -63,4 +63,28 @@ unsigned char Read_Bit4String(unsigned char* Data,unsigned char Bit)
 {
  return (Data[Bit/8]&(0x80>>Bit%8))!=0;
 }
+void Append_Data(char* S,char Digit,uint8_t Max)
+{
+   uint8_t i;
+   for(i=0;i<(Max-1) && S[i]!='\0';i++)
+      ;
+   if(i<(Max-1)) S[i]=Digit;
+   S[i+1]='\0';
+}
+void Backspace_Data(char* S)
+{
+   uint8_t i;
+   for(i=0;S[i]!='\0';i++)
+      ;
+   if(i>0) S[i-1]='\0';
+}
+void String_Padd(char* String, char *Padded_String, uint8_t Length, char Pad_Data)
+{
+   uint8_t i;
+   for(i=0;String[i]!='\0';i++)
+      Padded_String[i]=String[i];
+   for(;i<(Length-1);i++)        //reservo 1 para el null
+      Padded_String[i]=Pad_Data;
+   Padded_String[i]='\0';
+}
 //----------------------------------------------------------------------------------------

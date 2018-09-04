@@ -23,8 +23,8 @@ void Init_Ftm3C0(void)
 {
    CLOCK_EnableClock(kCLOCK_Ftm3);
    FTM3->CONTROLS[0].CnSC = 0x00000069;      //habilita irq pero no para que salte sino para que funcione DMA. tiene que estar los dos en 1.
-   FTM3->MOD              = 30;
-   FTM3->CONTROLS[0].CnV  = FTM3->MOD-3;
+   FTM3->MOD              = 80;
+   FTM3->CONTROLS[0].CnV  = FTM3->MOD-5;
    FTM3->SC               = 0x00010008;
 }
 
