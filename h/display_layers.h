@@ -3,11 +3,11 @@
 
 #include "state_machine.h"
 //---------------------------------------------------------
-#define MAX_PICS  15 //el maximo aparece en workin+pulsante (que son 2) + memorias + memoria grabada. 15
+#define MAX_PICS  25 //el maximo aparece en workin+pulsante (que son 2) + memorias + memoria grabada. 15
 //---------------------------------------------------------
 enum Display_Layers_Event_Code
  {
-   Info_Modified_Event      = 0xB001,
+   //Info_Modified_Event      = 0xB001,
    Structure_Modified_Event = 0xB002,
    Clear_Lcd_Event          = 0xB003,
    All_Updated_Event        = 0xB004,
@@ -54,7 +54,7 @@ extern void          Del_All_Layers           ( void                            
 extern bool          Find_Event_Handler       ( uint8_t Button,uint16_t X,uint16_t Y,uint8_t Handler );
 extern void          Layer_Clr_Lcd            ( void                                                 );
 extern void          Layer_Structure_Modified ( void                                                 );
-extern void          Layer_Info_Modified      ( void                                                 );
+//extern void          Layer_Info_Modified      ( void                                                 );
 extern unsigned char Layer_Used               ( void                                                 );
 //---------------------------------------------------------
 extern void       Move_Pic_Bits2Higth  ( unsigned char Bits  ,struct Struct_Pic* Pic );

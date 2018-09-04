@@ -35,12 +35,16 @@ bool Pic_Pos_Compare(struct Struct_Pic_Pos *A, struct Struct_Pic_Pos *B)
 void Init_Display_Pics(void)
 {
 }
-void String2Pic ( char *String ,struct Struct_Pic *Pic ,struct Struct_Pic *Font )
+uint8_t  String2Pic_Data ( char *String ,uint16_t** Data ,struct Struct_Pic *Font )
 {
    uint8_t i;
    for(i=0;String[i]!='\0';i++)
-      Pic->Data[i]=Font->Data[String[i]-' '];
-   Pic->PCount=i;
-   Layer_Info_Modified();
+      Data[i]=Font->Data[String[i]-' '];
+   return i;
+}
+void String2Pic ( char *String ,struct Struct_Pic *Pic ,struct Struct_Pic *Font )
+{
+   Pic->PCount=String2Pic_Data(String,Pic->Data,Font);
+   Layer_Structure_Modified();
 }
 

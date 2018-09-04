@@ -10,6 +10,7 @@
 #include "keyb_pic.h"
 #include "debug.h"
 #include "schedule.h"
+#include "tpanel.h"
 
 //--------------Pics Data----------------------------------
 uint16_t Welcome_Data_Raw[] RODATA=
@@ -23,10 +24,10 @@ uint16_t *Welcome_Data[] RODATA=
 {
    Welcome_Data_Raw,
 };
-
 //---------------Functions---------------------------------------
 void Welcome_Constr(void)
 {
+   Layer_Clr_Lcd();
 }
 void Welcome_Destr(void)
 {
@@ -35,13 +36,13 @@ void Welcome_Destr(void)
 //--------------Events----------------------------------
 struct Struct_Pic_Events Welcome_Events[] RODATA=
 {
-   {{ 0 ,0 ,0 ,0} ,0 ,0 ,{Welcome_Constr ,Del_Welcome ,Welcome_Destr} ,} // On_Create
+   { { 0 ,0 ,0 ,0} ,0          ,0 ,{Welcome_Constr ,Del_Welcome ,Welcome_Destr} }, // On_Create
+   { { 0 ,0 ,0 ,0} ,Any_Button ,0 ,{Rien           ,Rien        ,Del_Welcome}   },
 };
 //--------------Pics Info----------------------------------
-//
 struct Struct_Pic Welcome_Pic RODATA=
 {
-   {16,16+207,100,100+125},4,0,1,Welcome_Events,1,Welcome_Data
+   {16,16+207,100,100+125},4,0,2,Welcome_Events,1,Welcome_Data
 };
 void Add_Welcome               ( void ) { Add_Pic_On_Bottom(&Welcome_Pic);}
 void Del_Welcome               ( void ) { Del_Pic(&Welcome_Pic)          ;}

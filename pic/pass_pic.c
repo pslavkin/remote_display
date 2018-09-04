@@ -8,21 +8,22 @@
 #include "debug.h"
 #include <string.h>
 #include "str.h"
+#include "log_pic.h"
 #include "font_30x42.h"
 //------------------------------------------------------
 uint16_t *Pass_Data[9]; //con 8 alcanza
 char Key_String[] RODATA = "12345678";
-char PPass_String[9]      = "";
 char Pass_String[9]      = "";
 
 struct Struct_Pic_Events Pass_Events[] =
 {
- {{0 ,0 ,0 ,0} ,Invalid_Button ,0 ,{Init_Pass,Rien ,Rien}} ,// On_Create
+ {{0 ,0   ,0 ,0}  ,Invalid_Button ,0 ,{Init_Pass ,Rien ,Rien}}    ,// On_Create
+ {{0 ,239 ,0 ,70} ,Invalid_Button ,0 ,{Rien      ,Rien ,Add_Log}} ,
 };
 
 struct Struct_Pic Pass_Pic  =
 {
-   {0,0+29,5,5+41},0,0,1,Pass_Events,8,Pass_Data
+   {0,0+29,5,5+41},0,0,2,Pass_Events,8,Pass_Data
 };
 
 void Pass_String2Pic(void)

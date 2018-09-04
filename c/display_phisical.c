@@ -206,7 +206,7 @@ void Init_Display_Phisical_9341(void)/*{{{*/
    Write_Disp_Instr    ( 0x26   ); // Gamma curve 3
    Write_Disp_8b_Param ( 0x01   );
 
-   Clear_Lcd           (        );
+//   Clear_Lcd           (        );
 
    Write_Disp_Instr    ( 0x29   ); // display On
    Write_Disp_8b_Param ( 0x00   );
@@ -296,7 +296,7 @@ void Init_Display_Phisical_7789(void) /*  {{{*/
    Write_Disp_8b_Param ( 0x01   );
    Write_Disp_8b_Param ( 0x3F   ); //  Y address set
 
-   Clear_Lcd           (        );
+ //  Clear_Lcd           (        );
 
    Write_Disp_Instr    ( 0x29   ); //  display On
    Write_Disp_8b_Param ( 0x00   );
@@ -327,14 +327,14 @@ void Lcd2Pic_Inverted(struct Struct_Pic *Pic)
 {
    //es un bolonki porque cada 3 lecturas me levanda 2 bytes... me complica toda la logica la mierd.. 
    Write_Disp_Instr       ( 0x3A );
-   Write_Disp_8b_Param    ( 0x66 ); // COLMOD: Interface Pixel format
-   uint32_t Size=Pic_Area ( Pic  ); // deberia sumar 1,pero sumo 2 para que lee un poco mas por el kilombo de los pares e impares..
+   Write_Disp_8b_Param    ( 0x66 );   // COLMOD: Interface Pixel format
+   uint32_t Size=Pic_Area ( Pic  ); 
 
    Set_Frame_Address ( Pic              );
    Write_Disp_Instr  ( 0x2E             ); // comando de lectura
    GPIO_Port_As_In   ( GPIOB,0x0000FFFF );
    Read_Disp_Data    (                  ); // dummy read..
-   for(uint32_t i=0;i<Size;i++) {
+   for(uint32_t i=0;i<Size;i+=2) {        //cuento de a 2 porque en cada loop genero info para 2 pixeles
       uint16_t R,G,B;
       uint16_t D1,D2,D3;
       D1=Read_Disp_Data();
@@ -344,12 +344,12 @@ void Lcd2Pic_Inverted(struct Struct_Pic *Pic)
       R=0x1F- ( (D1&0x7E00 )>>10);
       G=0x3F- ( (D1&0x00FC )>>2 );
       B=0x1F- ( (D2&0x7E00 )>>10);
-      Pic->Data[0][2*i+0]=R<<11 | G<<5 | B;
+      Pic->Data[0][i+0]=R<<11 | G<<5 | B;
 
       R=0x1F- ((D2&0x00FC)>>3);
       G=0x3F- ((D3&0x7E00)>>9);
       B=0x1F- ((D3&0x00FC)>>3);
-      Pic->Data[0][2*i+1]=R<<11 | G<<5 | B;
+      Pic->Data[0][i+1]=R<<11 | G<<5 | B;
    }
    GPIO_Port_As_Out    ( GPIOB,0x0000FFFF );
    Write_Disp_Instr    ( 0x3A             );

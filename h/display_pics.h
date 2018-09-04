@@ -38,6 +38,7 @@ extern uint16_t   Pic_Width         ( struct Struct_Pic *Pic                    
 extern uint16_t   Pic_Hight         ( struct Struct_Pic *Pic                                        );
 extern uint32_t   Pic_Area          ( struct Struct_Pic *Pic                                        );
 extern void       Init_Display_Pics ( void                                                          );
+extern uint8_t    String2Pic_Data   ( char *String ,uint16_t** Data ,struct Struct_Pic *Font        );
 extern void       String2Pic        ( char *String ,struct Struct_Pic *Pic ,struct Struct_Pic *Font );
 //---------------------------------------------------------
 #endif

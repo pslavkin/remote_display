@@ -16,6 +16,8 @@ VPATH+=./board
 VPATH+=./drivers
 VPATH+=./c
 VPATH+=./pic
+VPATH+=./pic/font_30x42
+VPATH+=./pic/font_22x30
 VPATH+=./startup
 VPATH+=./utilities
 
@@ -42,6 +44,8 @@ IPATH+=./board
 IPATH+=./drivers
 IPATH+=./h
 IPATH+=./pic
+IPATH+=./pic/font_30x42
+IPATH+=./pic/font_22x30
 IPATH+=./startup
 IPATH+=./utilities
 #
@@ -91,7 +95,9 @@ ${BINDIR}/app.axf: ${OBJDIR}/mask_pic.o
 ${BINDIR}/app.axf: ${OBJDIR}/pass_pic.o
 ${BINDIR}/app.axf: ${OBJDIR}/accept_reject_pic.o
 ${BINDIR}/app.axf: ${OBJDIR}/bkgd_pic.o
+${BINDIR}/app.axf: ${OBJDIR}/log_pic.o
 ${BINDIR}/app.axf: ${OBJDIR}/font_30x42.o
+${BINDIR}/app.axf: ${OBJDIR}/font_22x30.o
 
 #../board
 #${BINDIR}/app.axf: ${OBJDIR}/board.o

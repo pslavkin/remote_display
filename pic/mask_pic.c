@@ -4,7 +4,6 @@
 #include "stdint.h"
 #include "schedule.h"
 #include "mask_pic.h"
-#include "pass_pic.h"
 #include "accept_reject_pic.h"
 
 //------------------------------------------------------
@@ -34,7 +33,7 @@ void Set_Mask_Pic(struct Struct_Pic_Pos *Pos)
 {
    if(!Pic_Pos_Compare(&Mask_Pic.Pos,Pos)) {      //si no cambio para que voy a hinchar las guindas...
       Mask_Pic.Pos=*Pos;
-      Layer_Info_Modified();
+      Layer_Structure_Modified();
    };
 }
 
