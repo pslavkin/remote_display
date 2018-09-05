@@ -36,13 +36,12 @@ void Copy_Pass2Log(char* Pass, bool Accepted)
    for(i=sizeof(Log_Table)/sizeof(Log_Table[0])-1;i>0;i--)
       strcpy(Log_Table[i],Log_Table[i-1]);
    strcpy(Log_Table[0],Pass);
+   String_Padd(Log_Table[0] ,Log_Table[0]     ,9 ,' ');
    Append_Data(Log_Table[0] ,Accepted?'+':'-' ,10);
-   String_Padd(Log_Table[0] ,Log_Table[0]     ,10 ,' ');
 }
 void Copy_Log2Pass(uint8_t N)
 {
-   strncpy(Read_Pass_String(),Log_Table[N],8);
-   Read_Pass_String()[strlen(Read_Pass_String())-1]='\0';
+   String_Copy_Until(Log_Table[N],Read_Pass_String(),' ',9);
    Pass_String2Pic();
    Del_Log();
 }
@@ -54,27 +53,29 @@ void Copy_Log2Pass4(void) {Copy_Log2Pass(4);}
 
 struct Struct_Pic_Events Log_Events[] =
 {
- { {0 ,0   ,0    ,0}    ,Invalid_Button ,0 ,{Init_Log ,Rien ,Rien}           },// On_Create
- { {0 ,239 ,0*65 ,1*65} ,Invalid_Button ,1 ,{Rien     ,Rien ,Copy_Log2Pass0} },
- { {0 ,239 ,1*65 ,2*65} ,Invalid_Button ,1 ,{Rien     ,Rien ,Copy_Log2Pass1} },
- { {0 ,239 ,2*65 ,3*65} ,Invalid_Button ,1 ,{Rien     ,Rien ,Copy_Log2Pass2} },
- { {0 ,239 ,3*65 ,4*65} ,Invalid_Button ,1 ,{Rien     ,Rien ,Copy_Log2Pass3} },
- { {0 ,239 ,4*65 ,5*65} ,Invalid_Button ,1 ,{Rien     ,Rien ,Copy_Log2Pass4} },
- { {0 ,0   ,0    ,0}    ,Any_Button     ,0 ,{Rien     ,Rien ,Rien}           },
+ { {0  ,0   ,0    ,0}      ,Invalid_Button ,0 ,{Init_Log ,Rien ,Rien}           } ,// On_Create
+ { { 0 ,239 ,0*63 ,1*63+1} ,Invalid_Button ,1 ,{Rien     ,Rien ,Copy_Log2Pass0} } ,
+ { { 0 ,239 ,1*63 ,2*63+1} ,Invalid_Button ,1 ,{Rien     ,Rien ,Copy_Log2Pass1} } ,
+ { { 0 ,239 ,2*63 ,3*63+1} ,Invalid_Button ,1 ,{Rien     ,Rien ,Copy_Log2Pass2} } ,
+ { { 0 ,239 ,3*63 ,4*63+1} ,Invalid_Button ,1 ,{Rien     ,Rien ,Copy_Log2Pass3} } ,
+ { { 0 ,239 ,4*63 ,5*63+1} ,Invalid_Button ,1 ,{Rien     ,Rien ,Copy_Log2Pass4} } ,
+ { {0  ,0   ,0    ,0}      ,Any_Button     ,0 ,{Rien     ,Rien ,Rien}           } ,
 };
 
 struct Struct_Pic Log_Pic [] RODATA=
 {
-   {  {21 ,21+21 ,14+0*65 ,14+0*65+30} ,0 ,0 ,7 ,Log_Events  ,sizeof(Log_Table[0])-1 ,Log_Data[0]} ,
-   {  {21 ,21+21 ,14+1*65 ,14+1*65+30} ,0 ,0 ,1 ,Rien_Events ,sizeof(Log_Table[0])-1 ,Log_Data[1]} ,
-   {  {21 ,21+21 ,14+2*65 ,14+2*65+30} ,0 ,0 ,1 ,Rien_Events ,sizeof(Log_Table[0])-1 ,Log_Data[2]} ,
-   {  {21 ,21+21 ,14+3*65 ,14+3*65+30} ,0 ,0 ,1 ,Rien_Events ,sizeof(Log_Table[0])-1 ,Log_Data[3]} ,
-   {  {21 ,21+21 ,14+4*65 ,14+4*65+30} ,0 ,0 ,1 ,Rien_Events ,sizeof(Log_Table[0])-1 ,Log_Data[4]} ,
+   {  {21 ,21+21 ,14+0*65 ,14+0*65+29} ,0 ,0 ,7 ,Log_Events  ,sizeof(Log_Table[0])-1 ,Log_Data[0]} ,
+   {  {21 ,21+21 ,14+1*65 ,14+1*65+29} ,0 ,0 ,1 ,Rien_Events ,sizeof(Log_Table[0])-1 ,Log_Data[1]} ,
+   {  {21 ,21+21 ,14+2*65 ,14+2*65+29} ,0 ,0 ,1 ,Rien_Events ,sizeof(Log_Table[0])-1 ,Log_Data[2]} ,
+   {  {21 ,21+21 ,14+3*65 ,14+3*65+29} ,0 ,0 ,1 ,Rien_Events ,sizeof(Log_Table[0])-1 ,Log_Data[3]} ,
+   {  {21 ,21+21 ,14+4*65 ,14+4*65+29} ,0 ,0 ,1 ,Rien_Events ,sizeof(Log_Table[0])-1 ,Log_Data[4]} ,
 
-   {  { 0 , 239 , 1*63 ,1*63+1} ,0 ,1 ,1 ,Rien_Events ,1 ,Line_Data},
-   {  { 0 , 239 , 2*63 ,2*63+1} ,0 ,1 ,1 ,Rien_Events ,1 ,Line_Data},
-   {  { 0 , 239 , 3*63 ,3*63+1} ,0 ,1 ,1 ,Rien_Events ,1 ,Line_Data},
-   {  { 0 , 239 , 4*63 ,4*63+1} ,0 ,1 ,1 ,Rien_Events ,1 ,Line_Data},
+   {  { 0 ,239 ,0*63 ,0*63+1} ,0 ,1 ,1 ,Rien_Events ,1 ,Line_Data },
+   {  { 0 ,239 ,1*63 ,1*63+1} ,0 ,1 ,1 ,Rien_Events ,1 ,Line_Data },
+   {  { 0 ,239 ,2*63 ,2*63+1} ,0 ,1 ,1 ,Rien_Events ,1 ,Line_Data },
+   {  { 0 ,239 ,3*63 ,3*63+1} ,0 ,1 ,1 ,Rien_Events ,1 ,Line_Data },
+   {  { 0 ,239 ,4*63 ,4*63+1} ,0 ,1 ,1 ,Rien_Events ,1 ,Line_Data },
+   {  { 0 ,239 ,318  ,319}    ,0 ,1 ,1 ,Rien_Events ,1 ,Line_Data },
 
    {  { 0   ,1   ,0 ,319} ,0 ,1 ,1 ,Rien_Events ,1 ,Line_Data} ,
    {  { 238 ,239 ,0 ,319} ,0 ,1 ,1 ,Rien_Events ,1 ,Line_Data} ,

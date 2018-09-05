@@ -3,6 +3,7 @@
 #include "display_layers.h"
 #include "events.h"
 #include "stdint.h"
+#include <string.h>
 #include "keyb_pic.h"
 #include "serial_tx.h"
 #include "mask_pic.h"
@@ -31,6 +32,11 @@ void Keyb_Constr(void)
 void Keyb_Destr(void)
 {
 }
+void Test_Pass_Length2Add_Clock(void)
+{
+   if(strlen(Read_Pass_String())>0)
+     Add_Clock(); 
+}
 //--------------Events----------------------------------
 struct Struct_Pic_Events Keyb_Events[] RODATA=
 {
@@ -46,7 +52,7 @@ struct Struct_Pic_Events Keyb_Events[] RODATA=
 { {161 ,161 +73 ,189 ,189 +53 } ,Invalid_Button ,1 ,{Add_Pass_Digit9 ,Rien           ,Rien}                 } ,
 { { 83 ,83 +73  ,248 ,319 }     ,Invalid_Button ,1 ,{Add_Pass_Digit0 ,Rien           ,Rien}                 } ,
 { {  4 ,4 +73   ,248 ,319 }     ,Invalid_Button ,1 ,{Del_Pass_Digit  ,Del_Pass_Digit ,Rien}                 } ,
-{ {161 ,161 +73 ,248 ,319 }     ,Invalid_Button ,1 ,{Rien            ,Rien           ,Add_Accept_Or_Reject} } ,
+{ {161 ,161 +73 ,248 ,319 }     ,Invalid_Button ,1 ,{Rien            ,Rien           ,Test_Pass_Length2Add_Clock} } ,
 };
 //--------------Pics Info----------------------------------
 struct Struct_Pic Keyb_Pic RODATA=

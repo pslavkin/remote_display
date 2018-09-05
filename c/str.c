@@ -18,6 +18,14 @@ unsigned char String_Cmp(unsigned char* A,unsigned char* B,unsigned char Length)
  while(Length-- && A[Length]==B[Length]);
  return !++Length;
 }
+uint8_t String_Copy_Until(char* Source,char* Destiny,char Pattern, uint8_t Max)
+{
+   uint8_t i;
+   for(i=0;i<(Max-1) && Source[i]!=Pattern;i++)
+      Destiny[i]=Source[i];
+   Destiny[i]='\0';
+   return i;
+}
 unsigned char Find_Char_On_String(unsigned char* String,unsigned char Exp,unsigned int Length)
 {
  unsigned int i;

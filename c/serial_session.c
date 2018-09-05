@@ -158,7 +158,7 @@ State Parsing_Layers [ ]RODATA=
 { '8'       ,Add_Pass_Digit8           ,Parsing_Layers } ,
 { '9'       ,Add_Pass_Digit9           ,Parsing_Layers } ,
 { 'D'       ,Del_Pass_Digit            ,Parsing_Layers } ,
-{ 'E'       ,Add_Accept_Or_Reject      ,Parsing_Layers } ,
+{ 'E'       ,Add_Clock                 ,Parsing_Layers } ,
 { 'F'       ,Layer_Clr_Lcd             ,Parsing_Layers } ,
 { '<'       ,Rien                      ,Parsing_Main   } ,
 { '?'       ,Print_Layers_Menu         ,Parsing_Layers } ,

@@ -29,6 +29,7 @@
 #define  TP_MIN_X 840
 
 #define DELAY_BEFORE_DRAG_FILTER 8
+#define DELAY_AFTER_DRAG_FILTER  4
 //------------------------------------------------------------------------------
 enum Buttons_Event_Code {
    None_Button        = 0x00,

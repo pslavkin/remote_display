@@ -11,6 +11,7 @@
 #include "tpanel.h"
 #include "bkgd_pic.h"
 #include "log_pic.h"
+#include "everythings.h"
 
 //--------------Pics Data----------------------------------
 uint16_t Accept_Data_Raw[] RODATA=
@@ -27,10 +28,10 @@ uint16_t *Accept_Data[] RODATA=
 //---------------Functions---------------------------------------
 void Accept_Constr(void)
 {
+  Copy_Pass2Log(Read_Pass_String(),true);
 }
 void Accept_Destr(void)
 {
-  Init_Pass();
   Del_Bkgd_Black();
   Layer_Clr_Lcd();
 }
@@ -64,6 +65,7 @@ uint16_t *Reject_Data[] RODATA=
 //---------------Functions---------------------------------------
 void Reject_Constr(void)
 {
+   Copy_Pass2Log(Read_Pass_String(),false);
 }
 void Reject_Destr(void)
 {
@@ -84,17 +86,46 @@ struct Struct_Pic Reject_Pic RODATA=
 };
 void Add_Reject            (void)   {Add_Pic_On_Top(&Reject_Pic);}
 void Del_Reject            (void)   {Del_Pic(&Reject_Pic);}
-//------------------------------------------------------
-void Add_Accept_Or_Reject(void)
+//--------------Pics Data----------------------------------
+uint16_t Clock_Data_Raw[] RODATA=
 {
-   Add_Bkgd_Black();
-   if(Psw_Compare())  {
-      Add_Accept();
-      Copy_Pass2Log(Read_Pass_String(),true);
-   }
-   else {
-      Add_Reject();
-      Copy_Pass2Log(Read_Pass_String(),false);
-   }
-}
+#ifdef PICS_ENABLED
+   #include "clock.raw"
+#endif
+};
+uint16_t *Clock_Data[] RODATA=
+{
+   Clock_Data_Raw,
+};
 
+//---------------Functions---------------------------------------
+void Clock_Constr(void)
+{
+}
+void Clock_Destr(void)
+{
+   if(Read_Ack_Pin()==true)
+      Add_Reject();
+   else
+      Add_Accept();
+   Layer_Clr_Lcd();
+}
+//--------------Events----------------------------------
+struct Struct_Pic_Events Clock_Events[] RODATA=
+{
+   { { 0  ,0   ,0  ,0 }   ,0          ,0 ,{Clock_Constr ,Del_Clock ,Clock_Destr} } ,// On_Create
+   { { 67 ,170 ,66 ,252 } ,Any_Button ,1 ,{Rien         ,Rien      ,Del_Clock }}   ,
+};
+//--------------Pics Info----------------------------------
+//
+struct Struct_Pic Clock_Pic RODATA=
+{
+   { 67 ,170 ,66 ,252 },5,0,2,Clock_Events,1,Clock_Data
+};
+void Add_Clock            (void)
+{
+   Add_Bkgd_Black (            );
+   Add_Pic_On_Top ( &Clock_Pic );
+}
+void Del_Clock ( void ) { Del_Pic        ( &Clock_Pic );}
+//------------------------------------------------------

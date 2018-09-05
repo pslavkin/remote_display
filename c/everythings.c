@@ -34,6 +34,18 @@ State
    Free_State10[ ];
 
 State* Everythings_Sm;           //variable que lleva cuenta del estado de la maquina de estados de "detodo un poco"...
+//-------------------------------------------------------------------
+void Init_Ack_Pin(void)
+{
+   CLOCK_EnableClock  ( kCLOCK_PortE               );
+   PORT_SetPinMux     ( PORTE ,14 ,kPORT_MuxAsGpio );
+   PORT_Pullup_Enable ( PORTE ,14                  );
+   GPIO_PinInit_As_In ( GPIOE ,14                  );
+}
+bool Read_Ack_Pin(void)
+{
+   return  GPIO_PinRead(GPIOE,14);
+}
 //----------------------------------------------------------------------------------------------------
 void     Init_Everythings  (void)
 {
@@ -46,6 +58,7 @@ void     Init_Everythings  (void)
    Init_Ftm3C0                ( );
    Init_Adc                   ( );
    Init_Tpanel                ( );
+   Init_Ack_Pin               ( );
 }  
 State**  Everythings     ( void ) { return &Everythings_Sm             ;} // devuelve la direccion de la maquina de estados Everythings para poder mandarle mensajes.
 void     Everythings_Rti ( void ) { Send_Event(ANY_Event,Everythings());} // manda mensajes ANY a tiempos predefinidos...

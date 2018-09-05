@@ -99,14 +99,14 @@ void On_Drag         (void)            //escala y busca un handler
    Scale_X ( );
    Scale_Y ( );
    Find_Event_Handler ( None_Button ,Tp.X_Scaled ,Tp.Y_Scaled ,1 );
+   Delay_Before_Drag=DELAY_AFTER_DRAG_FILTER;
   }
 }
 void On_Release         (void)
 {
    struct Struct_Pic_Pos P= { 0 ,0 ,0 ,0};
    Find_Event_Handler(None_Button,Tp.X_Scaled,Tp.Y_Scaled,2);
-   Set_Mask_Pic             ( &P );
-   Layer_Structure_Modified (    );
+   Set_Mask_Pic ( &P );
 }
 //--------------------------------------------------------------------
 void Init_Tpanel(void)

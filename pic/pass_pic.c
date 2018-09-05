@@ -12,7 +12,6 @@
 #include "font_30x42.h"
 //------------------------------------------------------
 uint16_t *Pass_Data[9]; //con 8 alcanza
-char Key_String[] RODATA = "12345678";
 char Pass_String[9]      = "";
 
 struct Struct_Pic_Events Pass_Events[] =
@@ -54,10 +53,6 @@ void Del_Pass_Digit(void)
 {
    Backspace_Data(Pass_String);
    Pass_String2Pic();
-}
-bool Psw_Compare(void)
-{
-   return strcmp(Pass_String,Key_String)==0;
 }
 void Add_Pass_Digit0(void) {Add_Pass_Digit('0');}
 void Add_Pass_Digit1(void) {Add_Pass_Digit('1');}

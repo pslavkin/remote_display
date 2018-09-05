@@ -18,7 +18,6 @@ extern void          Add_Pass_Digit7  ( void );
 extern void          Add_Pass_Digit8  ( void );
 extern void          Add_Pass_Digit9  ( void );
 extern void          Del_Pass_Digit   ( void );
-extern bool          Psw_Compare      ( void );
 extern void          Init_Pass        ( void );
 //------------------------------------------------------
 #endif

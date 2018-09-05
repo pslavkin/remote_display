@@ -3,15 +3,19 @@
 #define  EVERYTHINGS
 
 #include "state_machine.h"
+#include <stdbool.h>
 
 //-----------------------------------------------------------
 enum Everythings_Event_Code{
-			   Everythings_Null_Event	= 0
-		           };
+            Everythings_Null_Event  = 0
+                 };
 //-----------------------------------------------------------
-extern void 		Everythings_Rti		(void);
-extern void 		Init_Everythings	(void);
-extern State** 		Everythings		(void);
-//----------------------------------------------------
+extern void       Everythings_Rti  ( void );
+extern void       Init_Everythings ( void );
+extern State**    Everythings      ( void );
+// ----------------------------------------------------
+extern bool       Read_Ack_Pin     ( void );
+extern void       Init_Ack_Pin     ( void );
+// ----------------------------------------------------
 #endif
 

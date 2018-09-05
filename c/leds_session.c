@@ -13,6 +13,8 @@ static  State
 
 State *Leds_Session_Sm;
 //-------------------------------------------------------------------
+
+
 void Init_Leds(void)
 {
    CLOCK_EnableClock   ( kCLOCK_PortE               );
