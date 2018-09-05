@@ -9,70 +9,70 @@
 #include <string.h>
 //-----------------------------------------------------
 uint16_t Font_22x30_Tilde_Raw[] RODATA= {/*{{{*/
-#ifdef PICS_ENABLED_TEST
+#ifdef PICS_ENABLED
    #include "font_22x30_tilde.raw"
 #endif
 };
 uint16_t Font_22x30_Cross_Raw[] RODATA= {
-#ifdef PICS_ENABLED_TEST
+#ifdef PICS_ENABLED
    #include "font_22x30_cross.raw"
 #endif
 };
 uint16_t Font_22x30_0_Raw[] RODATA= {
-#ifdef PICS_ENABLED_TEST
+#ifdef PICS_ENABLED
    #include "font_22x30_0.raw"
 #endif
 };
 uint16_t Font_22x30_1_Raw[] RODATA= {
-#ifdef PICS_ENABLED_TEST
+#ifdef PICS_ENABLED
    #include "font_22x30_1.raw"
 #endif
 };
 uint16_t Font_22x30_2_Raw[] RODATA= {
-#ifdef PICS_ENABLED_TEST
+#ifdef PICS_ENABLED
    #include "font_22x30_2.raw"
 #endif
 };
 uint16_t Font_22x30_3_Raw[] RODATA= {
-#ifdef PICS_ENABLED_TEST
+#ifdef PICS_ENABLED
    #include "font_22x30_3.raw"
 #endif
 };
 uint16_t Font_22x30_4_Raw[] RODATA= { 
-#ifdef PICS_ENABLED_TEST
+#ifdef PICS_ENABLED
    #include "font_22x30_4.raw" 
 #endif
 };
 uint16_t Font_22x30_5_Raw[] RODATA= { 
-#ifdef PICS_ENABLED_TEST
+#ifdef PICS_ENABLED
    #include "font_22x30_5.raw" 
 #endif
 };
 uint16_t Font_22x30_6_Raw[] RODATA= { 
-#ifdef PICS_ENABLED_TEST
+#ifdef PICS_ENABLED
    #include "font_22x30_6.raw" 
 #endif
 };
 uint16_t Font_22x30_7_Raw[] RODATA= { 
-#ifdef PICS_ENABLED_TEST
+#ifdef PICS_ENABLED
    #include "font_22x30_7.raw" 
 #endif
 };
 uint16_t Font_22x30_8_Raw[] RODATA= { 
-#ifdef PICS_ENABLED_TEST
+#ifdef PICS_ENABLED
    #include "font_22x30_8.raw" 
 #endif
 };
 uint16_t Font_22x30_9_Raw[] RODATA= { 
-#ifdef PICS_ENABLED_TEST
+#ifdef PICS_ENABLED
    #include "font_22x30_9.raw" 
 #endif
 };
-uint16_t Font_22x30_Space_Raw[] RODATA= { 
-#ifdef PICS_ENABLED_TEST
+uint16_t Font_22x30_Space_Raw[] RODATA= {
+#ifdef PICS_ENABLED
    #include "font_22x30_space.raw"
 #endif
-};
+};/*}}}*/
 
 uint16_t * Font_22x30_Data[] RODATA=
 {

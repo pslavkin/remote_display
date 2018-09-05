@@ -18,9 +18,13 @@ char Pass_String[9]      = "";
 struct Struct_Pic_Events Pass_Events[] =
 {
  {{0 ,0   ,0 ,0}  ,Invalid_Button ,0 ,{Init_Pass ,Rien ,Rien}}    ,// On_Create
- {{0 ,239 ,0 ,70} ,Invalid_Button ,0 ,{Rien      ,Rien ,Add_Log}} ,
+ {{0 ,239 ,0 ,42} ,Invalid_Button ,1 ,{Rien      ,Rien ,Add_Log}} ,
 };
 
+char* Read_Pass_String(void)
+{
+   return Pass_String;
+}
 struct Struct_Pic Pass_Pic  =
 {
    {0,0+29,5,5+41},0,0,2,Pass_Events,8,Pass_Data

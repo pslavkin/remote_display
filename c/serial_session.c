@@ -71,8 +71,7 @@ unsigned char Layers_Menu[] RODATA=
  "9 Mask9\r\n"
  "D Mask Del\r\n"
  "E Mask Enter\r\n"
- "F Reboot\r\n"
- "G Clear LCD\r\n"
+ "F Clear LCD\r\n"
  "< Back\r\n"
  "? Help\r\n"
 };
@@ -160,8 +159,7 @@ State Parsing_Layers [ ]RODATA=
 { '9'       ,Add_Pass_Digit9           ,Parsing_Layers } ,
 { 'D'       ,Del_Pass_Digit            ,Parsing_Layers } ,
 { 'E'       ,Add_Accept_Or_Reject      ,Parsing_Layers } ,
-{ 'F'       ,Clear_All_And_Add_Welcome ,Parsing_Layers } ,
-{ 'G'       ,Layer_Clr_Lcd             ,Parsing_Layers } ,
+{ 'F'       ,Layer_Clr_Lcd             ,Parsing_Layers } ,
 { '<'       ,Rien                      ,Parsing_Main   } ,
 { '?'       ,Print_Layers_Menu         ,Parsing_Layers } ,
 { ANY_Event ,Rien                      ,Parsing_Layers } ,

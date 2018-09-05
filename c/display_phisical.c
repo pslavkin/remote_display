@@ -313,22 +313,19 @@ void Set_Frame_Address(struct Struct_Pic *Pic)
    Write_Disp_16b_Param ( Pic->Pos.YU );
    Write_Disp_16b_Param ( Pic->Pos.YL );
 }
-void Clear_Lcd(void)
+void Write_Pic(struct Struct_Pic* Pic)
 {
-   struct Struct_Pic Pic={{0,239,0,319},0,0,0,NULL,0,NULL};
-   Set_Frame_Address ( &Pic );
+   uint32_t Size=Pic_Area ( Pic  );
+   Set_Frame_Address ( Pic );
    Write_Disp_Instr  ( 0x2C );
-   for ( int j=0;j<320;j++ )
-      for ( int i=0;i<240;i++ )
-         Write_Disp_16b_Data ( 0x0000 );
+   for(uint32_t i=0;i<Size;i++)
+         Write_Disp_16b_Data ( Pic->Data[0][i]);
 }
-//----------------------------------------------------------------------
-void Lcd2Pic_Inverted(struct Struct_Pic *Pic)
+void Read_Lcd(struct Struct_Pic* Pic,bool Invert)
 {
-   //es un bolonki porque cada 3 lecturas me levanda 2 bytes... me complica toda la logica la mierd.. 
    Write_Disp_Instr       ( 0x3A );
    Write_Disp_8b_Param    ( 0x66 );   // COLMOD: Interface Pixel format
-   uint32_t Size=Pic_Area ( Pic  ); 
+   uint32_t Size=Pic_Area ( Pic  );
 
    Set_Frame_Address ( Pic              );
    Write_Disp_Instr  ( 0x2E             ); // comando de lectura
@@ -341,19 +338,56 @@ void Lcd2Pic_Inverted(struct Struct_Pic *Pic)
       D2=Read_Disp_Data();
       D3=Read_Disp_Data();
 
-      R=0x1F- ( (D1&0x7E00 )>>10);
-      G=0x3F- ( (D1&0x00FC )>>2 );
-      B=0x1F- ( (D2&0x7E00 )>>10);
+      R=( (D1&0x7E00 )>>10);
+      G=( (D1&0x00FC )>>2 );
+      B=( (D2&0x7E00 )>>10);
+      if(Invert) {
+         R=0x1F-R;
+         G=0x3F-G;
+         B=0x1F-B;
+      }
       Pic->Data[0][i+0]=R<<11 | G<<5 | B;
 
-      R=0x1F- ((D2&0x00FC)>>3);
-      G=0x3F- ((D3&0x7E00)>>9);
-      B=0x1F- ((D3&0x00FC)>>3);
+      R=((D2&0x00FC)>>3);
+      G=((D3&0x7E00)>>9);
+      B=((D3&0x00FC)>>3);
+      if(Invert) {
+         R=0x1F-R;
+         G=0x3F-G;
+         B=0x1F-B;
+      }
       Pic->Data[0][i+1]=R<<11 | G<<5 | B;
    }
    GPIO_Port_As_Out    ( GPIOB,0x0000FFFF );
    Write_Disp_Instr    ( 0x3A             );
    Write_Disp_8b_Param ( 0x55             ); // COLMOD: Interface Pixel format
+}
+void Clear_Lcd(void)
+{
+   struct Struct_Pic Pic={{0,239,0,319},0,0,0,NULL,0,NULL};
+   Paint_Lcd(&Pic,0x0000);
+}
+void Paint_Lcd(struct Struct_Pic* Pic,uint16_t Bkgd)
+{
+   uint32_t Size=Pic_Area ( Pic  );
+   Set_Frame_Address ( Pic );
+   Write_Disp_Instr  ( 0x2C );
+   for(uint32_t i=0;i<Size;i++)
+         Write_Disp_16b_Data ( Bkgd );
+}
+//----------------------------------------------------------------------
+void Invert_Pic(struct Struct_Pic *Pic)   //lee fila a fila y la invierte (para hacer una mascara de cualquier tamaio con un stack de 240 words)
+{
+   uint16_t Data[240];
+   uint16_t *Data_Raw[]={Data};
+   struct Struct_Pic Row_Pic= { { 0 ,0 ,0 ,0 } ,0 ,0 ,0 ,Rien_Events ,1 ,Data_Raw };
+   Row_Pic.Pos.XL=Pic->Pos.XL;
+   Row_Pic.Pos.XR=Pic->Pos.XR;
+   for(uint32_t i=Pic->Pos.YU;i<Pic->Pos.YL;i++) {
+      Row_Pic.Pos.YU=Row_Pic.Pos.YL=i;
+      Read_Lcd  ( &Row_Pic,true );     //true porque invierto antes de cuardar...
+      Write_Pic ( &Row_Pic      );     //escribo la misma pic invertida.
+   }
 }
 //--------------------------------------------------------------------------------
 void Pic2Lcd(struct Struct_Pic *Pic)

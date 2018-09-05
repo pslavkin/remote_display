@@ -30,16 +30,16 @@ struct Struct_Pic_Layer
 };
 
 //---------------------------------------------------------
-extern void          Print_Layers_Used  ( void                                        );
+extern void          Print_Layers_Used        ( void                                                 );
 // ---------------   ------------------------------------------
-extern void          Do_Blink_Pic       ( struct Struct_Pic* Pic,unsigned int Period  );
-extern void          Dont_Blink_Pic     ( struct Struct_Pic* Pic                      );
-extern void          Do_Blink_Only_Pic  ( struct Struct_Pic* Pic,unsigned int Period  );
-extern void          Dont_Blink_Any_Pic ( void                                        );
+extern void          Do_Blink_Pic             ( struct Struct_Pic* Pic,unsigned int Period           );
+extern void          Dont_Blink_Pic           ( struct Struct_Pic* Pic                               );
+extern void          Do_Blink_Only_Pic        ( struct Struct_Pic* Pic,unsigned int Period           );
+extern void          Dont_Blink_Any_Pic       ( void                                                 );
 // ---------------   ------------------------------------------
-extern void          Block_Pic_Events   ( struct Struct_Pic* Pic                      );
-extern void          Unblock_Pic_Events ( struct Struct_Pic* Pic,unsigned char Ecount );
-//---------------------------------------------------------
+extern void          Block_Pic_Events         ( struct Struct_Pic* Pic                               );
+extern void          Unblock_Pic_Events       ( struct Struct_Pic* Pic,unsigned char Ecount          );
+// ---------------------------------------------------------
 extern void          Move_Pic2Higth           ( unsigned char Bits, struct Struct_Pic* Pic           );
 extern void          Move_Pic2Low             ( unsigned char Bits, struct Struct_Pic* Pic           );
 extern void          Move_Pic2Rigth           ( unsigned char Bits, struct Struct_Pic* Pic           );
@@ -54,7 +54,8 @@ extern void          Del_All_Layers           ( void                            
 extern bool          Find_Event_Handler       ( uint8_t Button,uint16_t X,uint16_t Y,uint8_t Handler );
 extern void          Layer_Clr_Lcd            ( void                                                 );
 extern void          Layer_Structure_Modified ( void                                                 );
-//extern void          Layer_Info_Modified      ( void                                                 );
+extern void          Set_Watermark_Layer      ( void                                                 );
+extern void          Reset_Watermark_Layer    ( void                                                 );
 extern unsigned char Layer_Used               ( void                                                 );
 //---------------------------------------------------------
 extern void       Move_Pic_Bits2Higth  ( unsigned char Bits  ,struct Struct_Pic* Pic );

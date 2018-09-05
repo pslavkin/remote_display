@@ -27,8 +27,15 @@ struct Struct_Pic Bkgd_Black_Pic RODATA=
 {
    { 0 ,239 , 0 ,319 },0 ,1 ,1 ,Bkgd_Black_Events ,1 ,Bkgd_Black_Data
 };
-void Add_Bkgd_Black                    ( void ) { Add_Pic_On_Top(&Bkgd_Black_Pic);}
-void Del_Bkgd_Black                    ( void ) { Del_Pic(&Bkgd_Black_Pic)          ;}
+void Add_Bkgd_Black                    ( void ) 
+{ 
+   Set_Watermark_Layer (                 );
+   Add_Pic_On_Top      ( &Bkgd_Black_Pic );
+}
+void Del_Bkgd_Black                    ( void ) {
+   Del_Pic               ( &Bkgd_Black_Pic );
+   Reset_Watermark_Layer (                 );
+}
 struct Struct_Pic* Read_Bkgd_Black_Pic ( void ) { return &Bkgd_Black_Pic            ;}
 //------------------------------------------------------
 //--------------Pics Data----------------------------------

@@ -10,6 +10,7 @@
 #include "debug.h"
 #include "tpanel.h"
 #include "bkgd_pic.h"
+#include "log_pic.h"
 
 //--------------Pics Data----------------------------------
 uint16_t Accept_Data_Raw[] RODATA=
@@ -36,8 +37,8 @@ void Accept_Destr(void)
 //--------------Events----------------------------------
 struct Struct_Pic_Events Accept_Events[] RODATA=
 {
-{ { 0 ,0 ,0 ,0 } ,0          ,0 ,{Accept_Constr ,Del_Accept ,Accept_Destr}} ,// On_Create
-{ { 0 ,0 ,0 ,0 } ,Any_Button ,0 ,{Rien          ,Rien       ,Rien}}         ,
+{ { 0  ,0   ,0  ,0 }   ,0          ,0 ,{Accept_Constr ,Del_Accept ,Accept_Destr} }       ,// On_Create
+{ { 26 ,212 ,66 ,252 } ,Any_Button ,1 ,{Rien          ,Rien       ,Del_Accept}         } ,
 };
 //--------------Pics Info----------------------------------
 //
@@ -72,8 +73,8 @@ void Reject_Destr(void)
 //--------------Events----------------------------------
 struct Struct_Pic_Events Reject_Events[] RODATA=
 {
-   { { 0 ,0 ,0 ,0 } ,0          ,0 ,{Reject_Constr ,Del_Reject ,Reject_Destr} } ,// On_Create
-   { { 0 ,0 ,0 ,0 } ,Any_Button ,0 ,{Rien          ,Rien       ,Rien }}         ,
+   { { 0  ,0   ,0  ,0 }   ,0          ,0 ,{Reject_Constr ,Del_Reject ,Reject_Destr} } ,// On_Create
+   { { 26 ,212 ,66 ,252 } ,Any_Button ,1 ,{Rien          ,Rien       ,Del_Reject }}   ,
 };
 //--------------Pics Info----------------------------------
 //
@@ -87,8 +88,13 @@ void Del_Reject            (void)   {Del_Pic(&Reject_Pic);}
 void Add_Accept_Or_Reject(void)
 {
    Add_Bkgd_Black();
-   if(Psw_Compare())
+   if(Psw_Compare())  {
       Add_Accept();
-   else 
+      Copy_Pass2Log(Read_Pass_String(),true);
+   }
+   else {
       Add_Reject();
+      Copy_Pass2Log(Read_Pass_String(),false);
+   }
 }
+

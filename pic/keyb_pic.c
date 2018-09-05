@@ -34,19 +34,19 @@ void Keyb_Destr(void)
 //--------------Events----------------------------------
 struct Struct_Pic_Events Keyb_Events[] RODATA=
 {
-{ {  0 ,0       ,0   ,0       } ,Invalid_Button ,0 ,{Keyb_Constr     ,Rien ,Keyb_Destr}           } ,// On_Create
-{ {  4 ,4 +73   ,71  ,71 +53 }  ,Invalid_Button ,1 ,{Add_Pass_Digit1 ,Rien ,Rien}                 } ,
-{ { 83 ,83 +73  ,71  ,71 +53 }  ,Invalid_Button ,1 ,{Add_Pass_Digit2 ,Rien ,Rien}                 } ,
-{ {161 ,161 +73 ,71  ,71 +53 }  ,Invalid_Button ,1 ,{Add_Pass_Digit3 ,Rien ,Rien}                 } ,
-{ {  4 ,4 +73   ,131 ,131 +53 } ,Invalid_Button ,1 ,{Add_Pass_Digit4 ,Rien ,Rien}                 } ,
-{ { 83 ,83 +73  ,131 ,131 +53 } ,Invalid_Button ,1 ,{Add_Pass_Digit5 ,Rien ,Rien}                 } ,
-{ {161 ,161 +73 ,131 ,131 +53 } ,Invalid_Button ,1 ,{Add_Pass_Digit6 ,Rien ,Rien}                 } ,
-{ {  4 ,4 +73   ,189 ,189 +53 } ,Invalid_Button ,1 ,{Add_Pass_Digit7 ,Rien ,Rien}                 } ,
-{ { 83 ,83 +73  ,189 ,189 +53 } ,Invalid_Button ,1 ,{Add_Pass_Digit8 ,Rien ,Rien}                 } ,
-{ {161 ,161 +73 ,189 ,189 +53 } ,Invalid_Button ,1 ,{Add_Pass_Digit9 ,Rien ,Rien}                 } ,
-{ { 83 ,83 +73  ,248 ,319 }     ,Invalid_Button ,1 ,{Add_Pass_Digit0 ,Rien ,Rien}                 } ,
-{ {  4 ,4 +73   ,248 ,319 }     ,Invalid_Button ,1 ,{Del_Pass_Digit  ,Rien ,Rien}                 } ,
-{ {161 ,161 +73 ,248 ,319 }     ,Invalid_Button ,1 ,{Rien            ,Rien ,Add_Accept_Or_Reject} } ,
+{ {  0 ,0       ,0   ,0       } ,Invalid_Button ,0 ,{Keyb_Constr     ,Rien           ,Keyb_Destr}           } ,// On_Create
+{ {  4 ,4 +73   ,71  ,71 +53 }  ,Invalid_Button ,1 ,{Add_Pass_Digit1 ,Rien           ,Rien}                 } ,
+{ { 83 ,83 +73  ,71  ,71 +53 }  ,Invalid_Button ,1 ,{Add_Pass_Digit2 ,Rien           ,Rien}                 } ,
+{ {161 ,161 +73 ,71  ,71 +53 }  ,Invalid_Button ,1 ,{Add_Pass_Digit3 ,Rien           ,Rien}                 } ,
+{ {  4 ,4 +73   ,131 ,131 +53 } ,Invalid_Button ,1 ,{Add_Pass_Digit4 ,Rien           ,Rien}                 } ,
+{ { 83 ,83 +73  ,131 ,131 +53 } ,Invalid_Button ,1 ,{Add_Pass_Digit5 ,Rien           ,Rien}                 } ,
+{ {161 ,161 +73 ,131 ,131 +53 } ,Invalid_Button ,1 ,{Add_Pass_Digit6 ,Rien           ,Rien}                 } ,
+{ {  4 ,4 +73   ,189 ,189 +53 } ,Invalid_Button ,1 ,{Add_Pass_Digit7 ,Rien           ,Rien}                 } ,
+{ { 83 ,83 +73  ,189 ,189 +53 } ,Invalid_Button ,1 ,{Add_Pass_Digit8 ,Rien           ,Rien}                 } ,
+{ {161 ,161 +73 ,189 ,189 +53 } ,Invalid_Button ,1 ,{Add_Pass_Digit9 ,Rien           ,Rien}                 } ,
+{ { 83 ,83 +73  ,248 ,319 }     ,Invalid_Button ,1 ,{Add_Pass_Digit0 ,Rien           ,Rien}                 } ,
+{ {  4 ,4 +73   ,248 ,319 }     ,Invalid_Button ,1 ,{Del_Pass_Digit  ,Del_Pass_Digit ,Rien}                 } ,
+{ {161 ,161 +73 ,248 ,319 }     ,Invalid_Button ,1 ,{Rien            ,Rien           ,Add_Accept_Or_Reject} } ,
 };
 //--------------Pics Info----------------------------------
 struct Struct_Pic Keyb_Pic RODATA=

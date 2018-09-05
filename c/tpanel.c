@@ -37,8 +37,8 @@ State*               TPanel_Sm        ;//variable que lleva cuenta del estado de
 unsigned char        Delay_Before_Drag;
 struct TPanel_Struct Tp               ;
 
-State**  Tpanel     ( void ) { return &TPanel_Sm                ;}
-void     Tpanel_Rti ( void ) { Send_Event(Tp.Touched,&TPanel_Sm);}
+State**  Tpanel     ( void ) { return &TPanel_Sm               ;}
+void     Tpanel_Rti ( void ) { Send_Event(ANY_Event,&TPanel_Sm);}
 //--------------------------------------------------------------
 void     Print_TPanel_Raw  (void)
 {
@@ -66,6 +66,7 @@ void Test_Touched      (void)
                Tp.Y<=TPanel_Limits.Max_Y &&
                Tp.Y>=TPanel_Limits.Min_Y)?0x01:0x00)) &
                0x03;                                     // solo me quedo con 2 bits
+  Atomic_Send_Event(Tp.Touched,Actual_Sm());
 }
 unsigned char TPanel_Scaled_X( void ) { return Tp.X_Scaled;}
 unsigned char TPanel_Scaled_Y( void ) { return Tp.Y_Scaled;}
@@ -102,10 +103,10 @@ void On_Drag         (void)            //escala y busca un handler
 }
 void On_Release         (void)
 {
-   struct Struct_Pic_Pos P={0};
-   if(Find_Event_Handler(None_Button,Tp.X_Scaled,Tp.Y_Scaled,2)) {
-      }
-   Set_Mask_Pic (&P);
+   struct Struct_Pic_Pos P= { 0 ,0 ,0 ,0};
+   Find_Event_Handler(None_Button,Tp.X_Scaled,Tp.Y_Scaled,2);
+   Set_Mask_Pic             ( &P );
+   Layer_Structure_Modified (    );
 }
 //--------------------------------------------------------------------
 void Init_Tpanel(void)
@@ -157,26 +158,26 @@ void Read_X ( void ) { Tp.X= Read_Adc(12);} //cuando hago feed de X, leo en el A
 void Read_Y ( void ) { Tp.Y= Read_Adc(13);} //cuando hago feed de Y, leo en el ADC del X, la coordenada Y
 //--------------------------------------------------------------------
 void Read_X_And_Feed_Y_And_Free_X                  ( void ) { Read_X();Feed_Y_And_Free_X();}
-void Read_Y_And_Test_Touched_And_Feed_X_And_Free_Y ( void ) { Read_Y();Test_Touched();Feed_X_And_Free_Y();}
+void Read_Y_And_Feed_X_And_Free_Y_And_Test_Touched ( void ) { Read_Y();Feed_X_And_Free_Y();Test_Touched();}
 //----------------------------------------------------
 State Initializing   [ ]=
 {
-{ ANY_Event          ,Feed_X_And_Free_Y                             ,Reading_Y       } ,
+{ ANY_Event          ,Feed_X_And_Free_Y                             ,Reading_Y       },
 };
 State Reading_Y      [ ]=
 {
-{ ANY_Event          ,Read_X_And_Feed_Y_And_Free_X                  ,Reading_X       } ,
+{ ANY_Event          ,Read_X_And_Feed_Y_And_Free_X                  ,Reading_X       },
 };
 State Reading_X      [ ]=
 {
-{ ANY_Event          ,Read_Y_And_Test_Touched_And_Feed_X_And_Free_Y ,Testing_Touched } ,
+{ ANY_Event          ,Read_Y_And_Feed_X_And_Free_Y_And_Test_Touched ,Testing_Touched },
 };
 State Testing_Touched[ ]=
 {
-{ None_Touched_Event ,Read_X_And_Feed_Y_And_Free_X                  ,Reading_X       } ,
-{ Click_Event        ,On_Click                                      ,Reading_Y       } ,
-{ Drag_Event         ,On_Drag                                       ,Reading_Y       } ,
-{ Released_Event     ,On_Release                                    ,Reading_Y       } ,
-{ ANY_Event          ,Read_X_And_Feed_Y_And_Free_X                  ,Reading_X       } ,
+{ None_Touched_Event ,Rien                                          ,Reading_Y       },
+{ Click_Event        ,On_Click                                      ,Reading_Y       },
+{ Drag_Event         ,On_Drag                                       ,Reading_Y       },
+{ Released_Event     ,On_Release                                    ,Reading_Y       },
+{ ANY_Event          ,Rien                                          ,Testing_Touched },
 };
 //----------------------------------------------------

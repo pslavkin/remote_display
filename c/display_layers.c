@@ -17,7 +17,6 @@
 static State
    Idle[],
    Updating[],
-   Masking[],
    Clearing_Lcd[],
    Aborting[];
 //------------------------------------------------------------------------------------
@@ -25,6 +24,7 @@ struct Struct_Pic_Layer Pic_Layers[MAX_PICS+1];
 unsigned char           Pic_Layers_Used       ;
 unsigned char           Layer_Modified        ;
 unsigned char           Actual_Layer          ;
+unsigned char           Watermark_Layer       ;
 State*                  Display_Layers_Sm     ;
 // -------------------------------------------------------------------------------------
 void Set_Pic_In_Hole(unsigned char Hole,struct Struct_Pic* Pic)
@@ -111,8 +111,10 @@ void Blink(void)
       if(!--Pic_Layers[Layer].Actual_Blink)
      {
       Pic_Layers[Layer].Actual_Blink=Pic_Layers[Layer].Blink_Period;
-      if(Pic_Layers[Layer].Pic->Events->Handler[1]==Rien) Pic_Layers[Layer].Blink_State^=0x01;
-      else Pic_Layers[Layer].Pic->Events->Handler[1]();
+      if(Pic_Layers[Layer].Pic->Events->Handler[1]==Rien)
+         Pic_Layers[Layer].Blink_State^=0x01;
+      else 
+         Pic_Layers[Layer].Pic->Events->Handler[1]();
       Layer_Structure_Modified();
      }
 }
@@ -193,9 +195,10 @@ State**  Display_Layers      ( void ) { return &Display_Layers_Sm               
 void     Display_Layers_Rti  ( void ) { Atomic_Send_Event(ANY_Event,Display_Layers());}
 void     Init_Display_Layers ( void )
 {
- Pic_Layers_Used   = 0;
- Layer_Modified    = 0;
- Display_Layers_Sm = Idle;
+ Pic_Layers_Used      = 0;
+ Layer_Modified       = 0;
+ Display_Layers_Sm    = Idle;
+ Watermark_Layer      = 0;
  New_Periodic_Func_Schedule(5,Blink);
  Add_Welcome();
 }
@@ -212,10 +215,12 @@ void Next_Layer      (void)
       Atomic_Send_Event(All_Updated_Event,Display_Layers());
 }
 // -------------------------------------------------------------------------------------
-void Send_Next_Layer_Event (void) {Atomic_Send_Event(Next_Layer_Event,Display_Layers());} 
+void Send_Next_Layer_Event ( void ) { Atomic_Send_Event(Next_Layer_Event,Display_Layers());}
+void Set_Watermark_Layer   ( void ) { Watermark_Layer = Pic_Layers_Used                   ;}
+void Reset_Watermark_Layer ( void ) { Watermark_Layer = 0                                 ;}
 void Idle_Structure_Modified    (void)
 {
-   Actual_Layer=0;
+   Actual_Layer=Watermark_Layer;
    Layer_Modified&=~0x02;
    Send_Next_Layer_Event();
 }
@@ -224,14 +229,9 @@ void Idle_Clear_Lcd    (void)
    Layer_Modified&=~0x04;
    Pic2Lcd(Read_Bkgd_Black_Pic());
 }
-void Mask2Lcd(void)
-{
-   Pic2Lcd(Read_Mask_Pic());
-}
 void All_Displayed      (void)   {Atomic_Send_Event(All_Displayed_Event,Display_Layers());}
 // -------------------------------------------------------------------------------------
-void Mask2Lcd_And_Does_Layer_Modified ( void ) { Mask2Lcd()       ;Does_Layer_Modified();}
-void Update_Mask_Pic_And_Mask2Lcd     ( void ) { Update_Mask_Pic();Mask2Lcd()           ;}
+void Update_Mask_Pic_And_Does_Layer_Modified ( void ) { Update_Mask_Pic();Does_Layer_Modified();}
 // -------------------------------------------------------------------------------------
 static State Aborting    [ ] RODATA =
 {
@@ -247,21 +247,13 @@ static State Idle        [ ] RODATA =
                                                                        };
 static State Updating    [ ] RODATA =
 {
-{ Next_Sub_Pic_Event       ,Sub_Pic2Lcd                  ,Updating     },
-{ Next_Layer_Event         ,Next_Layer                   ,Updating     },
-{ All_Updated_Event        ,Update_Mask_Pic_And_Mask2Lcd ,Masking      },
-{ Structure_Modified_Event ,Rien                         ,Aborting     },
-{ Clear_Lcd_Event          ,Rien                         ,Aborting     },
-{ ANY_Event                ,Rien                         ,Updating     },
-                                                                       };
-static State Masking     [ ] RODATA =
-{
-{ Next_Sub_Pic_Event       ,Sub_Pic2Lcd                  ,Masking      },
-{ Next_Layer_Event         ,Does_Layer_Modified          ,Idle         },
-{ Structure_Modified_Event ,Rien                         ,Aborting     },
-{ Clear_Lcd_Event          ,Rien                         ,Aborting     },
-{ ANY_Event                ,Rien                         ,Masking      },
-                                                                       };
+{ Next_Sub_Pic_Event       ,Sub_Pic2Lcd                             ,Updating } ,
+{ Next_Layer_Event         ,Next_Layer                              ,Updating } ,
+{ All_Updated_Event        ,Update_Mask_Pic_And_Does_Layer_Modified ,Idle     } ,
+{ Structure_Modified_Event ,Rien                                    ,Aborting } ,
+{ Clear_Lcd_Event          ,Rien                                    ,Aborting } ,
+{ ANY_Event                ,Rien                                    ,Updating } ,
+};
 static State Clearing_Lcd[ ] RODATA =
 {
 { Next_Sub_Pic_Event       ,Sub_Pic2Lcd                  ,Clearing_Lcd },
