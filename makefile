@@ -14,6 +14,7 @@ include ${ROOT}/tools/makedefs
 VPATH =./cmsis 
 VPATH+=./board
 VPATH+=./drivers
+VPATH+=./flash
 VPATH+=./c
 VPATH+=./pic
 VPATH+=./pic/font_30x42
@@ -42,6 +43,7 @@ CFLAGS+=-D DISABLE_WDOG
 IPATH= ./cmsis 
 IPATH+=./board
 IPATH+=./drivers
+IPATH+=./flash
 IPATH+=./h
 IPATH+=./pic
 IPATH+=./pic/font_30x42
@@ -121,6 +123,13 @@ ${BINDIR}/app.axf: ${OBJDIR}/startup.o
 #${BINDIR}/app.axf: ${OBJDIR}/fsl_log.o
 #${BINDIR}/app.axf: ${OBJDIR}/fsl_str.o 
 ${BINDIR}/app.axf: ${OBJDIR}/fsl_bootloader_conf.o
+
+#../flash
+${BINDIR}/app.axf: ${OBJDIR}/fsl_ftfx_flexnvm.c
+
+
+
+
 #
 #SCATTERapp=app.ld
 #ENTRY_app=ResetISR

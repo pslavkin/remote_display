@@ -107,14 +107,14 @@ unsigned char Tpanel_Menu[] RODATA=
  "? Help\r\n"
 };
 //---------------------------------------------------------------------
-void Print_About_Menu   ( void ) { Send_NVData2Serial(sizeof(About_Menu)-1   ,(unsigned char*)About_Menu)    ;}
-void Print_Main_Menu    ( void ) { Send_NVData2Serial(sizeof(Main_Menu)-1    ,(unsigned char*)Main_Menu)     ;}
-void Print_Layers_Menu  ( void ) { Send_NVData2Serial(sizeof(Layers_Menu)-1  ,(unsigned char*)Layers_Menu)   ;}
-void Print_Working_Menu ( void ) { Send_NVData2Serial(sizeof(Working_Menu)-1 ,(unsigned char*)Working_Menu)  ;}
-void Print_Ftm_Menu     ( void ) { Send_NVData2Serial(sizeof(Ftm_Menu)-1     ,(unsigned char*)Ftm_Menu)      ;}
-void Print_Dma_Menu     ( void ) { Send_NVData2Serial(sizeof(Dma_Menu)-1     ,(unsigned char*)Dma_Menu)      ;}
-void Print_Adc_Menu     ( void ) { Send_NVData2Serial(sizeof(Adc_Menu)-1     ,(unsigned char*)Adc_Menu)      ;}
-void Print_Tpanel_Menu  ( void ) { Send_NVData2Serial(sizeof(Tpanel_Menu)-1     ,(unsigned char*)Tpanel_Menu);}
+void Print_About_Menu   ( void ) { Send_NVData2Serial(sizeof(About_Menu)-1   ,About_Menu)  ;}
+void Print_Main_Menu    ( void ) { Send_NVData2Serial(sizeof(Main_Menu)-1    ,Main_Menu)   ;}
+void Print_Layers_Menu  ( void ) { Send_NVData2Serial(sizeof(Layers_Menu)-1  ,Layers_Menu) ;}
+void Print_Working_Menu ( void ) { Send_NVData2Serial(sizeof(Working_Menu)-1 ,Working_Menu);}
+void Print_Ftm_Menu     ( void ) { Send_NVData2Serial(sizeof(Ftm_Menu)-1     ,Ftm_Menu)    ;}
+void Print_Dma_Menu     ( void ) { Send_NVData2Serial(sizeof(Dma_Menu)-1     ,Dma_Menu)    ;}
+void Print_Adc_Menu     ( void ) { Send_NVData2Serial(sizeof(Adc_Menu)-1     ,Adc_Menu)    ;}
+void Print_Tpanel_Menu  ( void ) { Send_NVData2Serial(sizeof(Tpanel_Menu)-1  ,Tpanel_Menu) ;}
 //--------------------------------------------------------------------
 State**  Serial_Session    (void)   {return &Serial_Session_Sm;} 
 void     Init_Serial_Session  (void)
