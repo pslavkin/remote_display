@@ -74,10 +74,10 @@ status_t FLEXNVM_Init(flexnvm_config_t *config)
 
     /* Set Flexnvm memory operation parameters */
     config->ftfxConfig.opsConfig.addrAligment.blockWriteUnitSize = FSL_FEATURE_FLASH_FLEX_NVM_BLOCK_WRITE_UNIT_SIZE;
-    config->ftfxConfig.opsConfig.addrAligment.sectorCmd          = FSL_FEATURE_FLASH_FLEX_NVM_SECTOR_CMD_ADDRESS_ALIGMENT;
-    config->ftfxConfig.opsConfig.addrAligment.sectionCmd         = FSL_FEATURE_FLASH_FLEX_NVM_SECTION_CMD_ADDRESS_ALIGMENT;
-    config->ftfxConfig.opsConfig.addrAligment.resourceCmd        = FSL_FEATURE_FLASH_FLEX_NVM_RESOURCE_CMD_ADDRESS_ALIGMENT;
-    config->ftfxConfig.opsConfig.addrAligment.checkCmd           = FSL_FEATURE_FLASH_FLEX_NVM_CHECK_CMD_ADDRESS_ALIGMENT;
+    config->ftfxConfig.opsConfig.addrAligment.sectorCmd = FSL_FEATURE_FLASH_FLEX_NVM_SECTOR_CMD_ADDRESS_ALIGMENT;
+    config->ftfxConfig.opsConfig.addrAligment.sectionCmd = FSL_FEATURE_FLASH_FLEX_NVM_SECTION_CMD_ADDRESS_ALIGMENT;
+    config->ftfxConfig.opsConfig.addrAligment.resourceCmd = FSL_FEATURE_FLASH_FLEX_NVM_RESOURCE_CMD_ADDRESS_ALIGMENT;
+    config->ftfxConfig.opsConfig.addrAligment.checkCmd = FSL_FEATURE_FLASH_FLEX_NVM_CHECK_CMD_ADDRESS_ALIGMENT;
 
     /* Set Flexnvm memory properties */
     config->ftfxConfig.flashDesc.blockBase = FSL_FEATURE_FLASH_FLEX_NVM_START_ADDRESS;
