@@ -16,6 +16,7 @@
 #include "adc.h"
 #include "tpanel.h"
 #include "pass_pic.h"
+#include "flash.h"
 
 State
    Parsing_Main   [ ],
@@ -24,15 +25,16 @@ State
    Parsing_Ftm    [ ],
    Parsing_Dma    [ ],
    Parsing_Adc    [ ],
-   Parsing_Tpanel [ ];
+   Parsing_Tpanel [ ],
+   Parsing_Flash  [ ];
 
 State* Serial_Session_Sm;
 //---------------------------------------------------------------------
-unsigned char About_Menu[] RODATA=
+char About_Menu[] RODATA=
 {
  "NOTO N1104 DCIV5.4\r\n"
 };
-unsigned char Main_Menu[] RODATA=
+char Main_Menu[] RODATA=
 {
  "NOTO N1104 Main menu\r\n"
  "A Working\r\n"
@@ -43,17 +45,18 @@ unsigned char Main_Menu[] RODATA=
  "F Ftm\r\n"
  "G Adc\r\n"
  "H Tpanel\r\n"
+ "I Flash\r\n"
  "R Reset\r\n"
  ". About\r\n"
  "? Help\r\n"
 };
-unsigned char Working_Menu[] RODATA=
+char Working_Menu[] RODATA=
 {
  "Working menu\r\n"
  "< Back\r\n"
  "? Help\r\n"
 };
-unsigned char Layers_Menu[] RODATA=
+char Layers_Menu[] RODATA=
 {
  "Layers menu\r\n"
  "A Actual Layer\r\n"
@@ -75,7 +78,7 @@ unsigned char Layers_Menu[] RODATA=
  "< Back\r\n"
  "? Help\r\n"
 };
-unsigned char Dma_Menu[] RODATA=
+char Dma_Menu[] RODATA=
 {
  "Dma menu\r\n"
  "A Print Destin\r\n"
@@ -84,7 +87,7 @@ unsigned char Dma_Menu[] RODATA=
  "< Back\r\n"
  "? Help\r\n"
 };
-unsigned char Ftm_Menu[] RODATA=
+char Ftm_Menu[] RODATA=
 {
  "Ftm menu\r\n"
  "A Clear OVF\r\n"
@@ -92,17 +95,30 @@ unsigned char Ftm_Menu[] RODATA=
  "< Back\r\n"
  "? Help\r\n"
 };
-unsigned char Adc_Menu[] RODATA=
+char Adc_Menu[] RODATA=
 {
  "Adc menu\r\n"
  "A Read Channel 12\r\n"
  "< Back\r\n"
  "? Help\r\n"
 };
-unsigned char Tpanel_Menu[] RODATA=
+char Tpanel_Menu[] RODATA=
 {
  "Tpanel menu\r\n"
  "A Print Raw\r\n"
+ "< Back\r\n"
+ "? Help\r\n"
+};
+char FlashMenu[] RODATA=
+{
+ "Flash menu\r\n"
+ "1 Init_Flash1\r\n"
+ "2 Init_Flash2\r\n"
+ "3 Init_Flash3\r\n"
+ "4 Init_Flash4\r\n"
+ "5 Init_Flash5\r\n"
+ "6 Init_Flash6\r\n"
+ "7 Init_Flash7\r\n"
  "< Back\r\n"
  "? Help\r\n"
 };
@@ -115,6 +131,7 @@ void Print_Ftm_Menu     ( void ) { Send_NVData2Serial(sizeof(Ftm_Menu)-1     ,Ft
 void Print_Dma_Menu     ( void ) { Send_NVData2Serial(sizeof(Dma_Menu)-1     ,Dma_Menu)    ;}
 void Print_Adc_Menu     ( void ) { Send_NVData2Serial(sizeof(Adc_Menu)-1     ,Adc_Menu)    ;}
 void Print_Tpanel_Menu  ( void ) { Send_NVData2Serial(sizeof(Tpanel_Menu)-1  ,Tpanel_Menu) ;}
+void Print_FlashMenu    ( void ) { Send_NVData2Serial(sizeof(FlashMenu)-1  ,FlashMenu)     ;}
 //--------------------------------------------------------------------
 State**  Serial_Session    (void)   {return &Serial_Session_Sm;} 
 void     Init_Serial_Session  (void)
@@ -132,6 +149,7 @@ State Parsing_Main   [ ]RODATA=
 { 'F'       ,Print_Ftm_Menu            ,Parsing_Ftm     },
 { 'G'       ,Print_Adc_Menu            ,Parsing_Adc     },
 { 'H'       ,Print_Tpanel_Menu         ,Parsing_Tpanel  },
+{ 'I'       ,Print_FlashMenu         ,Parsing_Flash  },
 { '.'       ,Print_About_Menu          ,Parsing_Main    },
 { '?'       ,Print_Main_Menu           ,Parsing_Main    },
 { ANY_Event ,Rien                      ,Parsing_Main    },
@@ -164,6 +182,7 @@ State Parsing_Layers [ ]RODATA=
 { '?'       ,Print_Layers_Menu         ,Parsing_Layers } ,
 { ANY_Event ,Rien                      ,Parsing_Layers } ,
 };
+
 State Parsing_Dma    [ ]RODATA=
 {
 { 'A'       ,Print_Destin              ,Parsing_Dma     },
@@ -172,7 +191,8 @@ State Parsing_Dma    [ ]RODATA=
 { '<'       ,Rien                      ,Parsing_Main    },
 { '?'       ,Print_Dma_Menu            ,Parsing_Dma     },
 { ANY_Event ,Rien                      ,Parsing_Dma     },
-                                                        };
+};
+
 State Parsing_Ftm    [ ]RODATA=
 {
 { 'A'       ,Ftm_Clear                 ,Parsing_Ftm     },
@@ -180,19 +200,35 @@ State Parsing_Ftm    [ ]RODATA=
 { '<'       ,Rien                      ,Parsing_Main    },
 { '?'       ,Print_Ftm_Menu            ,Parsing_Ftm     },
 { ANY_Event ,Rien                      ,Parsing_Ftm     },
-                                                        };
+};
+
 State Parsing_Adc    [ ]RODATA=
 {
 { 'A'       ,Print_Adc12               ,Parsing_Adc     },
 { '<'       ,Rien                      ,Parsing_Main    },
 { '?'       ,Print_Adc_Menu            ,Parsing_Adc     },
 { ANY_Event ,Rien                      ,Parsing_Adc     },
-                                                        };
+};
+
 State Parsing_Tpanel [ ]RODATA=
 {
 { 'A'       ,Print_TPanel_Raw          ,Parsing_Tpanel  },
 { '<'       ,Rien                      ,Parsing_Main    },
 { '?'       ,Print_Tpanel_Menu         ,Parsing_Tpanel  },
 { ANY_Event ,Rien                      ,Parsing_Tpanel  },
-                                                        };
+};
+
+State Parsing_Flash [ ]RODATA=
+{
+{ '1'       ,Init_Flash1     ,Parsing_Flash },
+{ '2'       ,Init_Flash2     ,Parsing_Flash },
+{ '3'       ,Init_Flash3     ,Parsing_Flash },
+{ '4'       ,Init_Flash4     ,Parsing_Flash },
+{ '5'       ,Init_Flash5     ,Parsing_Flash },
+{ '6'       ,Init_Flash6     ,Parsing_Flash },
+{ '7'       ,Init_Flash7     ,Parsing_Flash },
+{ '<'       ,Rien            ,Parsing_Main  },
+{ '?'       ,Print_FlashMenu ,Parsing_Flash },
+{ ANY_Event ,Rien            ,Parsing_Flash },
+};
 //------------------------------------------------------------------------------

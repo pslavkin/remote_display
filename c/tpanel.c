@@ -42,7 +42,7 @@ void     Tpanel_Rti ( void ) { Send_Event(ANY_Event,&TPanel_Sm);}
 //--------------------------------------------------------------
 void     Print_TPanel_Raw  (void)
 {
-   unsigned char *T=Serial_Tx_As_PChar(0);
+   char *T=Serial_Tx_As_PChar(0);
    Int2Bcd  ( T+0  ,Tp.X        );
    Int2Bcd  ( T+6  ,Tp.Y        );
    Int2Bcd  ( T+12 ,Tp.X_Scaled );

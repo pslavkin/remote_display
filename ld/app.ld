@@ -1,7 +1,9 @@
 MEMORY
 {
   /* Define each memory region */
-  PROGRAM_FLASH (rx): ORIGIN = 0x0,   LENGTH       = 0x80000  /* 512K bytes (alias Flash) */
+  PROGRAM_FLASH (rx): ORIGIN = 0x0,   LENGTH       = 0x07000  /* 512K bytes (alias Flash) */
+  /*PROGRAM_FLASH (rx): ORIGIN = 0x0,   LENGTH       = 0x80000  /* 512K bytes (alias Flash) */
+  USER_FLASH (rx): ORIGIN = 0x7000,   LENGTH       = 0x00400  /* 512K bytes (alias Flash) */
   SRAM_UPPER (rwx):   ORIGIN = 0x20000000,  LENGTH = 0x8000   /* 32K bytes (alias RAM) */
   SRAM_LOWER (rwx):   ORIGIN = 0x1fff8000,  LENGTH = 0x8000   /* 32K bytes (alias RAM2) */
   FLEX_RAM (rwx):     ORIGIN = 0x14000000,  LENGTH = 0x1000   /* 4K bytes (alias RAM3) */
@@ -101,6 +103,11 @@ SECTIONS
 
     _etext = .;
         
+    .test : ALIGN(4)
+    {
+        *(.testi*)
+        . = ALIGN(4);
+    } > USER_FLASH
     /* DATA section for SRAM_LOWER */
     .data_RAM2 : ALIGN(4)
     {
@@ -112,6 +119,7 @@ SECTIONS
         *(.data.$SRAM_LOWER*)
         . = ALIGN(4) ;
         PROVIDE(__end_data_RAM2 = .) ;
+
      } > SRAM_LOWER AT>PROGRAM_FLASH
 
     /* DATA section for FLEX_RAM */
@@ -123,6 +131,7 @@ SECTIONS
         *(.ramfunc.$FLEX_RAM)
         *(.data.$RAM3*)
         *(.data.$FLEX_RAM*)
+        *(.data.FLEX_RAM*)
         . = ALIGN(4) ;
         PROVIDE(__end_data_RAM3 = .) ;
      } > FLEX_RAM AT>PROGRAM_FLASH

@@ -2,8 +2,8 @@
 OBJDIR?=obj
 LIBDIR?=lib
 BINDIR?=exe
-PREFIX:=/opt/arm-none-eabi-7/bin/arm-none-eabi
-#PREFIX:=arm-none-eabi
+#PREFIX:=/opt/arm-none-eabi-7/bin/arm-none-eabi
+PREFIX:=arm-none-eabi
 CC=${PREFIX}-gcc
 
 # The command for extracting images from the linked executables.

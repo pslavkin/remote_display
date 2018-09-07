@@ -3,7 +3,7 @@
 #include "state_machine.h"
 
 //-----------------------------------------------------------------------
-#define SERIAL_TX_BUFFER   50    //considero el maximo la lista de codigos de una lista de 10 codigos cada uno de 17 bytes
+#define SERIAL_TX_BUFFER   400    //considero el maximo la lista de codigos de una lista de 10 codigos cada uno de 17 bytes
 //-----------------------------------------------------------------------
 enum Serial_Tx_Events {
             Byte_Ready_Event            = 0x00A0,
@@ -20,7 +20,7 @@ extern void       Init_Serial_Tx ( void );
 extern State**    Serial_Tx      ( void );
 //--------------------------------------------------------------------
 extern unsigned int*    Serial_Tx_As_PInt  ( unsigned char Pos );
-extern unsigned char*   Serial_Tx_As_PChar ( unsigned char Pos );
+extern char*   Serial_Tx_As_PChar ( unsigned char Pos );
 extern unsigned char    Serial_Tx_As_Char  ( unsigned char Pos );
 //--------------------------------------------------------------------
 extern void       Send_NVData2Serial_Ans  (unsigned int Length,char *Data);

@@ -349,7 +349,7 @@ status_t FTFx_CMD_Erase(ftfx_config_t *config,
     /* the start address will increment to the next sector address
      * until it reaches the endAdddress */
     while (start <= endAddress)
-    {
+   {
         /* preparing passing parameter to erase a flash block */
         kFCCOBx[0] = BYTE2WORD_1_3(FTFx_ERASE_SECTOR, start);
 
@@ -1187,19 +1187,19 @@ static status_t ftfx_command_sequence(ftfx_config_t *config)
 {
     uint8_t registerValue;
 
-#if FTFx_DRIVER_IS_FLASH_RESIDENT
+//#if FTFx_DRIVER_IS_FLASH_RESIDENT
     /* clear RDCOLERR & ACCERR & FPVIOL flag in flash status register */
-    FTFx->FSTAT = FTFx_FSTAT_RDCOLERR_MASK | FTFx_FSTAT_ACCERR_MASK | FTFx_FSTAT_FPVIOL_MASK;
-
-    /* Since the value of ARM function pointer is always odd, but the real start address
-     * of function memory should be even, that's why +1 operation exist. */
-    callFtfxRunCommand_t callFtfxRunCommand = (callFtfxRunCommand_t)((uint32_t)config->runCmdFuncAddr + 1);
-
-    /* We pass the ftfx_fstat address as a parameter to flash_run_comamnd() instead of using
-     * pre-processed MICRO sentences or operating global variable in flash_run_comamnd()
-     * to make sure that flash_run_command() will be compiled into position-independent code (PIC). */
-    callFtfxRunCommand((FTFx_REG8_ACCESS_TYPE)(&FTFx->FSTAT));
-#else
+//    FTFx->FSTAT = FTFx_FSTAT_RDCOLERR_MASK | FTFx_FSTAT_ACCERR_MASK | FTFx_FSTAT_FPVIOL_MASK;
+//
+//    /* Since the value of ARM function pointer is always odd, but the real start address
+//     * of function memory should be even, that's why +1 operation exist. */
+//    callFtfxRunCommand_t callFtfxRunCommand = (callFtfxRunCommand_t)((uint32_t)config->runCmdFuncAddr + 1);
+//
+//    /* We pass the ftfx_fstat address as a parameter to flash_run_comamnd() instead of using
+//     * pre-processed MICRO sentences or operating global variable in flash_run_comamnd()
+//     * to make sure that flash_run_command() will be compiled into position-independent code (PIC). */
+//    callFtfxRunCommand((FTFx_REG8_ACCESS_TYPE)(&FTFx->FSTAT));
+//#else
     /* clear RDCOLERR & ACCERR & FPVIOL flag in flash status register */
     FTFx->FSTAT = FTFx_FSTAT_RDCOLERR_MASK | FTFx_FSTAT_ACCERR_MASK | FTFx_FSTAT_FPVIOL_MASK;
 
@@ -1208,10 +1208,10 @@ static status_t ftfx_command_sequence(ftfx_config_t *config)
 
     /* Check CCIF bit of the flash status register, wait till it is set.
      * IP team indicates that this loop will always complete. */
-    while (!(FTFx->FSTAT & FTFx_FSTAT_CCIF_MASK))
-    {
-    }
-#endif /* FTFx_DRIVER_IS_FLASH_RESIDENT */
+//    while (!(FTFx->FSTAT & FTFx_FSTAT_CCIF_MASK))
+//    {
+//    }
+//#endif /* FTFx_DRIVER_IS_FLASH_RESIDENT */
 
     /* Check error bits */
     /* Get flash status register value */

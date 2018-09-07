@@ -5,7 +5,7 @@
 #define String_Copy(Source,Destiny,Length)   String_Copy_Backward(Source,Destiny,Length)
 extern uint8_t          String_Copy_Until         ( char* Source,char* Destiny,char Pattern, uint8_t Max                                                                        );
 extern void             String_Copy_Forward       ( unsigned char* Source,unsigned char* Destiny,unsigned int Length                                                            );
-extern unsigned char    Find_Char_On_String       ( unsigned char* String,unsigned char Exp,unsigned int Length                                                                 );
+extern unsigned char    Find_Char_On_String       ( char* String,unsigned char Exp,unsigned int Length                                                                 );
 extern void             String_Copy_Backward      ( unsigned char* Source,unsigned char* Destiny,unsigned int Length                                                            );
 extern unsigned char    String_Cmp                ( unsigned char* A,unsigned char* B,unsigned char Length                                                                      );
 extern unsigned char    Long_Compare              ( unsigned long* A,unsigned long*  B                                                                                          );

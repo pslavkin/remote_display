@@ -14,7 +14,6 @@ include ${ROOT}/tools/makedefs
 VPATH =./cmsis 
 VPATH+=./board
 VPATH+=./drivers
-VPATH+=./flash
 VPATH+=./c
 VPATH+=./pic
 VPATH+=./pic/font_30x42
@@ -43,7 +42,6 @@ CFLAGS+=-D DISABLE_WDOG
 IPATH= ./cmsis 
 IPATH+=./board
 IPATH+=./drivers
-IPATH+=./flash
 IPATH+=./h
 IPATH+=./pic
 IPATH+=./pic/font_30x42
@@ -90,6 +88,7 @@ ${BINDIR}/app.axf: ${OBJDIR}/dma.o
 ${BINDIR}/app.axf: ${OBJDIR}/ftm.o
 ${BINDIR}/app.axf: ${OBJDIR}/tpanel.o
 ${BINDIR}/app.axf: ${OBJDIR}/adc.o
+${BINDIR}/app.axf: ${OBJDIR}/flash.o
 #../pics
 ${BINDIR}/app.axf: ${OBJDIR}/welcome_pic.o
 ${BINDIR}/app.axf: ${OBJDIR}/keyb_pic.o
@@ -125,8 +124,10 @@ ${BINDIR}/app.axf: ${OBJDIR}/startup.o
 ${BINDIR}/app.axf: ${OBJDIR}/fsl_bootloader_conf.o
 
 #../flash
-${BINDIR}/app.axf: ${OBJDIR}/fsl_ftfx_flexnvm.c
-
+#${BINDIR}/app.axf: ${OBJDIR}/fsl_ftfx_flexnvm.o
+#${BINDIR}/app.axf: ${OBJDIR}/fsl_ftfx_cache.o
+#${BINDIR}/app.axf: ${OBJDIR}/fsl_ftfx_flash.o
+#${BINDIR}/app.axf: ${OBJDIR}/fsl_ftfx_controller.o
 
 
 

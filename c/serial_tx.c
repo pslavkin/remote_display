@@ -10,12 +10,12 @@
 #include "type_conversion.h"
 
 static State
-   Idle        [],
-   Transmiting    [],
-   Waiting_Last_Byte [];
+   Idle             [ ],
+   Transmiting      [ ],
+   Waiting_Last_Byte[ ];
 //--------------------------------------------------------------------------
-State* Serial_Tx_Sm;             
-static unsigned char       Tx_Buffer[SERIAL_TX_BUFFER];  
+State*                     Serial_Tx_Sm;
+static char                Tx_Buffer[SERIAL_TX_BUFFER];
 struct Serial_Tx_Message   Actual_Print_Message;
 //--------------------------------------------------------------------------
 State** Serial_Tx (void)      {return &Serial_Tx_Sm;}
@@ -25,9 +25,9 @@ void  Init_Serial_Tx (void)
  Init_Serial_Tx_Fifo();
 }
 //------------------------------------------------------------------------------
-unsigned int*  Serial_Tx_As_PInt (unsigned char Pos)  {return (unsigned int*) (Tx_Buffer+Pos);}
-unsigned char*    Serial_Tx_As_PChar   (unsigned char Pos)  {return (Tx_Buffer+Pos);}
-unsigned char     Serial_Tx_As_Char (unsigned char Pos)  {return *Serial_Tx_As_PChar(Pos);}
+unsigned int*  Serial_Tx_As_PInt  ( unsigned char Pos ) { return (unsigned int*) (Tx_Buffer+Pos);}
+char*          Serial_Tx_As_PChar ( unsigned char Pos ) { return (Tx_Buffer+Pos)                ;}
+unsigned char  Serial_Tx_As_Char  ( unsigned char Pos ) { return *Serial_Tx_As_PChar(Pos)       ;}
 //------------------------------------------------------------------------------
 void Search_Next  (void)      {Atomic_Send_Event(Read_Message_Type(),Serial_Tx());}
 void Load_Next    (void)      {Actual_Print_Message=Atomic_Read_Serial_Tx_Message();}
@@ -43,18 +43,18 @@ void Serial_Print (void)            //rutina que imprime n bytes...
 }
 void Ans2Application (void)      {Atomic_Send_Event(Transmit_Complete_Event,Actual_Print_Message.Sm);}
 //------------------------------------------------------------------------------
-void Send_NV2Serial_Ans (unsigned int Length,unsigned char *Data,unsigned char Type,State** Sm) //manda datos NO VOLATILES por el serial
+void Send_NV2Serial_Ans (unsigned int Length,char *Data,unsigned char Type,State** Sm) //manda datos NO VOLATILES por el serial
 {
  Atomic_Add_Serial_Tx_Message(Data,Length,Type,Sm);
  Search_Next();
 }
 void Send_V2Serial_Ans(unsigned int Length,char *Data,unsigned char Type,State** Sm)   //manda datos NO VOLATILES por el serial
 {
- String_Copy(Data,Serial_Tx_As_PChar(0),Length);
+ String_Copy((unsigned char*)Data,(unsigned char*)Serial_Tx_As_PChar(0),Length);
  Send_NV2Serial_Ans(Length,Serial_Tx_As_PChar(0),Type,Sm);
 }
-void Send_NVData2Serial_Ans   (unsigned int Length,char *Data) {Send_NV2Serial_Ans(Length,Data,Transmit_Data_Message_Event,Actual_Sm());}
-void Send_VData2Serial_Ans (unsigned int Length,char *Data) {Send_V2Serial_Ans(Length,Data,Transmit_Data_Message_Event,Actual_Sm());}
+void Send_NVData2Serial_Ans ( unsigned int Length,char *Data ) { Send_NV2Serial_Ans(Length,Data,Transmit_Data_Message_Event,Actual_Sm());}
+void Send_VData2Serial_Ans  ( unsigned int Length,char *Data ) { Send_V2Serial_Ans(Length,Data,Transmit_Data_Message_Event,Actual_Sm()) ;}
 //------------------------------------------------------------------------------
 void Send_NLine2Serial                  ( void                                                   ) { Send_NVData2Serial(2,"\r\n")                                                                       ;}
 void Send_NVData2Serial                 ( unsigned int Length,char *Data                         ) { Send_NV2Serial_Ans(Length,Data,Transmit_Data_Message_Event,Empty_State_Machine)                                    ;}

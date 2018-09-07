@@ -32,7 +32,7 @@ __attribute__ ((used,section(".FlashConfig"))) const struct {
     unsigned int word2;
     unsigned int word3;
     unsigned int word4;
-} Flash_Config = {0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFE};	//liberado arranca en ROM
+} Flash_Config = {0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFE};//liberado arranca en ROM
 //} Flash_Config = {0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFF0BFE};	//liberado arranca en FLASH (hay que borrar todo para volver!)
 
 //*****************************************************************************

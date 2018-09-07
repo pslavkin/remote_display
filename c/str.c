@@ -26,7 +26,7 @@ uint8_t String_Copy_Until(char* Source,char* Destiny,char Pattern, uint8_t Max)
    Destiny[i]='\0';
    return i;
 }
-unsigned char Find_Char_On_String(unsigned char* String,unsigned char Exp,unsigned int Length)
+unsigned char Find_Char_On_String(char* String,unsigned char Exp,unsigned int Length)
 {
  unsigned int i;
  for(i=0;i<Length && String[i]!=Exp;i++);
