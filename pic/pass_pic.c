@@ -14,10 +14,18 @@
 uint16_t *Pass_Data[9]; //con 8 alcanza
 char Pass_String[9]      = "";
 
+void Pass_Destr(void)
+{
+}
+void Pass_Constr(void)
+{
+   String_Copy_Until(Read_RLog()->Line[0],Read_Pass_String(),' ',9);
+   Pass_String2Pic();
+}
 struct Struct_Pic_Events Pass_Events[] =
 {
- {{0 ,0   ,0 ,0}  ,Invalid_Button ,0 ,{Init_Pass ,Rien ,Rien}}    ,// On_Create
- {{0 ,239 ,0 ,42} ,Invalid_Button ,1 ,{Rien      ,Rien ,Add_Log}} ,
+ {{0 ,0   ,0 ,0}  ,Invalid_Button ,0 ,{Pass_Constr ,Rien ,Pass_Destr}} ,// On_Create
+ {{0 ,239 ,0 ,42} ,Invalid_Button ,1 ,{Rien        ,Rien ,Add_Log}}    ,
 };
 
 char* Read_Pass_String(void)
@@ -34,11 +42,6 @@ void Pass_String2Pic(void)
    char Buff[sizeof ( Pass_String )];
    String_Padd ( Pass_String ,Buff      ,sizeof(Pass_String ),' ');
    String2Pic  ( Buff        ,&Pass_Pic ,&Font_30x42_Pic );
-}
-void Init_Pass(void)
-{
-   Pass_String[0]='\0';
-   Pass_String2Pic();
 }
 
 void Add_Pass ( void ) { Add_Pic_On_Top(&Pass_Pic);}

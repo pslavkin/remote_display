@@ -23,7 +23,7 @@ void Init_Ftm3C0(void)
 {
    CLOCK_EnableClock(kCLOCK_Ftm3);
    FTM3->CONTROLS[0].CnSC = 0x00000069;      //habilita irq pero no para que salte sino para que funcione DMA. tiene que estar los dos en 1.
-   FTM3->MOD              = 80;
+   FTM3->MOD              = 60;  //con 80 anda bien.. aunque por osci se ve que podria andar con 30... el tema es que podria cada tanto demorarse un poquito mas y como es open loop, se puede chiflar un bit
    FTM3->CONTROLS[0].CnV  = FTM3->MOD-5;
    FTM3->SC               = 0x00010008;
 }

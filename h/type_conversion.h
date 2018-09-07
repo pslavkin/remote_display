@@ -12,8 +12,8 @@
 #ifndef   RODATA
    #define RODATA __attribute__ ((section (".const_initialized")))
 #endif
-#ifndef   FLASH
-   #define FLASH __attribute__ ((section ("text")))
+#ifndef   FLASH_SECTION
+   #define FLASH_SECTION __attribute__ ((section ("text")))
 #endif
 //-----------------------------------------------------
 extern char*            Long2Bcd         ( char* Bcd ,unsigned long Bin  );
