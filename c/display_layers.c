@@ -118,17 +118,22 @@ void Blink(void)
       Layer_Structure_Modified();
      }
 }
-                                                                                                                                                         // -------------------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------
 void Block_Pic_Events   (struct Struct_Pic* Pic)         {Pic->ECount=1;}
 void Unblock_Pic_Events (struct Struct_Pic* Pic,unsigned char Ecount)   {Pic->ECount=Ecount;}
-                                                                                                                                                         // -------------------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------
 unsigned char Search_Pic_Pos  (struct Struct_Pic* Pic)
 {
  unsigned char i;
  for(i=0;i<Pic_Layers_Used && Pic_Layers[i].Pic!=Pic;i++);
  return i;
 }
-                                                                                                                                                         // -------------------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------
+void Update_Blink_Pic(struct Struct_Pic* Pic)
+{
+ unsigned char Layer=Search_Pic_Pos(Pic);
+ Pic_Layers[Layer].Actual_Blink=Pic_Layers[Layer].Blink_Period;
+}
 void Do_Blink_Pic(struct Struct_Pic* Pic,unsigned int Period)
 {
  unsigned char Layer=Search_Pic_Pos(Pic);
@@ -199,7 +204,7 @@ void     Init_Display_Layers ( void )
  Layer_Modified       = 0;
  Display_Layers_Sm    = Idle;
  Watermark_Layer      = 0;
- New_Periodic_Func_Schedule(5,Blink);
+ New_Periodic_Func_Schedule(10,Blink);
  Add_Welcome();
 }
                                                                                                                                                          // -------------------------------------------------------------------------------------

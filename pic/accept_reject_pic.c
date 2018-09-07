@@ -29,25 +29,25 @@ uint16_t *Accept_Data[] RODATA=
 //---------------Functions---------------------------------------
 void Accept_Constr(void)
 {
-   Copy_Pass2Log(Read_Pass_String(),true);
-   Save_Table_Log();
+   Copy_Pass2Log  ( Read_Pass_String( ),true);
+   Save_Table_Log (                   )      ;
 }
 void Accept_Destr(void)
 {
-  Del_Bkgd_Black();
-  Layer_Clr_Lcd();
+  Del_Bkgd_Black ( );
+  Layer_Clr_Lcd  ( );
 }
 //--------------Events----------------------------------
 struct Struct_Pic_Events Accept_Events[] RODATA=
 {
 { { 0  ,0   ,0  ,0 }   ,0          ,0 ,{Accept_Constr ,Del_Accept ,Accept_Destr} }       ,// On_Create
-{ { 26 ,212 ,66 ,252 } ,Any_Button ,1 ,{Rien          ,Rien       ,Del_Accept}         } ,
+{ { 26 ,212 ,66 ,252 } ,Any_Button ,0 ,{Rien          ,Rien       ,Del_Accept}         } ,
 };
 //--------------Pics Info----------------------------------
 //
 struct Struct_Pic Accept_Pic RODATA=
 {
-   { 26 ,212 ,66 ,252 },5 ,0 ,2 ,Accept_Events ,1 ,Accept_Data
+   { 26 ,212 ,66 ,252 },3 ,0 ,2 ,Accept_Events ,1 ,Accept_Data
 };
 void Add_Accept ( void ) { Add_Pic_On_Top(&Accept_Pic);}
 void Del_Accept ( void ) { Del_Pic(&Accept_Pic)       ;}
@@ -72,14 +72,14 @@ void Reject_Constr(void)
 }
 void Reject_Destr(void)
 {
-   Del_Bkgd_Black();
-   Layer_Clr_Lcd();
+   Del_Bkgd_Black ( );
+   Layer_Clr_Lcd  ( );
 }
 //--------------Events----------------------------------
 struct Struct_Pic_Events Reject_Events[] RODATA=
 {
    { { 0  ,0   ,0  ,0 }   ,0          ,0 ,{Reject_Constr ,Del_Reject ,Reject_Destr} } ,// On_Create
-   { { 26 ,212 ,66 ,252 } ,Any_Button ,1 ,{Rien          ,Rien       ,Del_Reject }}   ,
+   { { 26 ,212 ,66 ,252 } ,Any_Button ,0 ,{Rien          ,Rien       ,Del_Reject }}   ,
 };
 //--------------Pics Info----------------------------------
 //
@@ -117,13 +117,13 @@ void Clock_Destr(void)
 struct Struct_Pic_Events Clock_Events[] RODATA=
 {
    { { 0  ,0   ,0  ,0 }   ,0          ,0 ,{Clock_Constr ,Del_Clock ,Clock_Destr} } ,// On_Create
-   { { 67 ,170 ,66 ,252 } ,Any_Button ,1 ,{Rien         ,Rien      ,Del_Clock }}   ,
+   { { 67 ,170 ,66 ,252 } ,Any_Button ,0 ,{Rien         ,Rien      ,Del_Clock }}   ,
 };
 //--------------Pics Info----------------------------------
 //
 struct Struct_Pic Clock_Pic RODATA=
 {
-   { 67 ,170 ,66 ,252 },5,0,2,Clock_Events,1,Clock_Data
+   { 67 ,170 ,66 ,252 },3,0,2,Clock_Events,1,Clock_Data
 };
 void Add_Clock            (void)
 {

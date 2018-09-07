@@ -17,6 +17,7 @@
 #include <stdint.h>
 #include "type_conversion.h"
 #include "serial_tx.h"
+#include "ftm.h"
 //---------------------------------------------------------------------
 uint8_t           Actual_Sub_Pic_Index;
 struct Struct_Pic Actual_Sub_Pic;
@@ -62,7 +63,7 @@ void Init_Lcd_Pins(void)/*{{{*/
 {
       CLOCK_EnableClock ( kCLOCK_PortA ); // lo usan pines de seleccion
       CLOCK_EnableClock ( kCLOCK_PortB ); // lo usa el canal de datos y reset y IMO
-      CLOCK_EnableClock ( kCLOCK_PortC ); // lo usa bligth por ahora...
+//      CLOCK_EnableClock ( kCLOCK_PortC ); // lo usa bligth por ahora...
       CLOCK_EnableClock ( kCLOCK_PortD ); // lo usan pines de seleccion
 
       // CS port PTD2 - pin 71
@@ -88,10 +89,11 @@ void Init_Lcd_Pins(void)/*{{{*/
       //IMO port PTB16 - pin 64
       PORT_SetPinMux      ( PORTB,16, kPORT_MuxAsGpio ); // en 1 se elije 8 bits...
       GPIO_PinInit_As_Out ( GPIOB,16,0                ); //
-
-      //BLIGHT port PTC0 - pin 40 (por ahora como gpio.. pero tiene que tener FTM
-      PORT_SetPinMux      ( PORTC,  0, kPORT_MuxAsGpio ); //
-      GPIO_PinInit_As_Out ( GPIOC,  0,1                ); //
+      //
+//manejo el bligth con pwm tpm0ch0
+//      //BLIGHT port PTC0 - pin 40 (por ahora como gpio.. pero tiene que tener FTM
+//      PORT_SetPinMux      ( PORTC,  0, kPORT_MuxAsGpio ); //
+//      GPIO_PinInit_As_Out ( GPIOC,  0,1                ); //
 
    //D0-D7
       PORT_SetPinMux   ( PORTB,  0 , kPORT_MuxAsGpio ); //
@@ -219,42 +221,43 @@ void Init_Display_Phisical_7789(void) /*  {{{*/
    Disp_RD_Set         (        );
    Disp_WR_Set         (        );
    Disp_Rst_Clr        (        );
-   Disp_Imo_Clr        (        ); //  16 bit de datos
+   Disp_Imo_Clr        (        ); // 16 bit de datos
    Delay_Useg          ( 1000   );
-   Disp_Rst_Set        (        ); //  esto es porque podria filtrarse la senial de reset sino.
-   Delay_Useg          ( 120000 ); //  hay que esperar 120mseg.. ver pag 230 del controlador
+   Disp_Rst_Set        (        ); // esto es porque podria filtrarse la senial de reset sino.
+   Delay_Useg          ( 120000 ); // hay que esperar 120mseg.. ver pag 230 del controlador
 
-   Write_Disp_Instr    ( 0x11   ); //  exit SLEEP mode  /arranca en sleep in..
-   Delay_Useg          ( 5000   ); //  esperar 5mseg
+   Write_Disp_Instr    ( 0x11   ); // exit SLEEP mode  /arranca en sleep in..
+   Delay_Useg          ( 5000   ); // esperar 5mseg
+
 
    Write_Disp_Instr    ( 0x36   );
-   Write_Disp_8b_Param ( 0x00   ); //  MADCTL: memory data access control
+   Write_Disp_8b_Param ( 0x00   ); // MADCTL: memory data access control
    Write_Disp_Instr    ( 0x3A   );
-   Write_Disp_8b_Param ( 0x55   ); //  COLMOD: Interface Pixel format
+   Write_Disp_8b_Param ( 0x55   ); // COLMOD: Interface Pixel format
    Write_Disp_Instr    ( 0xB2   );
    Write_Disp_8b_Param ( 0x0C   );
    Write_Disp_8b_Param ( 0x0C   );
    Write_Disp_8b_Param ( 0x00   );
    Write_Disp_8b_Param ( 0x33   );
-   Write_Disp_8b_Param ( 0x33   ); //  PORCTRK: Porch setting
+   Write_Disp_8b_Param ( 0x33   ); // PORCTRK: Porch setting
    Write_Disp_Instr    ( 0xB7   );
-   Write_Disp_8b_Param ( 0x35   ); //  GCTRL: Gate Control
+   Write_Disp_8b_Param ( 0x35   ); // GCTRL: Gate Control
    Write_Disp_Instr    ( 0xBB   );
-   Write_Disp_8b_Param ( 0x2B   ); //  VCOMS: VCOM setting
+   Write_Disp_8b_Param ( 0x2B   ); // VCOMS: VCOM setting
    Write_Disp_Instr    ( 0xC0   );
-   Write_Disp_8b_Param ( 0x2C   ); //  LCMCTRL: LCM Control
+   Write_Disp_8b_Param ( 0x2C   ); // LCMCTRL: LCM Control
    Write_Disp_Instr    ( 0xC2   );
    Write_Disp_8b_Param ( 0x01   );
-   Write_Disp_8b_Param ( 0xFF   ); //  VDVVRHEN: VDV and VRH Command Enable
+   Write_Disp_8b_Param ( 0xFF   ); // VDVVRHEN: VDV and VRH Command Enable
    Write_Disp_Instr    ( 0xC3   );
-   Write_Disp_8b_Param ( 0x11   ); //  VRHS: VRH Set
+   Write_Disp_8b_Param ( 0x11   ); // VRHS: VRH Set
    Write_Disp_Instr    ( 0xC4   );
-   Write_Disp_8b_Param ( 0x20   ); //  VDVS: VDV Set
+   Write_Disp_8b_Param ( 0x20   ); // VDVS: VDV Set
    Write_Disp_Instr    ( 0xC6   );
-   Write_Disp_8b_Param ( 0x0F   ); //  FRCTRL2: Frame Rate control in normal mode
+   Write_Disp_8b_Param ( 0x0F   ); // FRCTRL2: Frame Rate control in normal mode
    Write_Disp_Instr    ( 0xD0   );
    Write_Disp_8b_Param ( 0xA4   );
-   Write_Disp_8b_Param ( 0xA1   ); //  PWCTRL1: Power Control 1
+   Write_Disp_8b_Param ( 0xA1   ); // PWCTRL1: Power Control 1
    Write_Disp_Instr    ( 0xE0   );
    Write_Disp_8b_Param ( 0xD0   );
    Write_Disp_8b_Param ( 0x00   );
@@ -269,7 +272,7 @@ void Init_Display_Phisical_7789(void) /*  {{{*/
    Write_Disp_8b_Param ( 0x15   );
    Write_Disp_8b_Param ( 0x12   );
    Write_Disp_8b_Param ( 0x16   );
-   Write_Disp_8b_Param ( 0x19   ); //  PVGAMCTRL: Positive Voltage Gamma control
+   Write_Disp_8b_Param ( 0x19   ); // PVGAMCTRL: Positive Voltage Gamma control
    Write_Disp_Instr    ( 0xE1   );
    Write_Disp_8b_Param ( 0xD0   );
    Write_Disp_8b_Param ( 0x00   );
@@ -284,24 +287,23 @@ void Init_Display_Phisical_7789(void) /*  {{{*/
    Write_Disp_8b_Param ( 0x1C   );
    Write_Disp_8b_Param ( 0x18   );
    Write_Disp_8b_Param ( 0x16   );
-   Write_Disp_8b_Param ( 0x19   ); //  NVGAMCTRL: Negative Voltage Gamma control
+   Write_Disp_8b_Param ( 0x19   ); // NVGAMCTRL: Negative Voltage Gamma control
    Write_Disp_Instr    ( 0x2A   );
    Write_Disp_8b_Param ( 0x00   );
    Write_Disp_8b_Param ( 0x00   );
    Write_Disp_8b_Param ( 0x00   );
-   Write_Disp_8b_Param ( 0xEF   ); //  X address set
+   Write_Disp_8b_Param ( 0xEF   ); // X address set
    Write_Disp_Instr    ( 0x2B   );
    Write_Disp_8b_Param ( 0x00   );
    Write_Disp_8b_Param ( 0x00   );
    Write_Disp_8b_Param ( 0x01   );
-   Write_Disp_8b_Param ( 0x3F   ); //  Y address set
+   Write_Disp_8b_Param ( 0x3F   ); // Y address set
 
- //  Clear_Lcd           (        );
+//   Clear_Lcd           (        ); // opcional
 
-   Write_Disp_Instr    ( 0x29   ); //  display On
+   Write_Disp_Instr    ( 0x29   ); // display On
    Write_Disp_8b_Param ( 0x00   );
 
-                                   /// Clear_Lcd();
 }                                  /*  }}}*/
 void Set_Frame_Address(struct Struct_Pic *Pic)
 {

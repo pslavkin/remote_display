@@ -8,7 +8,6 @@
 #include "str.h"
 
 //-------------------------------------------------------------------------------------
-
 struct Struct_Pic_Events Rien_Events[] RODATA =
 {
 {{0,0,0,0},0,0,{Rien,Rien,Rien},}

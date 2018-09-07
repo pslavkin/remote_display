@@ -91,8 +91,9 @@ char Dma_Menu[] RODATA=
 char Ftm_Menu[] RODATA=
 {
  "Ftm menu\r\n"
- "A Clear OVF\r\n"
- "B Print OVF\r\n"
+ "A Print BLigth\r\n"
+ "B Inc BLigth\r\n"
+ "C Dec BLigth\r\n"
  "< Back\r\n"
  "? Help\r\n"
 };
@@ -192,11 +193,12 @@ State Parsing_Dma    [ ]RODATA=
 
 State Parsing_Ftm    [ ]RODATA=
 {
-{ 'A'       ,Ftm_Clear                 ,Parsing_Ftm     },
-{ 'B'       ,Ftm_Print                 ,Parsing_Ftm     },
-{ '<'       ,Rien                      ,Parsing_Main    },
-{ '?'       ,Print_Ftm_Menu            ,Parsing_Ftm     },
-{ ANY_Event ,Rien                      ,Parsing_Ftm     },
+{ 'A'       ,Print_BLigth   ,Parsing_Ftm    } ,
+{ 'B'       ,Inc_Bligth     ,Parsing_Ftm    } ,
+{ 'C'       ,Dec_Bligth     ,Parsing_Ftm    } ,
+{ '<'       ,Rien           ,Parsing_Main    } ,
+{ '?'       ,Print_Ftm_Menu ,Parsing_Ftm     } ,
+{ ANY_Event ,Rien           ,Parsing_Ftm     } ,
 };
 
 State Parsing_Adc    [ ]RODATA=

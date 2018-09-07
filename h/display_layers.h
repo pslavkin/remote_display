@@ -24,14 +24,15 @@ extern void       Display_Layers_Rti  ( void );
 struct Struct_Pic_Layer
 {
  struct Struct_Pic   *Pic        ;
- uint8_t             Actual_Blink;
- uint8_t             Blink_Period;
+ uint16_t             Actual_Blink;
+ uint16_t             Blink_Period;
  unsigned char       Blink_State ;
 };
 
 //---------------------------------------------------------
 extern void          Print_Layers_Used        ( void                                                 );
 // ---------------   ------------------------------------------
+extern void          Update_Blink_Pic         ( struct Struct_Pic* Pic                               );
 extern void          Do_Blink_Pic             ( struct Struct_Pic* Pic,unsigned int Period           );
 extern void          Dont_Blink_Pic           ( struct Struct_Pic* Pic                               );
 extern void          Do_Blink_Only_Pic        ( struct Struct_Pic* Pic,unsigned int Period           );

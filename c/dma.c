@@ -55,9 +55,7 @@ void Pic2TCD_Mod(struct Struct_Pic *Pic,uint8_t Index,uint8_t Mod)
       TCD[i].CITER_ELINKNO  = TCD[i].BITER_ELINKNO  = TCD_Size;
    }
 
-//   DMA0->CINT=0;
-//   FTM3->CONTROLS[0].CnSC &= ~0x00000080;
-   *(uint16_t*)&GPIOB->PDOR=Pic->Data[0][0];
+   *(uint16_t*)&GPIOB->PDOR=Pic->Data[0][0]; //(no se si sirve para algo, pero como sea para que no haya basura en el bus al arrancar, ya adelanto el byte proxumo)
 
    DMA0->TCD[0].CSR       &= ~0x0080     ; // tip! hay que borrar el bit DONE de un previo dma complete para que me acepte escribir datos en este registro... sino no lo hace y no me linkea los TCD
    DMA0->TCD[0]            = TCD[0]      ;

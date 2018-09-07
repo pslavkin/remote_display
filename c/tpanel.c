@@ -162,22 +162,22 @@ void Read_Y_And_Feed_X_And_Free_Y_And_Test_Touched ( void ) { Read_Y();Feed_X_An
 //----------------------------------------------------
 State Initializing   [ ]=
 {
-{ ANY_Event          ,Feed_X_And_Free_Y                             ,Reading_Y       },
+{ ANY_Event          ,Feed_X_And_Free_Y                             ,Reading_Y       } ,
 };
 State Reading_Y      [ ]=
 {
-{ ANY_Event          ,Read_X_And_Feed_Y_And_Free_X                  ,Reading_X       },
+{ ANY_Event          ,Read_X_And_Feed_Y_And_Free_X                  ,Reading_X       } ,
 };
 State Reading_X      [ ]=
 {
-{ ANY_Event          ,Read_Y_And_Feed_X_And_Free_Y_And_Test_Touched ,Testing_Touched },
+{ ANY_Event          ,Read_Y_And_Feed_X_And_Free_Y_And_Test_Touched ,Testing_Touched } ,
 };
 State Testing_Touched[ ]=
 {
-{ None_Touched_Event ,Rien                                          ,Reading_Y       },
-{ Click_Event        ,On_Click                                      ,Reading_Y       },
-{ Drag_Event         ,On_Drag                                       ,Reading_Y       },
-{ Released_Event     ,On_Release                                    ,Reading_Y       },
-{ ANY_Event          ,Rien                                          ,Testing_Touched },
+{ None_Touched_Event ,Rien                                          ,Reading_Y       } ,
+{ Click_Event        ,On_Click                                      ,Reading_Y       } ,
+{ Drag_Event         ,On_Drag                                       ,Reading_Y       } ,
+{ Released_Event     ,On_Release                                    ,Reading_Y       } ,
+{ ANY_Event          ,Rien                                          ,Testing_Touched } ,
 };
 //----------------------------------------------------

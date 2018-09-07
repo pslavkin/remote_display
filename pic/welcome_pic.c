@@ -11,6 +11,7 @@
 #include "debug.h"
 #include "schedule.h"
 #include "tpanel.h"
+#include "ftm.h"
 
 //--------------Pics Data----------------------------------
 uint16_t Welcome_Data_Raw[] RODATA=
@@ -27,6 +28,7 @@ uint16_t *Welcome_Data[] RODATA=
 //---------------Functions---------------------------------------
 void Welcome_Constr(void)
 {
+   Set_Bligth ( 50 );
    Layer_Clr_Lcd();
 }
 void Welcome_Destr(void)
@@ -43,8 +45,30 @@ struct Struct_Pic_Events Welcome_Events[] RODATA=
 //--------------Pics Info----------------------------------
 struct Struct_Pic Welcome_Pic RODATA=
 {
-   {16,16+207,100,100+125},4,0,2,Welcome_Events,1,Welcome_Data
+   {16,16+207,100,100+125},2,0,2,Welcome_Events,1,Welcome_Data
 };
 void Add_Welcome               ( void ) { Add_Pic_On_Bottom(&Welcome_Pic);}
 void Del_Welcome               ( void ) { Del_Pic(&Welcome_Pic)          ;}
 //------------------------------------------------------
+void Off_Constr(void)
+{
+   Set_Bligth(10);
+   Layer_Clr_Lcd();
+}
+void Off_Destr(void)
+{
+   Add_Keyb();
+   Layer_Clr_Lcd();
+}
+struct Struct_Pic_Events Off_Events[] RODATA=
+{
+   { { 0 ,0   ,0 ,0}   ,0          ,0 ,{Off_Constr ,Rien ,Off_Destr} } ,// On_Create
+   { { 0 ,239 ,0 ,319} ,Any_Button ,1 ,{Rien       ,Rien ,Del_Off}   } ,
+};
+struct Struct_Pic Off_Pic RODATA=
+{
+   {16,16+207,100,100+125},0,0,2,Off_Events,1,Welcome_Data
+};
+void Add_Off               ( void ) { Add_Pic_On_Bottom(&Off_Pic);}
+void Del_Off               ( void ) { Del_Pic(&Off_Pic)          ;}
+//

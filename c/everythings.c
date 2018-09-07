@@ -21,6 +21,7 @@
 #include "adc.h"
 #include "tpanel.h"
 #include "flash.h"
+#include "ftm.h"
 
 State
    Free_State1 [ ],
@@ -50,13 +51,14 @@ bool Read_Ack_Pin(void)
 //----------------------------------------------------------------------------------------------------
 void     Init_Everythings  (void)
 {
-   Everythings_Sm=Free_State1;
+   Everythings_Sm=Free_State1    ;
    Init_Schedule              ( );
    Init_Leds_Session          ( );
+   Init_Ftm3C0                ( ); //LCD write strobe
+   Init_Ftm0C0                ( ); //bligth
    Init_Display_Phisical_7789 ( );
    Init_Display_Layers        ( );
    Init_Dma                   ( );
-   Init_Ftm3C0                ( );
    Init_Adc                   ( );
    Init_Tpanel                ( );
    Init_Ack_Pin               ( );
@@ -67,42 +69,42 @@ void     Everythings_Rti ( void ) { Send_Event(ANY_Event,Everythings());} // man
 //----------------------------------------------------------------------------------------------------
 State Free_State1 [ ] RODATA  =
 {
-{ANY_Event ,Rien             ,Free_State2} ,
+{ANY_Event ,Rien                ,Free_State2} ,
 };
 State Free_State2 [ ] RODATA  =
 {{
- ANY_Event ,Rien             ,Free_State3  ,
+ ANY_Event ,Rien                ,Free_State3  ,
 }};
 State Free_State3 [ ] RODATA  =
 {{
- ANY_Event ,Rien             ,Free_State4  ,
+ ANY_Event ,Rien                ,Free_State4  ,
 }};
 State Free_State4 [ ] RODATA  =
 {{
- ANY_Event ,Rien             ,Free_State5  ,
+ ANY_Event ,Rien                ,Free_State5  ,
 }};
 State Free_State5 [ ] RODATA  =
 {{
- ANY_Event ,Rien             ,Free_State6  ,
+ ANY_Event ,Accelerate_All_Ftm0 ,Free_State6  ,
 }};
 State Free_State6 [ ] RODATA  =
 {{
- ANY_Event ,Schedule         ,Free_State7  ,
+ ANY_Event ,Schedule            ,Free_State7  ,
 }};
 State Free_State7 [ ] RODATA  =
 {{
- ANY_Event ,Rien             ,Free_State8  ,
+ ANY_Event ,Rien                ,Free_State8  ,
 }};
 State Free_State8 [ ] RODATA  =
 {{
- ANY_Event ,Led_Effects_Func ,Free_State9  ,
+ ANY_Event ,Led_Effects_Func    ,Free_State9  ,
 }};
 State Free_State9 [ ] RODATA  =
 {{
- ANY_Event ,Rien             ,Free_State10 ,
+ ANY_Event ,Rien                ,Free_State10 ,
 }};
 State Free_State10[ ] RODATA  =
 {{
- ANY_Event ,Rien             ,Free_State1  ,
+ ANY_Event ,Rien                ,Free_State1  ,
 }};
 //-------------------------------------------------------------------------------
