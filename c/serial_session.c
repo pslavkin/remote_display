@@ -17,6 +17,7 @@
 #include "tpanel.h"
 #include "pass_pic.h"
 #include "flash.h"
+#include "log_pic.h"
 
 State
    Parsing_Main   [ ],
@@ -112,13 +113,9 @@ char Tpanel_Menu[] RODATA=
 char FlashMenu[] RODATA=
 {
  "Flash menu\r\n"
- "1 Init_Flash1\r\n"
- "2 Init_Flash2\r\n"
- "3 Init_Flash3\r\n"
- "4 Init_Flash4\r\n"
- "5 Init_Flash5\r\n"
- "6 Init_Flash6\r\n"
- "7 Init_Flash7\r\n"
+ "A Save Table Log\r\n"
+ "B Print RLog\r\n"
+ "C Print FLog\r\n"
  "< Back\r\n"
  "? Help\r\n"
 };
@@ -220,15 +217,11 @@ State Parsing_Tpanel [ ]RODATA=
 
 State Parsing_Flash [ ]RODATA=
 {
-{ '1'       ,Init_Flash1     ,Parsing_Flash },
-{ '2'       ,Init_Flash2     ,Parsing_Flash },
-{ '3'       ,Init_Flash3     ,Parsing_Flash },
-{ '4'       ,Init_Flash4     ,Parsing_Flash },
-{ '5'       ,Init_Flash5     ,Parsing_Flash },
-{ '6'       ,Init_Flash6     ,Parsing_Flash },
-{ '7'       ,Init_Flash7     ,Parsing_Flash },
-{ '<'       ,Rien            ,Parsing_Main  },
-{ '?'       ,Print_FlashMenu ,Parsing_Flash },
-{ ANY_Event ,Rien            ,Parsing_Flash },
+{ 'A'       ,Save_Table_Log  ,Parsing_Flash } ,
+{ 'B'       ,Print_RLog  ,Parsing_Flash } ,
+{ 'C'       ,Print_FLog  ,Parsing_Flash } ,
+{ '<'       ,Rien            ,Parsing_Main  } ,
+{ '?'       ,Print_FlashMenu ,Parsing_Flash } ,
+{ ANY_Event ,Rien            ,Parsing_Flash } ,
 };
 //------------------------------------------------------------------------------

@@ -1,9 +1,8 @@
 MEMORY
 {
   /* Define each memory region */
-  PROGRAM_FLASH (rx): ORIGIN = 0x0,   LENGTH       = 0x07000  /* 512K bytes (alias Flash) */
-  /*PROGRAM_FLASH (rx): ORIGIN = 0x0,   LENGTH       = 0x80000  /* 512K bytes (alias Flash) */
-  USER_FLASH (rx): ORIGIN = 0x7000,   LENGTH       = 0x00400  /* 512K bytes (alias Flash) */
+  PROGRAM_FLASH (rx): ORIGIN = 0x0,   LENGTH       = 0x7ff00  /* 512K bytes (alias Flash) */
+  USER_FLASH (rx):    ORIGIN = 0x7FF00,   LENGTH   = 0x00400  /* 512K bytes (alias Flash) */
   SRAM_UPPER (rwx):   ORIGIN = 0x20000000,  LENGTH = 0x8000   /* 32K bytes (alias RAM) */
   SRAM_LOWER (rwx):   ORIGIN = 0x1fff8000,  LENGTH = 0x8000   /* 32K bytes (alias RAM2) */
   FLEX_RAM (rwx):     ORIGIN = 0x14000000,  LENGTH = 0x1000   /* 4K bytes (alias RAM3) */
@@ -103,9 +102,9 @@ SECTIONS
 
     _etext = .;
         
-    .test : ALIGN(4)
+    .uflash : ALIGN(4)
     {
-        *(.testi*)
+        *(.uflash1*)
         . = ALIGN(4);
     } > USER_FLASH
     /* DATA section for SRAM_LOWER */

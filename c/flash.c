@@ -12,25 +12,51 @@
 #include "serial_tx.h"
 #include "type_conversion.h"
 #include "tpanel.h"
+#include "log_pic.h"
+#include "flash.h"
 
-
-
-
-
-
-__attribute__((section(".data.FLEX_RAM")))
-char flex[100]="\r\nesto esta por defecto en flex\r\n";
-
-__attribute__((section(".testi")))
-char sietemil[100]="\r\nesto esta por defecto en flash sietemil\r\n";
-
-
-void Init_Flash1(void)
+__attribute__((section(".uflash1")))
+struct Log_Table FLog={
+   {  "11111111+",
+      "22222222+",
+      "33333333-",
+      "44444444+",
+      "55555555-",
+   }
+};
+void Print_FLog(void)
 {
-   Send_NVData2Serial(23,"flash sietemil tiene:\r\n");
-   Send_NVData2Serial( 100,sietemil);
+   Send_NLine_NVData2Serial(sizeof(FLog),FLog.Line[0]);
 }
-void Init_Flash2(void)
+
+void Init_Flash(void)
+{
+   FlexRam_As_Ram();
+   *Read_RLog()=FLog;
+}
+
+void Save_Table_Log(void)
+{
+   FErase((void*)&FLog);
+   Save_FlexRam2Flash((void*)&FLog,sizeof(FLog));
+   Invalidate_Cache();
+}
+
+
+void FErase(void* Address)
+{
+   uint32_t A=(uint32_t)Address;
+   A&=0x00FFFC00;
+   FTFE->FSTAT=0x30;
+   FTFE->FCCOB0=0x09;
+   FTFE->FCCOB1=(A>>16);
+   FTFE->FCCOB2=(A>> 8);
+   FTFE->FCCOB3=(A>> 0);
+   FTFE->FSTAT|=0x80;
+   while((FTFE->FSTAT & 0x80)==0x00)
+      ;
+}
+void FlexRam_As_Ram(void)
 {
    FTFE->FSTAT=0x30;
    FTFE->FCCOB0=0x81;
@@ -38,50 +64,24 @@ void Init_Flash2(void)
    FTFE->FSTAT|=0x80;
    while((FTFE->FSTAT & 0x80)==0x00)
       ;
-   Send_NVData2Serial(13,"flex as ram\r\n");
-   Send_Int_NLine2Serial(FTFE->FSTAT);
 }
-void Init_Flash3(void)
+void Save_FlexRam2Flash(void* Address,uint32_t Length)
 {
-   Send_NVData2Serial(14,"esto es flex:\r\n");
-   Send_NVData2Serial(100,flex);
-}
-void Init_Flash4(void)
-{
-   memcpy(flex,"programo en flash\r\n",19);
-   Send_NVData2Serial(13,"cambie flex\r\n");
-}
-void Init_Flash5(void)
-{
-   FTFE->FSTAT=0x30;
-   FTFE->FCCOB0=0x09;
-   FTFE->FCCOB1=0x00;
-   FTFE->FCCOB2=0x70;
-   FTFE->FCCOB3=0x00;
-   FTFE->FSTAT|=0x80;
+   uint32_t A=(uint32_t)Address;
+   A&=0x00FFFC00;
+   Length=Length/16+Length%16;             //cada grabacion son 16 bytes
+   FTFE->FSTAT   = 0x30;
+   FTFE->FCCOB0  = 0x0B;
+   FTFE->FCCOB1  = (A>>16);
+   FTFE->FCCOB2  = (A>> 8);
+   FTFE->FCCOB3  = (A>> 0);
+   FTFE->FCCOB4  = Length>>8;
+   FTFE->FCCOB5  = Length>>0;
+   FTFE->FSTAT  |= 0x80;
    while((FTFE->FSTAT & 0x80)==0x00)
       ;
-   Send_NVData2Serial(13,"erase block\r\n");
-   Send_Int_NLine2Serial(FTFE->FSTAT);
 }
-void Init_Flash6(void)
-{
-   FTFE->FSTAT=0x30;
-   FTFE->FCCOB0=0x0B;
-   FTFE->FCCOB1=0x00;
-   FTFE->FCCOB2=0x70;
-   FTFE->FCCOB3=0x00;
-   FTFE->FCCOB4=0x00;
-   FTFE->FCCOB5=0x08;
-   FTFE->FSTAT|=0x80;
-   while((FTFE->FSTAT & 0x80)==0x00)
-      ;
-   Send_NVData2Serial(13,"save  block\r\n");
-   Send_Int_NLine2Serial(FTFE->FSTAT);
-}
-
-void Init_Flash7(void)
+void Invalidate_Cache(void)
 {
    LMEM->PCCCR|=0x85000000;
-   Send_NVData2Serial(13,"clear cache\r\n");
 }

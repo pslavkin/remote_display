@@ -11,16 +11,24 @@
 #include "bkgd_pic.h"
 #include "font_22x30.h"
 #include "pass_pic.h"
+#include "serial_tx.h"
 //------------------------------------------------------
-char Log_Table[][10]= {
-   "11111111+",
-   "22222222+",
-   "33333333-",
-   "44444444+",
-   "55555555-",
-};
+__attribute__((section(".data.FLEX_RAM")))
+struct Log_Table RLog;
 
-uint16_t* Log_Data[sizeof(Log_Table)/sizeof(Log_Table[0])][10];
+
+struct Log_Table* Read_RLog(void)
+{
+   return &RLog;
+}
+
+void Print_RLog(void)
+{
+   Send_NLine_NVData2Serial(sizeof(RLog),RLog.Line[0]);
+}
+
+
+uint16_t* Log_Data[LOG_LINES][10];
 uint16_t Line_Raw[] RODATA=
 {
    0x03E0,
@@ -33,15 +41,15 @@ uint16_t *Line_Data[] RODATA=
 void Copy_Pass2Log(char* Pass, bool Accepted)
 {
    uint8_t i;
-   for(i=sizeof(Log_Table)/sizeof(Log_Table[0])-1;i>0;i--)
-      strcpy(Log_Table[i],Log_Table[i-1]);
-   strcpy(Log_Table[0],Pass);
-   String_Padd(Log_Table[0] ,Log_Table[0]     ,9 ,' ');
-   Append_Data(Log_Table[0] ,Accepted?'+':'-' ,10);
+   for(i=LOG_LINES-1;i>0;i--)
+      strcpy(RLog.Line[i],RLog.Line[i-1]);
+   strcpy(RLog.Line[0],Pass);
+   String_Padd(RLog.Line[0] ,RLog.Line[0]     ,9 ,' ');
+   Append_Data(RLog.Line[0] ,Accepted?'+':'-' ,10);
 }
 void Copy_Log2Pass(uint8_t N)
 {
-   String_Copy_Until(Log_Table[N],Read_Pass_String(),' ',9);
+   String_Copy_Until(RLog.Line[N],Read_Pass_String(),' ',9);
    Pass_String2Pic();
    Del_Log();
 }
@@ -64,11 +72,11 @@ struct Struct_Pic_Events Log_Events[] =
 
 struct Struct_Pic Log_Pic [] RODATA=
 {
-   {  {21 ,21+21 ,14+0*65 ,14+0*65+29} ,0 ,0 ,7 ,Log_Events  ,sizeof(Log_Table[0])-1 ,Log_Data[0]} ,
-   {  {21 ,21+21 ,14+1*65 ,14+1*65+29} ,0 ,0 ,1 ,Rien_Events ,sizeof(Log_Table[0])-1 ,Log_Data[1]} ,
-   {  {21 ,21+21 ,14+2*65 ,14+2*65+29} ,0 ,0 ,1 ,Rien_Events ,sizeof(Log_Table[0])-1 ,Log_Data[2]} ,
-   {  {21 ,21+21 ,14+3*65 ,14+3*65+29} ,0 ,0 ,1 ,Rien_Events ,sizeof(Log_Table[0])-1 ,Log_Data[3]} ,
-   {  {21 ,21+21 ,14+4*65 ,14+4*65+29} ,0 ,0 ,1 ,Rien_Events ,sizeof(Log_Table[0])-1 ,Log_Data[4]} ,
+   {  {21 ,21+21 ,14+0*65 ,14+0*65+29} ,0 ,0 ,7 ,Log_Events  ,LOG_LENGTH-1 ,Log_Data[0]} ,
+   {  {21 ,21+21 ,14+1*65 ,14+1*65+29} ,0 ,0 ,1 ,Rien_Events ,LOG_LENGTH-1 ,Log_Data[1]} ,
+   {  {21 ,21+21 ,14+2*65 ,14+2*65+29} ,0 ,0 ,1 ,Rien_Events ,LOG_LENGTH-1 ,Log_Data[2]} ,
+   {  {21 ,21+21 ,14+3*65 ,14+3*65+29} ,0 ,0 ,1 ,Rien_Events ,LOG_LENGTH-1 ,Log_Data[3]} ,
+   {  {21 ,21+21 ,14+4*65 ,14+4*65+29} ,0 ,0 ,1 ,Rien_Events ,LOG_LENGTH-1 ,Log_Data[4]} ,
 
    {  { 0 ,239 ,0*63 ,0*63+1} ,0 ,1 ,1 ,Rien_Events ,1 ,Line_Data },
    {  { 0 ,239 ,1*63 ,1*63+1} ,0 ,1 ,1 ,Rien_Events ,1 ,Line_Data },
@@ -84,8 +92,8 @@ struct Struct_Pic Log_Pic [] RODATA=
 void Log_String2Pic(void)
 {
    uint8_t i;
-   for(i=0;i<sizeof(Log_Table)/sizeof(Log_Table[0]);i++)
-      String2Pic_Data ( Log_Table[i] ,Log_Pic[i].Data ,&Font_22x30_Pic );
+   for(i=0;i<LOG_LINES;i++)
+      String2Pic_Data ( RLog.Line[i] ,Log_Pic[i].Data ,&Font_22x30_Pic );
    Layer_Structure_Modified();
 }
 void Init_Log(void)

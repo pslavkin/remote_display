@@ -12,6 +12,7 @@
 #include "bkgd_pic.h"
 #include "log_pic.h"
 #include "everythings.h"
+#include "flash.h"
 
 //--------------Pics Data----------------------------------
 uint16_t Accept_Data_Raw[] RODATA=
@@ -28,7 +29,8 @@ uint16_t *Accept_Data[] RODATA=
 //---------------Functions---------------------------------------
 void Accept_Constr(void)
 {
-  Copy_Pass2Log(Read_Pass_String(),true);
+   Copy_Pass2Log(Read_Pass_String(),true);
+   Save_Table_Log();
 }
 void Accept_Destr(void)
 {
@@ -66,6 +68,7 @@ uint16_t *Reject_Data[] RODATA=
 void Reject_Constr(void)
 {
    Copy_Pass2Log(Read_Pass_String(),false);
+   Save_Table_Log();
 }
 void Reject_Destr(void)
 {

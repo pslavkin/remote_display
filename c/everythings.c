@@ -20,6 +20,7 @@
 #include "tpanel.h"
 #include "adc.h"
 #include "tpanel.h"
+#include "flash.h"
 
 State
    Free_State1 [ ],
@@ -59,6 +60,7 @@ void     Init_Everythings  (void)
    Init_Adc                   ( );
    Init_Tpanel                ( );
    Init_Ack_Pin               ( );
+   Init_Flash                 ( );
 }
 State**  Everythings     ( void ) { return &Everythings_Sm             ;} // devuelve la direccion de la maquina de estados Everythings para poder mandarle mensajes.
 void     Everythings_Rti ( void ) { Send_Event(ANY_Event,Everythings());} // manda mensajes ANY a tiempos predefinidos...
