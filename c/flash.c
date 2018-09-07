@@ -32,7 +32,10 @@ void Print_FLog(void)
 void Init_Flash(void)
 {
    FlexRam_As_Ram();
-   *Read_RLog()=FLog;
+   if(FLog.Line[0][0]!=0xFF)
+      *Read_RLog()=FLog;
+   else
+      memcpy(Read_RLog()->Line[0], "11111111+\0""22222222+\0""33333333-\0" "44444444+\0" "55555555-\0",sizeof(FLog));
 }
 
 void Save_Table_Log(void)
@@ -41,7 +44,6 @@ void Save_Table_Log(void)
    Save_FlexRam2Flash((void*)&FLog,sizeof(FLog));
    Invalidate_Cache();
 }
-
 
 void FErase(void* Address)
 {
