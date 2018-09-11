@@ -89,6 +89,7 @@ ${BINDIR}/app.axf: ${OBJDIR}/ftm.o
 ${BINDIR}/app.axf: ${OBJDIR}/tpanel.o
 ${BINDIR}/app.axf: ${OBJDIR}/adc.o
 ${BINDIR}/app.axf: ${OBJDIR}/flash.o
+${BINDIR}/app.axf: ${OBJDIR}/one_wire.o
 #../pics
 ${BINDIR}/app.axf: ${OBJDIR}/welcome_pic.o
 ${BINDIR}/app.axf: ${OBJDIR}/keyb_pic.o

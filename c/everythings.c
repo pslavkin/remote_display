@@ -22,6 +22,7 @@
 #include "tpanel.h"
 #include "flash.h"
 #include "ftm.h"
+#include "one_wire.h"
 
 State
    Free_State1 [ ],
@@ -54,8 +55,8 @@ void     Init_Everythings  (void)
    Everythings_Sm=Free_State1    ;
    Init_Schedule              ( );
    Init_Leds_Session          ( );
-   Init_Ftm3C0                ( ); //LCD write strobe
-   Init_Ftm0C0                ( ); //bligth
+   Init_Ftm3C0                ( ); // LCD write strobe
+   Init_Ftm0C0                ( ); // bligth
    Init_Display_Phisical_7789 ( );
    Init_Display_Layers        ( );
    Init_Dma                   ( );
@@ -63,6 +64,7 @@ void     Init_Everythings  (void)
    Init_Tpanel                ( );
    Init_Ack_Pin               ( );
    Init_Flash                 ( );
+   Init_One_Wire              ( );
 }
 State**  Everythings     ( void ) { return &Everythings_Sm             ;} // devuelve la direccion de la maquina de estados Everythings para poder mandarle mensajes.
 void     Everythings_Rti ( void ) { Send_Event(ANY_Event,Everythings());} // manda mensajes ANY a tiempos predefinidos...

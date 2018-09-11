@@ -1,6 +1,6 @@
 //se definen constantes para habilitar o deshabilitar ciertas partes del codigo encapsuladas con #ifdef
 
-#define PICS_ENABLED
+//#define PICS_ENABLED
 //#define PICS_ENABLED_TEST
 
 

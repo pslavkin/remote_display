@@ -3,6 +3,7 @@
 #include "serial_phisical.h"
 #include "ftm.h"
 #include "dma.h"
+#include "one_wire.h"
 
 #if defined (__cplusplus)
 // The entry point for the C++ library startup
