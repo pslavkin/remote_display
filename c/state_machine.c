@@ -29,7 +29,9 @@ void Pum(void)
 //-----------------------------------------------------------------------
 unsigned int   Actual_Event ( void ) { return Event.Event  ;}
 State**        Actual_Sm    ( void ) { return Event.Machine;}
-void           Soft_Reset   ( void ) { }
+void           Soft_Reset   ( void ) {
+SCB->AIRCR = 0x5FA;
+}
 //-----------------------------------------------------------------------
 void State_Machine(void)               //esta funcion ejecuta la maquina de estados donde el evento viene en la variable Event... que se decidio que no sea por parametro para permitir la recursividad infinita...  
 {

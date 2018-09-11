@@ -18,16 +18,18 @@
 #include "pass_pic.h"
 #include "flash.h"
 #include "log_pic.h"
+#include "one_wire.h"
 
 State
-   Parsing_Main   [ ],
-   Parsing_Working[ ],
-   Parsing_Layers [ ],
-   Parsing_Ftm    [ ],
-   Parsing_Dma    [ ],
-   Parsing_Adc    [ ],
-   Parsing_Tpanel [ ],
-   Parsing_Flash  [ ];
+   Parsing_Main    [ ],
+   Parsing_Working [ ],
+   Parsing_Layers  [ ],
+   Parsing_Ftm     [ ],
+   Parsing_Dma     [ ],
+   Parsing_Adc     [ ],
+   Parsing_Tpanel  [ ],
+   Parsing_Flash   [ ],
+   Parsing_One_Wire[ ];
 
 State* Serial_Session_Sm;
 //---------------------------------------------------------------------
@@ -47,6 +49,7 @@ char Main_Menu[] RODATA=
  "G Adc\r\n"
  "H Tpanel\r\n"
  "I Flash\r\n"
+ "J One Wire\r\n"
  "R Reset\r\n"
  ". About\r\n"
  "? Help\r\n"
@@ -111,7 +114,7 @@ char Tpanel_Menu[] RODATA=
  "< Back\r\n"
  "? Help\r\n"
 };
-char FlashMenu[] RODATA=
+char Flash_Menu[] RODATA=
 {
  "Flash menu\r\n"
  "A Save Table Log\r\n"
@@ -120,16 +123,24 @@ char FlashMenu[] RODATA=
  "< Back\r\n"
  "? Help\r\n"
 };
+char One_Wire_Menu[] RODATA=
+{
+ "One Wire menu\r\n"
+ "A Actual Code\r\n"
+ "< Back\r\n"
+ "? Help\r\n"
+};
 //---------------------------------------------------------------------
-void Print_About_Menu   ( void ) { Send_NVData2Serial(sizeof(About_Menu)-1   ,About_Menu)  ;}
-void Print_Main_Menu    ( void ) { Send_NVData2Serial(sizeof(Main_Menu)-1    ,Main_Menu)   ;}
-void Print_Layers_Menu  ( void ) { Send_NVData2Serial(sizeof(Layers_Menu)-1  ,Layers_Menu) ;}
-void Print_Working_Menu ( void ) { Send_NVData2Serial(sizeof(Working_Menu)-1 ,Working_Menu);}
-void Print_Ftm_Menu     ( void ) { Send_NVData2Serial(sizeof(Ftm_Menu)-1     ,Ftm_Menu)    ;}
-void Print_Dma_Menu     ( void ) { Send_NVData2Serial(sizeof(Dma_Menu)-1     ,Dma_Menu)    ;}
-void Print_Adc_Menu     ( void ) { Send_NVData2Serial(sizeof(Adc_Menu)-1     ,Adc_Menu)    ;}
-void Print_Tpanel_Menu  ( void ) { Send_NVData2Serial(sizeof(Tpanel_Menu)-1  ,Tpanel_Menu) ;}
-void Print_FlashMenu    ( void ) { Send_NVData2Serial(sizeof(FlashMenu)-1  ,FlashMenu)     ;}
+void Print_About_Menu    ( void ) { Send_NVData2Serial(sizeof(About_Menu)-1    ,About_Menu)   ;}
+void Print_Main_Menu     ( void ) { Send_NVData2Serial(sizeof(Main_Menu)-1     ,Main_Menu)    ;}
+void Print_Layers_Menu   ( void ) { Send_NVData2Serial(sizeof(Layers_Menu)-1   ,Layers_Menu)  ;}
+void Print_Working_Menu  ( void ) { Send_NVData2Serial(sizeof(Working_Menu)-1  ,Working_Menu) ;}
+void Print_Ftm_Menu      ( void ) { Send_NVData2Serial(sizeof(Ftm_Menu)-1      ,Ftm_Menu)     ;}
+void Print_Dma_Menu      ( void ) { Send_NVData2Serial(sizeof(Dma_Menu)-1      ,Dma_Menu)     ;}
+void Print_Adc_Menu      ( void ) { Send_NVData2Serial(sizeof(Adc_Menu)-1      ,Adc_Menu)     ;}
+void Print_Tpanel_Menu   ( void ) { Send_NVData2Serial(sizeof(Tpanel_Menu)-1   ,Tpanel_Menu)  ;}
+void Print_Flash_Menu    ( void ) { Send_NVData2Serial(sizeof(Flash_Menu)-1    ,Flash_Menu)   ;}
+void Print_One_Wire_Menu ( void ) { Send_NVData2Serial(sizeof(One_Wire_Menu)-1 ,One_Wire_Menu);}
 //--------------------------------------------------------------------
 State**  Serial_Session    (void)   {return &Serial_Session_Sm;} 
 void     Init_Serial_Session  (void)
@@ -141,17 +152,19 @@ void     Init_Serial_Session  (void)
 //---------------------------------------------------------------------
 State Parsing_Main   [ ]RODATA=
 {
-{ 'A'       ,Rien                      ,Parsing_Working },
-{ 'D'       ,Print_Layers_Menu         ,Parsing_Layers  },
-{ 'E'       ,Print_Dma_Menu            ,Parsing_Dma     },
-{ 'F'       ,Print_Ftm_Menu            ,Parsing_Ftm     },
-{ 'G'       ,Print_Adc_Menu            ,Parsing_Adc     },
-{ 'H'       ,Print_Tpanel_Menu         ,Parsing_Tpanel  },
-{ 'I'       ,Print_FlashMenu         ,Parsing_Flash  },
-{ '.'       ,Print_About_Menu          ,Parsing_Main    },
-{ '?'       ,Print_Main_Menu           ,Parsing_Main    },
-{ ANY_Event ,Rien                      ,Parsing_Main    },
-                                                        };
+{ 'A'       ,Rien                ,Parsing_Working  },
+{ 'D'       ,Print_Layers_Menu   ,Parsing_Layers   },
+{ 'E'       ,Print_Dma_Menu      ,Parsing_Dma      },
+{ 'F'       ,Print_Ftm_Menu      ,Parsing_Ftm      },
+{ 'G'       ,Print_Adc_Menu      ,Parsing_Adc      },
+{ 'H'       ,Print_Tpanel_Menu   ,Parsing_Tpanel   },
+{ 'I'       ,Print_Flash_Menu    ,Parsing_Flash    },
+{ 'J'       ,Print_One_Wire_Menu ,Parsing_One_Wire },
+{ 'R'       ,Soft_Reset          ,Parsing_Main     },
+{ '.'       ,Print_About_Menu    ,Parsing_Main     },
+{ '?'       ,Print_Main_Menu     ,Parsing_Main     },
+{ ANY_Event ,Rien                ,Parsing_Main     },
+};
 State Parsing_Working[ ]RODATA=
 {
 { '<'       ,Rien                      ,Parsing_Main    },
@@ -219,11 +232,18 @@ State Parsing_Tpanel [ ]RODATA=
 
 State Parsing_Flash [ ]RODATA=
 {
-{ 'A'       ,Save_Table_Log  ,Parsing_Flash } ,
-{ 'B'       ,Print_RLog  ,Parsing_Flash } ,
-{ 'C'       ,Print_FLog  ,Parsing_Flash } ,
-{ '<'       ,Rien            ,Parsing_Main  } ,
-{ '?'       ,Print_FlashMenu ,Parsing_Flash } ,
-{ ANY_Event ,Rien            ,Parsing_Flash } ,
+{ 'A'       ,Save_Table_Log   ,Parsing_Flash } ,
+{ 'B'       ,Print_RLog       ,Parsing_Flash } ,
+{ 'C'       ,Print_FLog       ,Parsing_Flash } ,
+{ '<'       ,Rien             ,Parsing_Main  } ,
+{ '?'       ,Print_Flash_Menu ,Parsing_Flash } ,
+{ ANY_Event ,Rien             ,Parsing_Flash } ,
+};
+State Parsing_One_Wire [ ]RODATA=
+{
+{ 'A'       ,Print_Actual_Code   ,Parsing_One_Wire } ,
+{ '<'       ,Rien                ,Parsing_Main  }    ,
+{ '?'       ,Print_One_Wire_Menu ,Parsing_One_Wire } ,
+{ ANY_Event ,Rien                ,Parsing_One_Wire } ,
 };
 //------------------------------------------------------------------------------
