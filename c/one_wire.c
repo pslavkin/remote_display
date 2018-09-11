@@ -21,9 +21,9 @@ State* One_Wire_Sm;
 uint8_t Actual_Bit;
 uint8_t Actual_Command;
 One_Wire_Struct OW;
-uint8_t Zero_Code[12]={1,2,3,4,5,6,7,8,9,0x0A,0x0B,0x0C};
+uint8_t Zero_Code[12]={0,0,0,0,0,0,0,0,1,2,3,4};
 //-------------------------------------------------------------------
-unsigned char  Update_crc          ( unsigned char New, unsigned char Last  )
+unsigned char  Rotate_crc          ( unsigned char New, unsigned char Last  )
 {
 //8-bit CRC value  using polynomial  X^8 + X^5 + X^4 + 1 
  #define POLYVAL 0x8C
@@ -35,10 +35,10 @@ unsigned char  Update_crc          ( unsigned char New, unsigned char Last  )
  return Last;
 }
 
-unsigned char Calculate_One_Wire_Crc(unsigned char* Data,unsigned char Length)
+unsigned char Calc_One_Wire_Crc(unsigned char* Data,unsigned char Length)
 {
  unsigned char Crc=0;
- while(Length--) Crc=Update_crc(Data[Length],Crc);
+ while(Length--) Crc=Rotate_crc(Data[Length],Crc);
  return Crc;
 }
 void Set_OW_Code_Nibble(uint8_t Number,uint8_t Pos)
@@ -53,10 +53,18 @@ void Set_OW_Code(uint8_t* Code)
    for(i=0;i<12;i++)
       Set_OW_Code_Nibble(Code[i],i);
 }
-
-
-
-
+void Set_OW_Family(uint8_t Family)
+{
+   OW.Family=Family;
+}
+void Set_OW_Crc(void)
+{
+   uint8_t Crc=0,i;
+   Crc=Rotate_crc(OW.Family,Crc);
+   for(i=0;i<6;i++)
+      Crc=Rotate_crc(OW.Code[5-i],Crc);
+   OW.Crc=Crc;
+}
 
 void Init_One_Wire_Pin(void)
 {
@@ -112,6 +120,8 @@ void     Init_One_Wire  (void)
    One_Wire_Sm=Presence;
    Init_One_Wire_Pin ( );
    Set_OW_Code(Zero_Code);
+   Set_OW_Family(1);
+   Set_OW_Crc();
 }
 State**  One_Wire     ( void ) { return &One_Wire_Sm                    ;} // devuelve la direccion de la maquina de estados One_Wire para poder mandarle mensajes.
 void     One_Wire_Rti ( void ) { Atomic_Send_Event(ANY_Event,One_Wire());} // manda mensajes ANY a tiempos predefinidos...
@@ -181,9 +191,9 @@ void Add_Zero(void)
 }
 void Print_Command(void)
 {
-   Send_NVData2Serial(9,"Command=:");
-   Send_Hex_Int_NLine2Serial(Actual_Command);
-   Atomic_Send_Event(Actual_Command,Actual_Sm());
+   Send_NVData2Serial        ( 9,"Command=:"             ) ;
+   Send_Hex_Int_NLine2Serial ( Actual_Command            ) ;
+   Atomic_Send_Event         ( Actual_Command,Actual_Sm( ));
 }
 void Print_Read_Rom(void)
 {
@@ -191,12 +201,14 @@ void Print_Read_Rom(void)
 }
 void Print_Actual_Code(void)
 {
-   char B[14];
-   String2Hex_Bcd(B,(char*)OW.Code,6);
-   B[12]='\r';
-   B[13]='\n';
+   char B[18];
+   Char2Hex_Bcd   ( B     ,OW.Crc    );
+   String2Hex_Bcd ( B+2 ,(char*      )&OW.Code ,6);
+   Char2Hex_Bcd   ( B+14  ,OW.Family );
+   B[16]='\r';
+   B[17]='\n';
    Send_NVData2Serial(12,"Actual Code=");
-   Send_VData2Serial(14,B);
+   Send_VData2Serial(18,B);
 }
 //----------------------------------------------------------------------------------------------------
 void Ack_Presence_And_Receive_Command(void) {Ack_Presence();Receive_Command();}
