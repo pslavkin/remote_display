@@ -127,6 +127,7 @@ char One_Wire_Menu[] RODATA=
 {
  "One Wire menu\r\n"
  "A Actual Code\r\n"
+ "B Send New Code\r\n"
  "< Back\r\n"
  "? Help\r\n"
 };
@@ -241,9 +242,10 @@ State Parsing_Flash [ ]RODATA=
 };
 State Parsing_One_Wire [ ]RODATA=
 {
-{ 'A'       ,Print_Actual_Code   ,Parsing_One_Wire } ,
-{ '<'       ,Rien                ,Parsing_Main  }    ,
-{ '?'       ,Print_One_Wire_Menu ,Parsing_One_Wire } ,
-{ ANY_Event ,Rien                ,Parsing_One_Wire } ,
+{ 'A'       ,Print_Actual_Code   ,Parsing_One_Wire },
+{ 'B'       ,Send_New_OW_Code    ,Parsing_One_Wire },
+{ '<'       ,Rien                ,Parsing_Main     },
+{ '?'       ,Print_One_Wire_Menu ,Parsing_One_Wire },
+{ ANY_Event ,Rien                ,Parsing_One_Wire },
 };
 //------------------------------------------------------------------------------

@@ -4,6 +4,11 @@
 #include "state_machine.h"
 #include "events.h"
 //-----------------------------------------------------------
+enum ONE_WIRE_DATA_MEANING {
+      CRC_POS    =0,
+      CODE_POS   =1,
+      FAMILY_POS =7
+};
 
 typedef struct {
    uint8_t Crc;
@@ -26,7 +31,9 @@ enum One_Wire_Event_Code{
             Presense_Event     = 0x1204 ,
             Error_Event        = 0x1205 ,
             Time_Invalid_Event = 0x1206 ,
-            Command_End_Event  = 0x1207
+            Command_End_Event  = 0x1207 ,
+            New_Code_Event     = 0x1208 ,
+            Code_Sended_Event  = 0x1209
 };
 enum ONE_WIRE_COMMANDS
 {
@@ -40,13 +47,14 @@ extern void       One_Wire_Rti      ( void                        );
 extern void       Init_One_Wire     ( void                        );
 extern State**    One_Wire          ( void                        );
 extern void       Receive_Command   ( void                        );
-extern void       Inc_Actual_Bit    ( uint8_t Max ,uint16_t Event );
+extern void Inc_Actual_Bit(uint8_t Max);
 extern void       Add_One           ( void                        );
 extern void       Add_Zero          ( void                        );
 extern void       Print_Command     ( void                        );
 extern void       Print_Presence    ( void                        );
 extern void       Wait_Fall         ( void                        );
 extern void       Print_Actual_Code ( void                        );
+extern void       Send_New_OW_Code  ( void                        );
 // ----------------------------------------------------
 #endif
 
