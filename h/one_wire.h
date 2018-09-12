@@ -5,8 +5,8 @@
 #include "events.h"
 //-----------------------------------------------------------
 //8-bit CRC value  using polynomial  X^8 + X^5 + X^4 + 1
-#define POLYVAL 0x8C
-
+#define POLYVAL         0x8C
+#define DEFAULT_FAMILY  0x01
 enum ONE_WIRE_DATA_MEANING {
       CRC_POS    =0,
       CODE_POS   =1,
@@ -36,7 +36,8 @@ enum One_Wire_Event_Code{
             Time_Invalid_Event = 0x1206 ,
             Command_End_Event  = 0x1207 ,
             New_Code_Event     = 0x1208 ,
-            Code_Sended_Event  = 0x1209
+            Code_Sended_Event  = 0x1209 ,
+            Abort_Event        = 0x120A
 };
 enum ONE_WIRE_COMMANDS
 {
@@ -64,6 +65,8 @@ extern void       Wait_Fall         ( void                        );
 extern void Wait_None(void);
 extern void       Print_Actual_Code ( void                        );
 extern void       Send_New_OW_Code  ( void                        );
+extern void Send_Abort_Event ( void );
+extern void Write_New_Code(uint8_t* Code);
 // ----------------------------------------------------
 #endif
 

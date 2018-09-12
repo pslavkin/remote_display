@@ -13,6 +13,8 @@
 #include "log_pic.h"
 #include "everythings.h"
 #include "flash.h"
+#include "str.h"
+#include "one_wire.h"
 
 //--------------Pics Data----------------------------------
 uint16_t Accept_Data_Raw[] RODATA=
@@ -104,6 +106,9 @@ uint16_t *Clock_Data[] RODATA=
 //---------------Functions---------------------------------------
 void Clock_Constr(void)
 {
+   char Buf[13];
+   String_Head(Read_Pass_String(),Buf,13,'0');
+   Write_New_Code((uint8_t*)Buf);
 }
 void Clock_Destr(void)
 {

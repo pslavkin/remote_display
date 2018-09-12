@@ -79,6 +79,7 @@ char Layers_Menu[] RODATA=
  "D Mask Del\r\n"
  "E Mask Enter\r\n"
  "F Clear LCD\r\n"
+ "G Actual Pass\r\n"
  "< Back\r\n"
  "? Help\r\n"
 };
@@ -128,6 +129,7 @@ char One_Wire_Menu[] RODATA=
  "One Wire menu\r\n"
  "A Actual Code\r\n"
  "B Send New Code\r\n"
+ "C Abort\r\n"
  "< Back\r\n"
  "? Help\r\n"
 };
@@ -190,6 +192,7 @@ State Parsing_Layers [ ]RODATA=
 { 'D'       ,Del_Pass_Digit            ,Parsing_Layers } ,
 { 'E'       ,Add_Clock                 ,Parsing_Layers } ,
 { 'F'       ,Layer_Clr_Lcd             ,Parsing_Layers } ,
+{ 'G'       ,Print_Actual_Pass         ,Parsing_Layers } ,
 { '<'       ,Rien                      ,Parsing_Main   } ,
 { '?'       ,Print_Layers_Menu         ,Parsing_Layers } ,
 { ANY_Event ,Rien                      ,Parsing_Layers } ,
@@ -244,6 +247,7 @@ State Parsing_One_Wire [ ]RODATA=
 {
 { 'A'       ,Print_Actual_Code   ,Parsing_One_Wire },
 { 'B'       ,Send_New_OW_Code    ,Parsing_One_Wire },
+{ 'C'       ,Send_Abort_Event    ,Parsing_One_Wire },
 { '<'       ,Rien                ,Parsing_Main     },
 { '?'       ,Print_One_Wire_Menu ,Parsing_One_Wire },
 { ANY_Event ,Rien                ,Parsing_One_Wire },

@@ -36,7 +36,8 @@ extern void       Left_Roll_Jumping (unsigned char *Data,unsigned char Times,uns
 extern char*       String2Hex_Bcd       (char* Bcd,char* String,unsigned char Length);
 extern char*       Char2Hex_Bcd         (char* Bcd,unsigned char Bin);
 extern char*   Int2Hex_Bcd       (char* Bcd,uint16_t  Bin);
-//---------------------------------------------------------------------
+extern char* String2Char_Array(char* Char_Array,char* String,unsigned char Length);
+//-----------------Bcd----------------------------------------------------
 extern char*   Replace_Zero2Space      (char* Buf,unsigned char Length);
 //---------------------------------------------------------------------
 

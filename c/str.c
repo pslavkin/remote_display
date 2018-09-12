@@ -1,5 +1,6 @@
 #include <events.h>
-#include <str.h>
+#include "str.h"
+#include <string.h>
 #include <display_pics.h>
 
 //----------------------------------------------------------------------------------------
@@ -94,5 +95,14 @@ void String_Padd(char* String, char *Padded_String, uint8_t Length, char Pad_Dat
    for(;i<(Length-1);i++)        //reservo 1 para el null
       Padded_String[i]=Pad_Data;
    Padded_String[i]='\0';
+}
+void String_Head(char* String, char *Head_String, uint8_t Length, char Head_Data)
+{
+   uint8_t Len=strlen(String);
+   uint8_t i;
+   for(i=0;i<=Len;i++)
+      Head_String[Length-i-1]=String[Len-i];
+   for(;i<Length;i++)
+      Head_String[Length-i-1]=Head_Data;
 }
 //----------------------------------------------------------------------------------------

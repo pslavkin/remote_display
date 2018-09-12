@@ -20,5 +20,6 @@ extern unsigned char    Read_Bit4String           ( unsigned char* Data,unsigned
 extern void             Append_Data               ( char* S,char Digit,uint8_t Max                                                                                              );
 extern void             Backspace_Data            ( char* S                                                                                                                     );
 extern void             String_Padd               ( char* String, char *Padded_String, uint8_t Length, char Pad_Data                                                            );
+extern void String_Head(char* String, char *Head_String, uint8_t Length, char Head_Data);
 
 #endif

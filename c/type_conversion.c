@@ -123,6 +123,11 @@ void Left_Shift(unsigned char *Data,unsigned char Times,unsigned char Length)
    }
 }
 //----------------------------------------------------------------
+char* String2Char_Array(char* Char_Array,char* String,unsigned char Length)
+{
+ while(Length--) Char_Array[Length]=String[Length]-'0';
+ return Char_Array;
+}
 char* String2Hex_Bcd(char* Bcd,char* String,unsigned char Length)
 {
  while(Length--) Char2Hex_Bcd(Bcd+2*Length,String[Length]);

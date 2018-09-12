@@ -10,6 +10,7 @@
 #include "str.h"
 #include "log_pic.h"
 #include "font_30x42.h"
+#include "serial_tx.h"
 //------------------------------------------------------
 uint16_t *Pass_Data[9]; //con 8 alcanza
 char Pass_String[9]      = "";
@@ -67,3 +68,9 @@ void Add_Pass_Digit6(void) {Add_Pass_Digit('6');}
 void Add_Pass_Digit7(void) {Add_Pass_Digit('7');}
 void Add_Pass_Digit8(void) {Add_Pass_Digit('8');}
 void Add_Pass_Digit9(void) {Add_Pass_Digit('9');}
+
+void Print_Actual_Pass(void)
+{
+   Send_NVData2Serial(strlen(Read_Pass_String()),Read_Pass_String());
+   Send_NLine2Serial();
+}
