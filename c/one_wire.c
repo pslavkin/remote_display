@@ -17,43 +17,15 @@ State
    Idle         [ ],
    Presence     [ ],
    Command      [ ],
-   Sending_Data [ ];
+   Writing_Code [ ];
 
 State* One_Wire_Sm;
 uint8_t Actual_Bit;
 uint8_t Actual_Command;
 uint8_t OW[8];                                     //CRC|1|2|3|4|5|6|FAMILY
 uint8_t Zero_Code[12]={0,0,0,0,0,0,0,0,1,2,3,4};
+void (*PTimer_Irq) (void);
 //-------------------------------------------------------------------
-unsigned char  Rotate_crc          ( unsigned char New, unsigned char Last  )
-{
-//8-bit CRC value  using polynomial  X^8 + X^5 + X^4 + 1 
- #define POLYVAL 0x8C
- unsigned char i;
- for(i=0;i<8;i++) {
-  Last=((Last^New)&0x01)?(Last>>1)^POLYVAL:Last>>1;
-  New>>=1;
- }
- return Last;
-}
-void Set_OW_Code(uint8_t* Code)
-{
-   uint8_t i;
-   for(i=0;i<6;i++)
-      OW[CODE_POS+i]=Code[i*2]<<4 | (Code[i*2+1]&0x0F);
-}
-void Set_OW_Family(uint8_t Family)
-{
-   OW[FAMILY_POS]=Family;
-}
-void Set_OW_Crc(void)
-{
-   uint8_t Crc=0,i=8;
-   while(--i)
-      Crc=Rotate_crc(OW[i],Crc);
-   OW[CRC_POS]=Crc;
-}
-
 void Init_One_Wire_Pin(void)
 {
    CLOCK_EnableClock   ( kCLOCK_Ftm2              );
@@ -66,69 +38,6 @@ void Init_One_Wire_Pin(void)
    FTM2->SC               = 0x0000000F;              // prescaler x 128, 1.06 useg x clk (120M/128/9375=10mseg (con 0.5m me alcanzaba)
    NVIC_EnableIRQ(FTM2_IRQn);                        // la iRQ salta cuando termina de transferir todo el pic y recien ahi agpgo el ftm y aviso con un evento
 }
-
-void Waiting_Fall(void)
-{
-   Send_Event(Fall_Event,&One_Wire_Sm);
-   FTM2->CONTROLS[5].CnSC = 0x00000046;             // cambio a rise y limpio flag
-}
-void Waiting_Rise(void)
-{
-   uint16_t Time=FTM2->CONTROLS[5].CnV;
-   uint16_t Event=Time_Invalid_Event;
-
-      if(Time<ONE_TIME) {
-         Event=One_Event;
-         FTM2->CONTROLS[5].CnSC = 0x00000000;             // apago.. ya tengo el tiempo.. vere que hacer en SM
-      }
-   else if (Time<ZERO_TIME) {
-         Event=Zero_Event;
-         FTM2->CONTROLS[5].CnSC = 0x0000004A;             //vuelvo a prender antes de que venga de nuevo fall.. como es zero, no tengo que intervenir el pin.. solo saber que llego cero
-   }
-   else if (Time<PRESENCE_TIME) {
-         FTM2->CONTROLS[5].CnSC = 0x00000000;             // apago.. ya tengo el tiempo.. vere que hacer en SM
-         Event=Presense_Event;
-   }
-   Send_Event(Event,&One_Wire_Sm);
-}
-
-void FTM2_IRQHandler(void)
-{
-   uint16_t Time=FTM2->CONTROLS[5].CnV;
-   switch(FTM2->CONTROLS[5].CnSC&0x0000008C) {
-      case 0x88:
-         FTM2->CONTROLS[5].CnSC = 0x00000046;             // cambio a rise y limpio flag
-         Send_Event(Fall_Event,&One_Wire_Sm);
-         break;
-
-      case 0x84: {
-         uint16_t Event=Time_Invalid_Event;
-            if(Time<ONE_TIME) {
-               Event=One_Event;
-               FTM2->CONTROLS[5].CnSC = 0x00000000;             // apago.. ya tengo el tiempo.. vere que hacer en SM
-            }
-         else if (Time<ZERO_TIME) {
-               Event=Zero_Event;
-               FTM2->CONTROLS[5].CnSC = 0x0000004A;             //vuelvo a prender antes de que venga de nuevo fall.. como es zero, no tengo que intervenir el pin.. solo saber que llego cero
-         }
-         else if (Time<PRESENCE_TIME) {
-               FTM2->CONTROLS[5].CnSC = 0x00000000;             // apago.. ya tengo el tiempo.. vere que hacer en SM
-               Event=Presense_Event;
-         }
-         Send_Event(Event,&One_Wire_Sm);
-         }
-         break;
-      default:
-         Send_Event(Error_Event,&One_Wire_Sm);
-         break;
-   }
-}
-
-bool Read_One_Wire_Pin(void)
-{
-   return  GPIO_PinRead(GPIOD,14);
-}
-//----------------------------------------------------------------------------------------------------
 void     Init_One_Wire  (void)
 {
    One_Wire_Sm=Idle;
@@ -137,67 +46,73 @@ void     Init_One_Wire  (void)
    Set_OW_Family(1);
    Set_OW_Crc();
 }
-State**  One_Wire     ( void ) { return &One_Wire_Sm                    ;} // devuelve la direccion de la maquina de estados One_Wire para poder mandarle mensajes.
-void     One_Wire_Rti ( void ) { Atomic_Send_Event(ANY_Event,One_Wire());} // manda mensajes ANY a tiempos predefinidos...
+State**  One_Wire ( void ) { return &One_Wire_Sm;}
 //----------------------------------------------------------------------------------------------------
-void Print_Error    ( void ) { Send_NVData2Serial( 7,"Error\r\n" )  ;}
-void Print_Overflow ( void ) { Send_NVData2Serial(10,"Overflow\r\n");}
-void Print_Fall     ( void ) { Send_NVData2Serial( 6,"Fall\r\n")    ;}
-
-void Wait_Fall(void) { FTM2->CONTROLS[5].CnSC = 0x0000004A; }
-void Wait_Rise(void) { FTM2->CONTROLS[5].CnSC = 0x00000046; }
-void Wait_None(void) { FTM2->CONTROLS[5].CnSC = 0x00000000; }
-
-void Print_Zero     ( void ){
-   Send_NVData2Serial( 6,"Zero\r\n")    ;
+uint8_t Rotate_crc          ( uint8_t New, uint8_t Last  ) {
+   uint8_t i;
+   for(i=0;i<8;i++,New>>=1)
+      Last=((Last^New)&0x01)?(Last>>1)^POLYVAL:Last>>1;
+   return Last;
 }
-void Print_One     ( void ){
-   Send_NVData2Serial( 5,"One\r\n")    ;
+void Set_OW_Code(uint8_t* Code) {
+   uint8_t i;
+   for(i=0;i<6;i++)
+      OW[CODE_POS+i]=Code[i*2]<<4 | (Code[i*2+1]&0x0F);
 }
-void Print_Presence     ( void ){
-   Send_NVData2Serial(10,"Presence\r\n")    ;
+void Set_OW_Family(uint8_t Family) {
+   OW[FAMILY_POS]=Family;
 }
-void Ack_Presence     ( void ) {
-   Delay_Useg(30);
-   PORT_SetPinMux     ( PORTD ,14 ,kPORT_MuxAsGpio );
-   Delay_Useg(200);
-   PORT_SetPinMux     ( PORTD ,14 ,kPORT_MuxAlt2 );
-   Delay_Useg(10);
-   Wait_Fall();
-   Send_NVData2Serial ( 14,"Presence Ack\r\n" );
+void Set_OW_Crc(void) {
+   uint8_t Crc=0,i=8;
+   while(--i)
+      Crc=Rotate_crc(OW[i],Crc);
+   OW[CRC_POS]=Crc;
 }
-
-void Receive_Command(void)
+//-------------------------------------------------------------------
+void Waiting_Fall(void)
 {
-   Actual_Bit     = 7;
-//   Actual_Command = 0;
+   FTM2->CONTROLS[5].CnSC&=~0x00000080;
+   Wait_Rise();
+   Send_Event(Fall_Event,&One_Wire_Sm);
 }
-void Next_Command_Bit(void)
+void Waiting_Rise(void)
 {
-   if(Actual_Bit--==0)
-      Atomic_Send_Event(Actual_Command,Actual_Sm());
+   uint16_t Event;
+   uint16_t Time=FTM2->CONTROLS[5].CnV;
+   FTM2->CONTROLS[5].CnSC&=~0x00000080;
+      if(Time<ONE_TIME) {
+         Wait_None();
+         Event=One_Event;
+      }
+   else if (Time<ZERO_TIME) {
+         Wait_Fall();
+         Event=Zero_Event;
+   }
+   else if (Time<PRESENCE_TIME) {
+         Wait_None();
+         Event=Presense_Event;
+   }
+   else {
+         Event=Time_Invalid_Event;
+         Wait_None();
+   }
+   Send_Event(Event,&One_Wire_Sm);
 }
-void Add_One(void)
-{
-   Wait_Fall();
-   Set_Bit_On_String(&Actual_Command,Actual_Bit);
-   Next_Command_Bit();
-   Print_One();
+void FTM2_IRQHandler(void) { PTimer_Irq(); }
+//----------------------------------------------------------------------------------------------------
+void Print_Error    ( void ) {
+   Send_NVData2Serial( 7,"Error\r\n" )  ;
+   Send_Int_NLine2Serial(Actual_Event());
 }
-void Add_Zero(void)
-{
-   Clear_Bit_On_String(&Actual_Command,Actual_Bit);
-   Next_Command_Bit();
-   Print_Zero();
-}
-void Print_Command(void)
-{
+void Print_Fall     ( void ) { }//Send_NVData2Serial( 6,"Fall\r\n")    ;}
+void Print_Zero     ( void ) { }//Send_NVData2Serial( 6,"Zero\r\n" )   ;}
+void Print_One      ( void ) { }//Send_NVData2Serial( 5,"One\r\n" )    ;}
+void Print_Presence     ( void ) { Send_NVData2Serial(10,"Presence\r\n")    ;}
+void Print_Code_Sended  ( void ) { Send_NVData2Serial(13,"Code Sended\r\n") ;}
+void Print_Time_Invalid ( void ) { Send_NVData2Serial(14,"Time invalid\r\n");}
+void Print_Command(void) {
    Send_NVData2Serial        ( 9,"Command=:"             ) ;
    Send_Hex_Int_NLine2Serial ( Actual_Command            ) ;
-}
-void Print_Read_Rom(void)
-{
-   Send_NVData2Serial(12,"Read Rom\r\n");
 }
 void Print_Actual_Code(void)
 {
@@ -208,64 +123,111 @@ void Print_Actual_Code(void)
    Send_NVData2Serial(12,"Actual Code=");
    Send_VData2Serial(18,B);
 }
-void Begin_Write_Rom(void)
-{
-   Print_Command();
-   Actual_Bit=63;
+//----------------------------------------------------------------------------------------------------
+void Wait_Fall(void) {
+   PTimer_Irq=Waiting_Fall;
+   FTM2->CONTROLS[5].CnSC = 0x0000004A;
 }
-void Send_New_OW_Code(void)
-{
-   Atomic_Send_Event(New_Code_Event,One_Wire());
+void Wait_Rise(void) {
+   PTimer_Irq=Waiting_Rise;
+   FTM2->CONTROLS[5].CnSC = 0x00000046;
 }
-void Write_Next_Bit(void)
-{
+void Wait_None(void) {
+   FTM2->CONTROLS[5].CnSC = 0x00000000;
+}
+//----------------------------------------------------------------------------------------------------
+void Ack_Presence     ( void ) {
+   Delay_Useg(30);
+   PORT_SetPinMux     ( PORTD ,14 ,kPORT_MuxAsGpio );
+   Delay_Useg(200);
+   PORT_SetPinMux     ( PORTD ,14 ,kPORT_MuxAlt2 );
+   Delay_Useg(10);
+   Wait_Fall();
+   Print_Presence();
+}
+void Write_Next_Bit(void) {
    bool Bit=Read_Bit4String(OW,Actual_Bit);
    Delay_Useg(2);
    if(Bit==0)
-         PORT_SetPinMux     ( PORTD ,14 ,kPORT_MuxAsGpio );
-   Send_NVData2Serial(1,Bit?"1":"0");
-   Delay_Useg(20);
+      PORT_SetPinMux     ( PORTD ,14 ,kPORT_MuxAsGpio );
+   Delay_Useg(18);
    PORT_SetPinMux     ( PORTD ,14 ,kPORT_MuxAlt2 );
    Delay_Useg(10);
    Wait_Fall();
    if(Actual_Bit--==0)
       Atomic_Send_Event(Code_Sended_Event,One_Wire());
 }
-void Print_Code_Sended(void)
+//----------------------------------------------------------------------------------------------------
+void Begin_Read_Command(void) {
+   Actual_Bit     = 7;
+}
+void Begin_Write_Code(void) {
+   Actual_Bit=63;
+   Print_Command();
+}
+void Next_Command_Bit(void)
 {
-   Send_NVData2Serial(10,"Code Sended\r\n");
-   Wait_None();
+   if(Actual_Bit--==0)
+      Atomic_Insert_Event(Actual_Command&0x00FF,Actual_Sm());
+}
+void Read_One(void)
+{
+   Wait_Fall();
+   Set_Bit_On_String(&Actual_Command,Actual_Bit);
+   Next_Command_Bit();
+   Print_One();
+}
+void Read_Zero(void)
+{
+   Clear_Bit_On_String(&Actual_Command,Actual_Bit);
+   Next_Command_Bit();
+   Print_Zero();
+}
+void Send_New_OW_Code(void)
+{
+   Atomic_Send_Event(New_Code_Event,One_Wire());
 }
 //----------------------------------------------------------------------------------------------------
-void Ack_Presence_And_Receive_Command(void) {Ack_Presence();Receive_Command();}
+void Ack_Presence_And_Begin_Read_Command ( void ) { Ack_Presence()      ;Begin_Read_Command();}
+void Print_Presence_And_Wait_Fall        ( void ) { Print_Presence()    ;Wait_Fall()         ;}
+void Print_Error_And_Wait_Fall           ( void ) { Print_Error()       ;Wait_Fall()         ;}
+void Print_Zero_And_Wait_Fall            ( void ) { Print_Zero()        ;Wait_Fall()         ;}
+void Print_Code_Sended_And_Wait_None     ( void ) { Print_Code_Sended() ;Wait_None()         ;}
+void Print_Time_Invalid_And_Wait_Fall    ( void ) { Print_Time_Invalid();Wait_Fall()         ;}
 //----------------------------------------------------------------------------------------------------
-State Idle         [ ]RODATA  =
+State Idle        [ ]RODATA  =
 {
-{ New_Code_Event    ,Wait_Fall                        ,Presence}      ,
-{ ANY_Event         ,Print_Error                      ,Idle}          ,
+{ New_Code_Event    ,Wait_Fall                           ,Presence     },
+{ ANY_Event         ,Print_Error                         ,Idle         },
+                                                                       };
+State Presence    [ ]RODATA  =
+{
+{ Fall_Event        ,Print_Fall                          ,Presence     },
+{ Presense_Event    ,Ack_Presence_And_Begin_Read_Command ,Command      },
+{ New_Code_Event    ,Rien                                ,Presence     },
+{ Time_Invalid_Event,Print_Time_Invalid_And_Wait_Fall    ,Presence     },
+{ ANY_Event         ,Print_Error_And_Wait_Fall           ,Presence     },
 };
-State Presence     [ ]RODATA  =
+State Command     [ ]RODATA  =
 {
-{ Fall_Event        ,Print_Fall                       ,Presence}      ,
-{ Presense_Event    ,Ack_Presence_And_Receive_Command ,Command}       ,
-{ ANY_Event         ,Print_Error                      ,Presence}      ,
+{ Fall_Event        ,Print_Fall                          ,Command      },
+{ One_Event         ,Read_One                            ,Command      },
+{ Zero_Event        ,Read_Zero                           ,Command      },
+{ READ_ROM          ,Begin_Write_Code                    ,Writing_Code },
+{ New_Code_Event    ,Rien                                ,Command      },
+{ Presense_Event    ,Print_Presence_And_Wait_Fall        ,Presence     },
+{ Time_Invalid_Event,Print_Time_Invalid_And_Wait_Fall    ,Presence     },
+{ ANY_Event         ,Print_Error_And_Wait_Fall           ,Presence     },
 };
-State Command      [ ]RODATA  =
+State Writing_Code[ ]RODATA  =
 {
-{ Fall_Event        ,Print_Fall                       ,Command}       ,
-{ One_Event         ,Add_One                          ,Command}       ,
-{ Zero_Event        ,Add_Zero                         ,Command}       ,
-{ READ_ROM          ,Begin_Write_Rom                  ,Sending_Data}  ,
-{ Presense_Event    ,Print_Presence                   ,Idle}       , //esto seria un error..vuelve a emprezr 
-{ ANY_Event         ,Print_Error                      ,Idle}       ,
-};
-State Sending_Data [ ]RODATA  =
-{
-{ Fall_Event        ,Print_Fall        ,Sending_Data },
-{ One_Event         ,Write_Next_Bit    ,Sending_Data },
-{ Zero_Event        ,Print_Zero        ,Idle         },//no puede venier cero.
-{ Code_Sended_Event ,Print_Code_Sended ,Idle         },
-{ Presense_Event    ,Print_Presence    ,Idle         },//no puede venir presence
-{ ANY_Event         ,Print_Error       ,Idle         },
+{ Fall_Event        ,Print_Fall                          ,Writing_Code },
+{ One_Event         ,Write_Next_Bit                      ,Writing_Code },
+{ Zero_Event        ,Print_Zero_And_Wait_Fall            ,Presence     },
+{ Code_Sended_Event ,Print_Code_Sended_And_Wait_None     ,Idle         },
+{ New_Code_Event    ,Rien                                ,Writing_Code },
+{ Presense_Event    ,Print_Presence_And_Wait_Fall        ,Presence     },
+{ Time_Invalid_Event,Print_Time_Invalid_And_Wait_Fall    ,Presence     },
+{ ANY_Event         ,Print_Error_And_Wait_Fall           ,Presence     },
 };
 //-------------------------------------------------------------------------------

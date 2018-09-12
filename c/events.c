@@ -42,7 +42,7 @@ void Insert_Event(unsigned int Event, State** Machine)   //escribe un nuevo dato
     for(;;);         //debug
    }
 }
-void Atomic_Insert_Event(unsigned int Event, State** Machine)  
+void Atomic_Insert_Event(unsigned int Event, State** Machine)
 {
  Atomic(Insert_Event(Event,Machine));
 }

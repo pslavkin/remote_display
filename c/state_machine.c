@@ -35,9 +35,7 @@ SCB->AIRCR = 0x5FA;
 //-----------------------------------------------------------------------
 void State_Machine(void)               //esta funcion ejecuta la maquina de estados donde el evento viene en la variable Event... que se decidio que no sea por parametro para permitir la recursividad infinita...  
 {
-// Disable_Irq();
  Atomic(Event=Read_Event());
-// Enable_Irq();
  if(Event.Machine!=Empty_State_Machine)
  {
   ActualState = *(Event.Machine);

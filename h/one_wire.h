@@ -4,6 +4,9 @@
 #include "state_machine.h"
 #include "events.h"
 //-----------------------------------------------------------
+//8-bit CRC value  using polynomial  X^8 + X^5 + X^4 + 1
+#define POLYVAL 0x8C
+
 enum ONE_WIRE_DATA_MEANING {
       CRC_POS    =0,
       CODE_POS   =1,
@@ -43,7 +46,11 @@ enum ONE_WIRE_COMMANDS
  SEARCH_ROM = 0xF0
 };
 //-----------------------------------------------------------
-extern void       One_Wire_Rti      ( void                        );
+extern void Begin_Read_Command(void);
+extern void Begin_Write_Code(void);
+extern void Set_OW_Code(uint8_t* Code);
+extern void Set_OW_Family(uint8_t Family);
+extern void Set_OW_Crc(void);
 extern void       Init_One_Wire     ( void                        );
 extern State**    One_Wire          ( void                        );
 extern void       Receive_Command   ( void                        );
@@ -52,7 +59,9 @@ extern void       Add_One           ( void                        );
 extern void       Add_Zero          ( void                        );
 extern void       Print_Command     ( void                        );
 extern void       Print_Presence    ( void                        );
+extern void Wait_Rise(void);
 extern void       Wait_Fall         ( void                        );
+extern void Wait_None(void);
 extern void       Print_Actual_Code ( void                        );
 extern void       Send_New_OW_Code  ( void                        );
 // ----------------------------------------------------
