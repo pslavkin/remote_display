@@ -14,6 +14,7 @@
 #include "everythings.h"
 #include "flash.h"
 #include "str.h"
+#include "clock_pic.h"
 #include "one_wire.h"
 
 //--------------Pics Data----------------------------------
@@ -51,7 +52,11 @@ struct Struct_Pic Accept_Pic RODATA=
 {
    { 26 ,212 ,66 ,252 },3 ,0 ,2 ,Accept_Events ,1 ,Accept_Data
 };
-void Add_Accept ( void ) { Add_Pic_On_Top(&Accept_Pic);}
+void Add_Accept ( void )
+{
+   Add_Bkgd_Black (             );
+   Add_Pic_On_Top ( &Accept_Pic );
+}
 void Del_Accept ( void ) { Del_Pic(&Accept_Pic)       ;}
 //------------------------------------------------------
 //--------------Pics Data----------------------------------
@@ -89,51 +94,9 @@ struct Struct_Pic Reject_Pic RODATA=
 {
    { 26 ,212 ,66 ,252 },5,0,2,Reject_Events,1,Reject_Data
 };
-void Add_Reject            (void)   {Add_Pic_On_Top(&Reject_Pic);}
+void Add_Reject            (void)   {
+   Add_Bkgd_Black (             );
+   Add_Pic_On_Top ( &Reject_Pic );
+}
 void Del_Reject            (void)   {Del_Pic(&Reject_Pic);}
 //--------------Pics Data----------------------------------
-uint16_t Clock_Data_Raw[] RODATA=
-{
-#ifdef PICS_ENABLED
-   #include "clock.raw"
-#endif
-};
-uint16_t *Clock_Data[] RODATA=
-{
-   Clock_Data_Raw,
-};
-
-//---------------Functions---------------------------------------
-void Clock_Constr(void)
-{
-   char Buf[13];
-   String_Head(Read_Pass_String(),Buf,13,'0');
-   Write_New_Code((uint8_t*)Buf);
-}
-void Clock_Destr(void)
-{
-   if(Read_Ack_Pin()==true)
-      Add_Reject();
-   else
-      Add_Accept();
-   Layer_Clr_Lcd();
-}
-//--------------Events----------------------------------
-struct Struct_Pic_Events Clock_Events[] RODATA=
-{
-   { { 0  ,0   ,0  ,0 }   ,0          ,0 ,{Clock_Constr ,Del_Clock ,Clock_Destr} } ,// On_Create
-   { { 67 ,170 ,66 ,252 } ,Any_Button ,0 ,{Rien         ,Rien      ,Del_Clock }}   ,
-};
-//--------------Pics Info----------------------------------
-//
-struct Struct_Pic Clock_Pic RODATA=
-{
-   { 67 ,170 ,66 ,252 },3,0,2,Clock_Events,1,Clock_Data
-};
-void Add_Clock            (void)
-{
-   Add_Bkgd_Black (            );
-   Add_Pic_On_Top ( &Clock_Pic );
-}
-void Del_Clock ( void ) { Del_Pic        ( &Clock_Pic );}
-//------------------------------------------------------

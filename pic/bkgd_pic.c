@@ -20,12 +20,13 @@ uint16_t *Bkgd_Black_Data[] RODATA=
 //--------------Events----------------------------------
 struct Struct_Pic_Events Bkgd_Black_Events[] RODATA=
 {
-{ { 0 ,0 ,0 ,0 } ,0          ,0 ,{Rien ,Rien ,Rien}} ,// On_Create
+{ { 0 ,0 ,0 ,0 } ,0          ,0 ,{Rien ,Rien ,Rien} },// On_Create
+{ { 0 ,0 ,0 ,0 } ,Any_Button ,0 ,{Rien ,Rien ,Rien} },// no solo tapa la imagen sino tambien los eventos mas abajo de esto
 };
 //--------------Pics Info----------------------------------
 struct Struct_Pic Bkgd_Black_Pic RODATA=
 {
-   { 0 ,239 , 0 ,319 },0 ,1 ,1 ,Bkgd_Black_Events ,1 ,Bkgd_Black_Data
+   { 0 ,239 , 0 ,319 },0 ,1 ,2 ,Bkgd_Black_Events ,1 ,Bkgd_Black_Data
 };
 void Add_Bkgd_Black                    ( void ) 
 { 

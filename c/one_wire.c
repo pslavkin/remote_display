@@ -20,6 +20,7 @@ State
    Writing_Code [ ];
 
 State* One_Wire_Sm;
+bool  Busy;
 uint8_t Actual_Bit;
 uint8_t Actual_Command;
 uint8_t OW[8];                                     //CRC|1|2|3|4|5|6|FAMILY
@@ -45,6 +46,7 @@ void     Init_One_Wire  (void)
    Set_OW_Code(Zero_Code);
    Set_OW_Family(1);
    Set_OW_Crc();
+   Clear_Busy();
 }
 State**  One_Wire ( void ) { return &One_Wire_Sm;}
 //----------------------------------------------------------------------------------------------------
@@ -190,53 +192,57 @@ void Read_Zero(void)
    Next_Command_Bit();
    Print_Zero();
 }
-void Send_Abort_Event ( void ) { Atomic_Send_Event(Abort_Event,One_Wire())   ;}
-void Send_New_OW_Code ( void ) { Atomic_Send_Event(New_Code_Event,One_Wire());}
+void Send_One_Wire_Abort_Event ( void ) { Atomic_Send_Event(Abort_Event,One_Wire())   ;}
+void Send_New_OW_Code          ( void ) { Atomic_Send_Event(New_Code_Event,One_Wire());}
+void Clear_Busy                ( void ) { Busy=false                                  ;}
+void Set_Busy                  ( void ) { Busy=true                                   ;}
+bool One_Wire_Busy             ( void ) { return Busy                                 ;}
 //----------------------------------------------------------------------------------------------------
-void Ack_Presence_And_Begin_Read_Command ( void ) { Ack_Presence()      ;Begin_Read_Command();}
-void Print_Presence_And_Wait_Fall        ( void ) { Print_Presence()    ;Wait_Fall()         ;}
-void Print_Error_And_Wait_Fall           ( void ) { Print_Error()       ;Wait_Fall()         ;}
-void Print_Zero_And_Wait_Fall            ( void ) { Print_Zero()        ;Wait_Fall()         ;}
-void Print_Code_Sended_And_Wait_None     ( void ) { Print_Code_Sended() ;Wait_None()         ;}
-void Print_Time_Invalid_And_Wait_Fall    ( void ) { Print_Time_Invalid();Wait_Fall()         ;}
-void Print_Abort_And_Wait_None           ( void ) { Print_Abort()       ;Wait_None()         ;}
+void Ack_Presence_And_Begin_Read_Command            ( void ) { Ack_Presence()      ;Begin_Read_Command();}
+void Print_Presence_And_Wait_Fall                   ( void ) { Print_Presence()    ;Wait_Fall()         ;}
+void Print_Error_And_Wait_Fall                      ( void ) { Print_Error()       ;Wait_Fall()         ;}
+void Print_Zero_And_Wait_Fall                       ( void ) { Print_Zero()        ;Wait_Fall()         ;}
+void Print_Code_Sended_And_Wait_None_And_Clear_Busy ( void ) { Print_Code_Sended() ;Wait_None()         ;Clear_Busy();}
+void Print_Time_Invalid_And_Wait_Fall               ( void ) { Print_Time_Invalid();Wait_Fall()         ;}
+void Print_Abort_And_Wait_None_And_Clear_Busy       ( void ) { Print_Abort()       ;Wait_None()         ;Clear_Busy();}
+void Wait_Fall_And_Set_Busy                         ( void ) { Wait_Fall()         ;Set_Busy()          ;}
 //----------------------------------------------------------------------------------------------------
 State Idle        [ ]RODATA  =
 {
-{ New_Code_Event     ,Wait_Fall                           ,Presence     },
-{ ANY_Event          ,Print_Error                         ,Idle         },
-                                                                        };
+{ New_Code_Event     ,Wait_Fall_And_Set_Busy                         ,Presence     },
+{ ANY_Event          ,Print_Error                                    ,Idle         },
+                                                                                   };
 State Presence    [ ]RODATA  =
 {
-{ Fall_Event         ,Print_Fall                          ,Presence     },
-{ Presense_Event     ,Ack_Presence_And_Begin_Read_Command ,Command      },
-{ New_Code_Event     ,Rien                                ,Presence     },
-{ Time_Invalid_Event ,Print_Time_Invalid_And_Wait_Fall    ,Presence     },
-{ Abort_Event        ,Print_Abort_And_Wait_None           ,Idle         },
-{ ANY_Event          ,Print_Error_And_Wait_Fall           ,Presence     },
-                                                                        };
+{ Fall_Event         ,Print_Fall                                     ,Presence     },
+{ Presense_Event     ,Ack_Presence_And_Begin_Read_Command            ,Command      },
+{ New_Code_Event     ,Rien                                           ,Presence     },
+{ Time_Invalid_Event ,Print_Time_Invalid_And_Wait_Fall               ,Presence     },
+{ Abort_Event        ,Print_Abort_And_Wait_None_And_Clear_Busy       ,Idle         },
+{ ANY_Event          ,Print_Error_And_Wait_Fall                      ,Presence     },
+                                                                                   };
 State Command     [ ]RODATA  =
 {
-{ Fall_Event         ,Print_Fall                          ,Command      },
-{ One_Event          ,Read_One                            ,Command      },
-{ Zero_Event         ,Read_Zero                           ,Command      },
-{ READ_ROM           ,Begin_Write_Code                    ,Writing_Code },
-{ New_Code_Event     ,Rien                                ,Command      },
-{ Presense_Event     ,Print_Presence_And_Wait_Fall        ,Presence     },
-{ Abort_Event        ,Print_Abort_And_Wait_None           ,Idle         },
-{ Time_Invalid_Event ,Print_Time_Invalid_And_Wait_Fall    ,Presence     },
-{ ANY_Event          ,Print_Error_And_Wait_Fall           ,Presence     },
-                                                                        };
+{ Fall_Event         ,Print_Fall                                     ,Command      },
+{ One_Event          ,Read_One                                       ,Command      },
+{ Zero_Event         ,Read_Zero                                      ,Command      },
+{ READ_ROM           ,Begin_Write_Code                               ,Writing_Code },
+{ New_Code_Event     ,Rien                                           ,Command      },
+{ Presense_Event     ,Print_Presence_And_Wait_Fall                   ,Presence     },
+{ Abort_Event        ,Print_Abort_And_Wait_None_And_Clear_Busy       ,Idle         },
+{ Time_Invalid_Event ,Print_Time_Invalid_And_Wait_Fall               ,Presence     },
+{ ANY_Event          ,Print_Error_And_Wait_Fall                      ,Presence     },
+                                                                                   };
 State Writing_Code[ ]RODATA  =
 {
-{ Fall_Event         ,Print_Fall                          ,Writing_Code },
-{ One_Event          ,Write_Next_Bit                      ,Writing_Code },
-{ Zero_Event         ,Print_Zero_And_Wait_Fall            ,Presence     },
-{ Code_Sended_Event  ,Print_Code_Sended_And_Wait_None     ,Idle         },
-{ New_Code_Event     ,Rien                                ,Writing_Code },
-{ Presense_Event     ,Print_Presence_And_Wait_Fall        ,Presence     },
-{ Abort_Event        ,Print_Abort_And_Wait_None           ,Idle         },
-{ Time_Invalid_Event ,Print_Time_Invalid_And_Wait_Fall    ,Presence     },
-{ ANY_Event          ,Print_Error_And_Wait_Fall           ,Presence     },
-                                                                        };
+{ Fall_Event         ,Print_Fall                                     ,Writing_Code },
+{ One_Event          ,Write_Next_Bit                                 ,Writing_Code },
+{ Zero_Event         ,Print_Zero_And_Wait_Fall                       ,Presence     },
+{ Code_Sended_Event  ,Print_Code_Sended_And_Wait_None_And_Clear_Busy ,Idle         },
+{ New_Code_Event     ,Rien                                           ,Writing_Code },
+{ Presense_Event     ,Print_Presence_And_Wait_Fall                   ,Presence     },
+{ Abort_Event        ,Print_Abort_And_Wait_None_And_Clear_Busy       ,Idle         },
+{ Time_Invalid_Event ,Print_Time_Invalid_And_Wait_Fall               ,Presence     },
+{ ANY_Event          ,Print_Error_And_Wait_Fall                      ,Presence     },
+                                                                                   };
 //-------------------------------------------------------------------------------

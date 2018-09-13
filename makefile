@@ -96,6 +96,7 @@ ${BINDIR}/app.axf: ${OBJDIR}/keyb_pic.o
 ${BINDIR}/app.axf: ${OBJDIR}/mask_pic.o
 ${BINDIR}/app.axf: ${OBJDIR}/pass_pic.o
 ${BINDIR}/app.axf: ${OBJDIR}/accept_reject_pic.o
+${BINDIR}/app.axf: ${OBJDIR}/clock_pic.o
 ${BINDIR}/app.axf: ${OBJDIR}/bkgd_pic.o
 ${BINDIR}/app.axf: ${OBJDIR}/log_pic.o
 ${BINDIR}/app.axf: ${OBJDIR}/font_30x42.o

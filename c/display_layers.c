@@ -115,7 +115,7 @@ void Blink(void)
          Pic_Layers[Layer].Blink_State^=0x01;
       else 
          Pic_Layers[Layer].Pic->Events->Handler[1]();
-      Layer_Structure_Modified();
+//      Layer_Structure_Modified();
      }
 }
 // -------------------------------------------------------------------------------------

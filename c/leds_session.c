@@ -26,8 +26,8 @@ void Fan_Off     ( void ) { }
 //-------------------------------------------------------------------
 struct Led_Effect_Struct Led_Effects[]=
 {
- {0xAAAA ,0xFFAA ,Led_Run_On ,Led_Run_Off} ,
- {0xAAAA ,0x00AA ,Rien       ,Rien}        ,
+ {0x8000 ,0xFFAA ,Led_Run_On ,Led_Run_Off} ,
+// {0xAAAA ,0x00AA ,Rien       ,Rien}        ,
 };
 void Set_Led_Effect        ( unsigned char Led,unsigned int Effect ) { Led_Effects[Led].Effect=Led_Effects[Led].Temp_Effect=Effect                                     ;}
 void Set_Temp_Led_Effect   ( unsigned char Led,unsigned int Effect ) { Led_Effects[Led].Temp_Effect=Effect                                                             ;}

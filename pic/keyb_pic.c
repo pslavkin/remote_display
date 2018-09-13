@@ -13,6 +13,7 @@
 #include "tpanel.h"
 #include "schedule.h"
 #include "ftm.h"
+#include "clock_pic.h"
 #include "accept_reject_pic.h"
 
 //--------------Pics Data----------------------------------

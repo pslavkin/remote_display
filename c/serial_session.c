@@ -19,6 +19,7 @@
 #include "flash.h"
 #include "log_pic.h"
 #include "one_wire.h"
+#include "clock_pic.h"
 
 State
    Parsing_Main    [ ],
@@ -245,11 +246,11 @@ State Parsing_Flash [ ]RODATA=
 };
 State Parsing_One_Wire [ ]RODATA=
 {
-{ 'A'       ,Print_Actual_Code   ,Parsing_One_Wire },
-{ 'B'       ,Send_New_OW_Code    ,Parsing_One_Wire },
-{ 'C'       ,Send_Abort_Event    ,Parsing_One_Wire },
-{ '<'       ,Rien                ,Parsing_Main     },
-{ '?'       ,Print_One_Wire_Menu ,Parsing_One_Wire },
-{ ANY_Event ,Rien                ,Parsing_One_Wire },
+{ 'A'       ,Print_Actual_Code         ,Parsing_One_Wire } ,
+{ 'B'       ,Send_New_OW_Code          ,Parsing_One_Wire } ,
+{ 'C'       ,Send_One_Wire_Abort_Event ,Parsing_One_Wire } ,
+{ '<'       ,Rien                      ,Parsing_Main     } ,
+{ '?'       ,Print_One_Wire_Menu       ,Parsing_One_Wire } ,
+{ ANY_Event ,Rien                      ,Parsing_One_Wire } ,
 };
 //------------------------------------------------------------------------------

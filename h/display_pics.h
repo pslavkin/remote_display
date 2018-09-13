@@ -23,7 +23,7 @@ struct Struct_Pic_Events
 struct Struct_Pic
 {
    struct Struct_Pic_Pos Pos       ;
-   uint16_t Blink_Period            ;
+   uint16_t Blink_Period           ;
    unsigned char Mod               ; // waf?? es un modulo de avance de los datos de la pic en el DMA.. se es cero, recorre toda la pic. si es 1, solo 1 byte, 2, 4 bytes, y asi.. puedo hacer un bkgd de color solido o tramado con 1 a 10 bytes de rom...! magico!!
    unsigned char ECount            ; // numero de eventos
    struct Struct_Pic_Events* Events; //
