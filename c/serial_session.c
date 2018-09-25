@@ -36,11 +36,11 @@ State* Serial_Session_Sm;
 //---------------------------------------------------------------------
 char About_Menu[] RODATA=
 {
- "NOTO N1104 DCIV5.4\r\n"
+ "Pointer LCD Keyboard 1.0 22-09-23018\r\n"
 };
 char Main_Menu[] RODATA=
 {
- "NOTO N1104 Main menu\r\n"
+ "Main Menu\r\n"
  "A Working\r\n"
  "B Buzzer\r\n"
  "C Info\r\n"
@@ -64,9 +64,7 @@ char Working_Menu[] RODATA=
 char Layers_Menu[] RODATA=
 {
  "Layers menu\r\n"
- "A Actual Layer\r\n"
- "B Layer Modified\r\n"
- "C Layer Used\r\n"
+ "A Layer Used\r\n"
  "0 Mask0\r\n"
  "1 Mask1\r\n"
  "2 Mask2\r\n"
@@ -156,94 +154,92 @@ void     Init_Serial_Session  (void)
 //---------------------------------------------------------------------
 State Parsing_Main   [ ]RODATA=
 {
-{ 'A'       ,Rien                ,Parsing_Working  },
-{ 'D'       ,Print_Layers_Menu   ,Parsing_Layers   },
-{ 'E'       ,Print_Dma_Menu      ,Parsing_Dma      },
-{ 'F'       ,Print_Ftm_Menu      ,Parsing_Ftm      },
-{ 'G'       ,Print_Adc_Menu      ,Parsing_Adc      },
-{ 'H'       ,Print_Tpanel_Menu   ,Parsing_Tpanel   },
-{ 'I'       ,Print_Flash_Menu    ,Parsing_Flash    },
-{ 'J'       ,Print_One_Wire_Menu ,Parsing_One_Wire },
-{ 'R'       ,Soft_Reset          ,Parsing_Main     },
-{ '.'       ,Print_About_Menu    ,Parsing_Main     },
-{ '?'       ,Print_Main_Menu     ,Parsing_Main     },
-{ ANY_Event ,Rien                ,Parsing_Main     },
-};
+{ 'A'       ,Rien                      ,Parsing_Working  } ,
+{ 'D'       ,Print_Layers_Menu         ,Parsing_Layers   } ,
+{ 'E'       ,Print_Dma_Menu            ,Parsing_Dma      } ,
+{ 'F'       ,Print_Ftm_Menu            ,Parsing_Ftm      } ,
+{ 'G'       ,Print_Adc_Menu            ,Parsing_Adc      } ,
+{ 'H'       ,Print_Tpanel_Menu         ,Parsing_Tpanel   } ,
+{ 'I'       ,Print_Flash_Menu          ,Parsing_Flash    } ,
+{ 'J'       ,Print_One_Wire_Menu       ,Parsing_One_Wire } ,
+{ 'R'       ,Soft_Reset                ,Parsing_Main     } ,
+{ '.'       ,Print_About_Menu          ,Parsing_Main     } ,
+{ '?'       ,Print_Main_Menu           ,Parsing_Main     } ,
+{ ANY_Event ,Rien                      ,Parsing_Main     } ,
+                                                         };
 State Parsing_Working[ ]RODATA=
 {
-{ '<'       ,Rien                      ,Parsing_Main    },
-{ '?'       ,Print_Working_Menu        ,Parsing_Working },
-{ ANY_Event ,Rien                      ,Parsing_Working },
-                                                        };
+{ '<'       ,Rien                      ,Parsing_Main     } ,
+{ '?'       ,Print_Working_Menu        ,Parsing_Working  } ,
+{ ANY_Event ,Rien                      ,Parsing_Working  } ,
+                                                         };
 State Parsing_Layers [ ]RODATA=
 {
-// {'A'     ,Print_Actual_Layers       ,Parsing_Layers}  ,
-// {'B'     ,Print_Layer_Modified      ,Parsing_Layers}  ,
-// {'C'     ,Print_Layers_Used         ,Parsing_Layers}  ,
-{ '0'       ,Add_Pass_Digit0           ,Parsing_Layers } ,
-{ '1'       ,Add_Pass_Digit1           ,Parsing_Layers } ,
-{ '2'       ,Add_Pass_Digit2           ,Parsing_Layers } ,
-{ '3'       ,Add_Pass_Digit3           ,Parsing_Layers } ,
-{ '4'       ,Add_Pass_Digit4           ,Parsing_Layers } ,
-{ '5'       ,Add_Pass_Digit5           ,Parsing_Layers } ,
-{ '6'       ,Add_Pass_Digit6           ,Parsing_Layers } ,
-{ '7'       ,Add_Pass_Digit7           ,Parsing_Layers } ,
-{ '8'       ,Add_Pass_Digit8           ,Parsing_Layers } ,
-{ '9'       ,Add_Pass_Digit9           ,Parsing_Layers } ,
-{ 'D'       ,Del_Pass_Digit            ,Parsing_Layers } ,
-{ 'E'       ,Add_Clock                 ,Parsing_Layers } ,
-{ 'F'       ,Layer_Clr_Lcd             ,Parsing_Layers } ,
-{ 'G'       ,Print_Actual_Pass         ,Parsing_Layers } ,
-{ '<'       ,Rien                      ,Parsing_Main   } ,
-{ '?'       ,Print_Layers_Menu         ,Parsing_Layers } ,
-{ ANY_Event ,Rien                      ,Parsing_Layers } ,
-};
+{ 'A'       ,Print_Layer_Used          ,Parsing_Layers   } ,
+{ '0'       ,Add_Pass_Digit0           ,Parsing_Layers   } ,
+{ '1'       ,Add_Pass_Digit1           ,Parsing_Layers   } ,
+{ '2'       ,Add_Pass_Digit2           ,Parsing_Layers   } ,
+{ '3'       ,Add_Pass_Digit3           ,Parsing_Layers   } ,
+{ '4'       ,Add_Pass_Digit4           ,Parsing_Layers   } ,
+{ '5'       ,Add_Pass_Digit5           ,Parsing_Layers   } ,
+{ '6'       ,Add_Pass_Digit6           ,Parsing_Layers   } ,
+{ '7'       ,Add_Pass_Digit7           ,Parsing_Layers   } ,
+{ '8'       ,Add_Pass_Digit8           ,Parsing_Layers   } ,
+{ '9'       ,Add_Pass_Digit9           ,Parsing_Layers   } ,
+{ 'D'       ,Del_Pass_Digit            ,Parsing_Layers   } ,
+{ 'E'       ,Add_Clock                 ,Parsing_Layers   } ,
+{ 'F'       ,Layer_Clr_Lcd             ,Parsing_Layers   } ,
+{ 'G'       ,Print_Actual_Pass         ,Parsing_Layers   } ,
+{ '<'       ,Rien                      ,Parsing_Main     } ,
+{ '?'       ,Print_Layers_Menu         ,Parsing_Layers   } ,
+{ ANY_Event ,Rien                      ,Parsing_Layers   } ,
+                                                         };
 
 State Parsing_Dma    [ ]RODATA=
 {
-{ 'A'       ,Print_Destin              ,Parsing_Dma     },
-{ 'B'       ,Dma_Request               ,Parsing_Dma     },
-{ 'C'       ,Dma_Clear                 ,Parsing_Dma     },
-{ '<'       ,Rien                      ,Parsing_Main    },
-{ '?'       ,Print_Dma_Menu            ,Parsing_Dma     },
-{ ANY_Event ,Rien                      ,Parsing_Dma     },
-};
+{ 'A'       ,Print_Destin              ,Parsing_Dma      } ,
+{ 'B'       ,Dma_Request               ,Parsing_Dma      } ,
+{ 'C'       ,Dma_Clear                 ,Parsing_Dma      } ,
+{ '<'       ,Rien                      ,Parsing_Main     } ,
+{ '?'       ,Print_Dma_Menu            ,Parsing_Dma      } ,
+{ ANY_Event ,Rien                      ,Parsing_Dma      } ,
+                                                         };
 
 State Parsing_Ftm    [ ]RODATA=
 {
-{ 'A'       ,Print_BLigth   ,Parsing_Ftm    } ,
-{ 'B'       ,Inc_Bligth     ,Parsing_Ftm    } ,
-{ 'C'       ,Dec_Bligth     ,Parsing_Ftm    } ,
-{ '<'       ,Rien           ,Parsing_Main    } ,
-{ '?'       ,Print_Ftm_Menu ,Parsing_Ftm     } ,
-{ ANY_Event ,Rien           ,Parsing_Ftm     } ,
-};
+{ 'A'       ,Print_BLigth              ,Parsing_Ftm      } ,
+{ 'B'       ,Inc_Bligth                ,Parsing_Ftm      } ,
+{ 'C'       ,Dec_Bligth                ,Parsing_Ftm      } ,
+{ '<'       ,Rien                      ,Parsing_Main     } ,
+{ '?'       ,Print_Ftm_Menu            ,Parsing_Ftm      } ,
+{ ANY_Event ,Rien                      ,Parsing_Ftm      } ,
+                                                         };
 
 State Parsing_Adc    [ ]RODATA=
 {
-{ 'A'       ,Print_Adc12               ,Parsing_Adc     },
-{ '<'       ,Rien                      ,Parsing_Main    },
-{ '?'       ,Print_Adc_Menu            ,Parsing_Adc     },
-{ ANY_Event ,Rien                      ,Parsing_Adc     },
-};
+{ 'A'       ,Print_Adc12               ,Parsing_Adc      } ,
+{ '<'       ,Rien                      ,Parsing_Main     } ,
+{ '?'       ,Print_Adc_Menu            ,Parsing_Adc      } ,
+{ ANY_Event ,Rien                      ,Parsing_Adc      } ,
+                                                         };
 
 State Parsing_Tpanel [ ]RODATA=
 {
-{ 'A'       ,Print_TPanel_Raw          ,Parsing_Tpanel  },
-{ '<'       ,Rien                      ,Parsing_Main    },
-{ '?'       ,Print_Tpanel_Menu         ,Parsing_Tpanel  },
-{ ANY_Event ,Rien                      ,Parsing_Tpanel  },
-};
+{ 'A'       ,Print_TPanel_Raw          ,Parsing_Tpanel   } ,
+{ '<'       ,Rien                      ,Parsing_Main     } ,
+{ '?'       ,Print_Tpanel_Menu         ,Parsing_Tpanel   } ,
+{ ANY_Event ,Rien                      ,Parsing_Tpanel   } ,
+                                                         };
 
 State Parsing_Flash [ ]RODATA=
 {
-{ 'A'       ,Save_Table_Log   ,Parsing_Flash } ,
-{ 'B'       ,Print_RLog       ,Parsing_Flash } ,
-{ 'C'       ,Print_FLog       ,Parsing_Flash } ,
-{ '<'       ,Rien             ,Parsing_Main  } ,
-{ '?'       ,Print_Flash_Menu ,Parsing_Flash } ,
-{ ANY_Event ,Rien             ,Parsing_Flash } ,
-};
+{ 'A'       ,Save_Table_Log            ,Parsing_Flash    } ,
+{ 'B'       ,Print_RLog                ,Parsing_Flash    } ,
+{ 'C'       ,Print_FLog                ,Parsing_Flash    } ,
+{ '<'       ,Rien                      ,Parsing_Main     } ,
+{ '?'       ,Print_Flash_Menu          ,Parsing_Flash    } ,
+{ ANY_Event ,Rien                      ,Parsing_Flash    } ,
+                                                         };
 State Parsing_One_Wire [ ]RODATA=
 {
 { 'A'       ,Print_Actual_Code         ,Parsing_One_Wire } ,
@@ -252,5 +248,5 @@ State Parsing_One_Wire [ ]RODATA=
 { '<'       ,Rien                      ,Parsing_Main     } ,
 { '?'       ,Print_One_Wire_Menu       ,Parsing_One_Wire } ,
 { ANY_Event ,Rien                      ,Parsing_One_Wire } ,
-};
+                                                         };
 //------------------------------------------------------------------------------

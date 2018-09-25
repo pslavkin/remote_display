@@ -16,6 +16,9 @@ extern State**    Everythings      ( void );
 // ----------------------------------------------------
 extern bool       Read_Ack_Pin     ( void );
 extern void       Init_Ack_Pin     ( void );
+extern void       Update_Ack_State ( void );
+extern void       Reset_Ack_State  ( void );
+bool              Read_Ack_State   ( void );
 // ----------------------------------------------------
 #endif
 

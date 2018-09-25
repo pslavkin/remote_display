@@ -3,7 +3,7 @@
 
 #include "state_machine.h"
 //---------------------------------------------------------
-#define MAX_PICS  25 //el maximo aparece en workin+pulsante (que son 2) + memorias + memoria grabada. 15
+#define MAX_PICS  25 //
 //---------------------------------------------------------
 enum Display_Layers_Event_Code
  {
@@ -58,6 +58,7 @@ extern void          Layer_Structure_Modified ( void                            
 extern void          Set_Watermark_Layer      ( void                                                 );
 extern void          Reset_Watermark_Layer    ( void                                                 );
 extern unsigned char Layer_Used               ( void                                                 );
+extern void          Print_Layer_Used         ( void                                                 );
 //---------------------------------------------------------
 extern void       Move_Pic_Bits2Higth  ( unsigned char Bits  ,struct Struct_Pic* Pic );
 extern void       Move_Pic_Bits2Low    ( unsigned char Bits  ,struct Struct_Pic* Pic );

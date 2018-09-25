@@ -25,8 +25,8 @@ void Pass_Constr(void)
 }
 struct Struct_Pic_Events Pass_Events[] =
 {
- {{0 ,0   ,0 ,0}  ,Invalid_Button ,0 ,{Pass_Constr ,Rien ,Pass_Destr}} ,// On_Create
- {{0 ,239 ,0 ,42} ,Invalid_Button ,1 ,{Rien        ,Rien ,Add_Log}}    ,
+ {{0 ,0   ,0 ,0}    ,Invalid_Button ,0 ,{Pass_Constr ,Rien ,Pass_Destr}} ,// On_Create
+ {{0 ,239 ,5 ,5+41} ,Invalid_Button ,1 ,{Rien        ,Rien ,Add_Log}}    ,
 };
 
 char* Read_Pass_String(void)

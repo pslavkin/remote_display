@@ -15,10 +15,10 @@
 #include "serial_tx.h"
 //
 static State
-   Idle[],
-   Updating[],
-   Clearing_Lcd[],
-   Aborting[];
+   Idle        [ ],
+   Updating    [ ],
+   Clearing_Lcd[ ],
+   Aborting    [ ];
 //------------------------------------------------------------------------------------
 struct Struct_Pic_Layer Pic_Layers[MAX_PICS+1];
 unsigned char           Pic_Layers_Used       ;
@@ -194,8 +194,9 @@ void Does_Layer_Modified ( void )
    else if(Layer_Modified&0x02)
            Atomic_Send_Event(Structure_Modified_Event,Display_Layers());
 }
-unsigned char Layer_Used ( void ) { return Pic_Layers_Used;}
-                                                                                                                                                         // -------------------------------------------------------------------------------------
+unsigned char  Layer_Used       ( void ) { return Pic_Layers_Used            ;}
+void           Print_Layer_Used ( void ) { Send_Int_NLine2Serial(Layer_Used());}
+// -------------------------------------------------------------------------------------
 State**  Display_Layers      ( void ) { return &Display_Layers_Sm                    ;} // devuelve la direccion de la maquina de estados Everythings para poder mandarle mensajes.
 void     Display_Layers_Rti  ( void ) { Atomic_Send_Event(ANY_Event,Display_Layers());}
 void     Init_Display_Layers ( void )

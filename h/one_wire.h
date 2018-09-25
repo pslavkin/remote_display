@@ -27,17 +27,20 @@ enum ONE_WIRE_TIMINGS{
 };
 
 enum One_Wire_Event_Code{
-            Overflow_Event     = 0x1200 ,
-            Fall_Event         = 0x1201 ,
-            Zero_Event         = 0x1202 ,
-            One_Event          = 0x1203 ,
-            Presense_Event     = 0x1204 ,
-            Error_Event        = 0x1205 ,
-            Time_Invalid_Event = 0x1206 ,
-            Command_End_Event  = 0x1207 ,
-            New_Code_Event     = 0x1208 ,
-            Code_Sended_Event  = 0x1209 ,
-            Abort_Event        = 0x120A
+            Overflow_Event             = 0x1200 ,
+            Fall_Event                 = 0x1201 ,
+            Zero_Event                 = 0x1202 ,
+            One_Event                  = 0x1203 ,
+            Presense_Event             = 0x1204 ,
+            Error_Event                = 0x1205 ,
+            Time_Invalid_Event         = 0x1206 ,
+            Command_End_Event          = 0x1207 ,
+            New_Code_Event             = 0x1208 ,
+            Code_Sended_Event          = 0x1209 ,
+            Abort_Event                = 0x120A ,
+            Test_Code_Validated_Event  = 0x120B ,
+            Code_Validated_Event       = 0x120C ,
+            Code_Not_Validated_Event   = 0x120D
 };
 enum ONE_WIRE_COMMANDS
 {

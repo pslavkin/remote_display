@@ -18,6 +18,7 @@ VPATH+=./c
 VPATH+=./pic
 VPATH+=./pic/font_30x42
 VPATH+=./pic/font_22x30
+VPATH+=./pic/font_80x88
 VPATH+=./startup
 VPATH+=./utilities
 
@@ -46,6 +47,7 @@ IPATH+=./h
 IPATH+=./pic
 IPATH+=./pic/font_30x42
 IPATH+=./pic/font_22x30
+IPATH+=./pic/font_80x88
 IPATH+=./startup
 IPATH+=./utilities
 #
@@ -95,12 +97,14 @@ ${BINDIR}/app.axf: ${OBJDIR}/welcome_pic.o
 ${BINDIR}/app.axf: ${OBJDIR}/keyb_pic.o
 ${BINDIR}/app.axf: ${OBJDIR}/mask_pic.o
 ${BINDIR}/app.axf: ${OBJDIR}/pass_pic.o
+${BINDIR}/app.axf: ${OBJDIR}/pass_big_pic.o
 ${BINDIR}/app.axf: ${OBJDIR}/accept_reject_pic.o
 ${BINDIR}/app.axf: ${OBJDIR}/clock_pic.o
 ${BINDIR}/app.axf: ${OBJDIR}/bkgd_pic.o
 ${BINDIR}/app.axf: ${OBJDIR}/log_pic.o
 ${BINDIR}/app.axf: ${OBJDIR}/font_30x42.o
 ${BINDIR}/app.axf: ${OBJDIR}/font_22x30.o
+${BINDIR}/app.axf: ${OBJDIR}/font_80x88.o
 
 #../board
 #${BINDIR}/app.axf: ${OBJDIR}/board.o

@@ -17,6 +17,7 @@
 #include "adc.h"
 #include "tpanel.h"
 #include "mask_pic.h"
+#include "ftm.h"
 
 State
    Initializing   [ ],
@@ -36,6 +37,8 @@ struct TPanel_Limits_Struct TPanel_Limits= {
 State*               TPanel_Sm        ;//variable que lleva cuenta del estado de la maquina de estados de "detodo un poco"...
 unsigned char        Delay_Before_Drag;
 struct TPanel_Struct Tp               ;
+uint32_t Time2Bligth_Off=0;
+uint8_t Drag_Counter;
 
 State**  Tpanel     ( void ) { return &TPanel_Sm               ;}
 void     Tpanel_Rti ( void ) { Send_Event(ANY_Event,&TPanel_Sm);}
@@ -72,6 +75,8 @@ unsigned char TPanel_Scaled_X( void ) { return Tp.X_Scaled;}
 unsigned char TPanel_Scaled_Y( void ) { return Tp.Y_Scaled;}
 unsigned char TPanel_X       ( void ) { return Tp.X       ;}
 unsigned char TPanel_Y       ( void ) { return Tp.Y       ;}
+
+uint8_t Read_Drag_Counter ( void ) { return Drag_Counter;}
 //--------------------------------------------------------------------
 void Scale_X(void)
 {
@@ -90,6 +95,7 @@ void On_Click        (void)            //escala y busca algun handler
  Scale_Y ( );
  Delay_Before_Drag=DELAY_BEFORE_DRAG_FILTER                  ;
  Find_Event_Handler ( None_Button,Tp.X_Scaled,Tp.Y_Scaled,0 );
+ Drag_Counter=0;
 }
 void On_Drag         (void)            //escala y busca un handler
 {
@@ -100,6 +106,8 @@ void On_Drag         (void)            //escala y busca un handler
    Scale_Y ( );
    Find_Event_Handler ( None_Button ,Tp.X_Scaled ,Tp.Y_Scaled ,1 );
    Delay_Before_Drag=DELAY_AFTER_DRAG_FILTER;
+   if(Drag_Counter<MAX_DRAG_COUNTER)
+        Drag_Counter++;
   }
 }
 void On_Release         (void)
@@ -157,9 +165,30 @@ void Feed_Y_And_Free_X(void)
 void Read_X ( void ) { Tp.X= Read_Adc(12);} //cuando hago feed de X, leo en el ADC del Y, la coordenada X
 void Read_Y ( void ) { Tp.Y= Read_Adc(13);} //cuando hago feed de Y, leo en el ADC del X, la coordenada Y
 //--------------------------------------------------------------------
-void Read_X_And_Feed_Y_And_Free_X                  ( void ) { Read_X();Feed_Y_And_Free_X();}
-void Read_Y_And_Feed_X_And_Free_Y_And_Test_Touched ( void ) { Read_Y();Feed_X_And_Free_Y();Test_Touched();}
+void Update_Time2Bligth_Off(void)
+{
+ if(Time2Bligth_Off>MAX_TIME2BLIGTH_OFF) {
+    Set_Bligth(MAX_BLIGHT);
+ }
+ Time2Bligth_Off=0;
+}
+void Inc_Time2Bligth_Off(void)
+{
+   if(Time2Bligth_Off<MAX_TIME2BLIGTH_OFF) {
+      Time2Bligth_Off++;
+   }
+   else
+      if(Time2Bligth_Off==MAX_TIME2BLIGTH_OFF) {
+         Time2Bligth_Off++;
+         Set_Bligth(MIN_BLIGHT);
+     }
+}
 //----------------------------------------------------
+void Read_X_And_Feed_Y_And_Free_X                  ( void ) { Read_X()  ;Feed_Y_And_Free_X()     ;}
+void Read_Y_And_Feed_X_And_Free_Y_And_Test_Touched ( void ) { Read_Y()  ;Feed_X_And_Free_Y()     ;Test_Touched()   ;}
+void On_Click_And_Update_Time2Bligth_Off           ( void ) { On_Click();Update_Time2Bligth_Off();}
+//----------------------------------------------------
+//
 State Initializing   [ ]=
 {
 { ANY_Event          ,Feed_X_And_Free_Y                             ,Reading_Y       } ,
@@ -174,10 +203,10 @@ State Reading_X      [ ]=
 };
 State Testing_Touched[ ]=
 {
-{ None_Touched_Event ,Rien                                          ,Reading_Y       } ,
-{ Click_Event        ,On_Click                                      ,Reading_Y       } ,
-{ Drag_Event         ,On_Drag                                       ,Reading_Y       } ,
-{ Released_Event     ,On_Release                                    ,Reading_Y       } ,
-{ ANY_Event          ,Rien                                          ,Testing_Touched } ,
+{ None_Touched_Event ,Inc_Time2Bligth_Off                 ,Reading_Y       } ,
+{ Click_Event        ,On_Click_And_Update_Time2Bligth_Off ,Reading_Y       } ,
+{ Drag_Event         ,On_Drag                             ,Reading_Y       } ,
+{ Released_Event     ,On_Release                          ,Reading_Y       } ,
+{ ANY_Event          ,Rien                                ,Testing_Touched } ,
 };
 //----------------------------------------------------

@@ -15,29 +15,16 @@
 //------------------------------------------------------
 __attribute__((section(".data.FLEX_RAM")))
 struct Log_Table RLog;
-
+uint16_t* Log_Data[LOG_LINES][10];
 
 struct Log_Table* Read_RLog(void)
 {
    return &RLog;
 }
-
 void Print_RLog(void)
 {
    Send_NLine_NVData2Serial(sizeof(RLog),RLog.Line[0]);
 }
-
-
-uint16_t* Log_Data[LOG_LINES][10];
-uint16_t Line_Raw[] RODATA=
-{
-   0x03E0,
-};
-uint16_t *Line_Data[] RODATA=
-{
-   Line_Raw,
-};
-
 void Copy_Pass2Log(char* Pass, bool Accepted)
 {
    uint8_t i;
@@ -78,15 +65,15 @@ struct Struct_Pic Log_Pic [] RODATA=
    {  {21 ,21+21 ,14+3*65 ,14+3*65+29} ,0 ,0 ,1 ,Rien_Events ,LOG_LENGTH-1 ,Log_Data[3]} ,
    {  {21 ,21+21 ,14+4*65 ,14+4*65+29} ,0 ,0 ,1 ,Rien_Events ,LOG_LENGTH-1 ,Log_Data[4]} ,
 
-   {  { 0 ,239 ,0*63 ,0*63+1} ,0 ,1 ,1 ,Rien_Events ,1 ,Line_Data },
-   {  { 0 ,239 ,1*63 ,1*63+1} ,0 ,1 ,1 ,Rien_Events ,1 ,Line_Data },
-   {  { 0 ,239 ,2*63 ,2*63+1} ,0 ,1 ,1 ,Rien_Events ,1 ,Line_Data },
-   {  { 0 ,239 ,3*63 ,3*63+1} ,0 ,1 ,1 ,Rien_Events ,1 ,Line_Data },
-   {  { 0 ,239 ,4*63 ,4*63+1} ,0 ,1 ,1 ,Rien_Events ,1 ,Line_Data },
-   {  { 0 ,239 ,318  ,319}    ,0 ,1 ,1 ,Rien_Events ,1 ,Line_Data },
+   {  { 0 ,239 ,0*63 ,0*63+1} ,0 ,1 ,1 ,Rien_Events ,1 ,Line_Green_Data },
+   {  { 0 ,239 ,1*63 ,1*63+1} ,0 ,1 ,1 ,Rien_Events ,1 ,Line_Green_Data },
+   {  { 0 ,239 ,2*63 ,2*63+1} ,0 ,1 ,1 ,Rien_Events ,1 ,Line_Green_Data },
+   {  { 0 ,239 ,3*63 ,3*63+1} ,0 ,1 ,1 ,Rien_Events ,1 ,Line_Green_Data },
+   {  { 0 ,239 ,4*63 ,4*63+1} ,0 ,1 ,1 ,Rien_Events ,1 ,Line_Green_Data },
+   {  { 0 ,239 ,318  ,319}    ,0 ,1 ,1 ,Rien_Events ,1 ,Line_Green_Data },
 
-   {  { 0   ,1   ,0 ,319} ,0 ,1 ,1 ,Rien_Events ,1 ,Line_Data} ,
-   {  { 238 ,239 ,0 ,319} ,0 ,1 ,1 ,Rien_Events ,1 ,Line_Data} ,
+   {  { 0   ,1   ,0 ,319} ,0 ,1 ,1 ,Rien_Events ,1 ,Line_Green_Data} ,
+   {  { 238 ,239 ,0 ,319} ,0 ,1 ,1 ,Rien_Events ,1 ,Line_Green_Data} ,
 };
 
 void Log_String2Pic(void)

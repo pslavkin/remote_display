@@ -30,6 +30,14 @@
 
 #define DELAY_BEFORE_DRAG_FILTER 8
 #define DELAY_AFTER_DRAG_FILTER  4
+
+#define MAX_TIME2BLIGTH_OFF (50*120)         //50=1seg
+#define MAX_BLIGHT   100
+#define MIN_BLIGHT   40
+
+#define MAX_DRAG_COUNTER 200
+
+
 //------------------------------------------------------------------------------
 enum Buttons_Event_Code {
    None_Button        = 0x00,
@@ -69,10 +77,15 @@ unsigned char  TPanel_Y             ( void                                  );
 unsigned char  TPanel_Scaled_X      ( void                                  );
 unsigned char  TPanel_Scaled_Y      ( void                                  );
 //-------------------------------------------------------------------------
+uint8_t Read_Drag_Counter ( void );
+//-------------------------------------------------------------------------
 unsigned char  Read_TPanel_Limits         ( unsigned char Pos                     );
 void           Reset_TPanel_Limits        ( void                                  );
 void           Print_TPanel_Limits        ( void                                  );
 void           Print_TPanel_Raw           ( void                                  );
 void           Print_Buttons              ( void                                  );
+//------------------------------------------------------------------------------
+void Update_Time2Bligth_Off ( void );
+void Inc_Time2Bligth_Off    ( void );
 //------------------------------------------------------------------------------
 #endif

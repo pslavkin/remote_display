@@ -37,6 +37,8 @@ State
    Free_State10[ ];
 
 State* Everythings_Sm;           //variable que lleva cuenta del estado de la maquina de estados de "detodo un poco"...
+bool Ack_State;
+bool Initial_Ack_Pin_State;
 //-------------------------------------------------------------------
 void Init_Ack_Pin(void)
 {
@@ -48,6 +50,23 @@ void Init_Ack_Pin(void)
 bool Read_Ack_Pin(void)
 {
    return  GPIO_PinRead(GPIOE,14);
+}
+bool Read_Ack_State(void)
+{
+   return Ack_State;
+}
+void Reset_Ack_State(void)
+{
+   Initial_Ack_Pin_State=Read_Ack_Pin(); // en el primer acceso, el pin esta en
+                                         // cero. para los proxumos, se
+                                         // invierte
+   Send_NVData2Serial    ( 19,Initial_Ack_Pin_State?"Initial Ack pin=1\r\n":"Initial Ack pin=0\r\n");
+   Ack_State=false;
+}
+void Update_Ack_State(void)
+{
+   if(Read_Ack_Pin()==!Initial_Ack_Pin_State)
+      Ack_State=true;
 }
 //----------------------------------------------------------------------------------------------------
 void     Init_Everythings  (void)
@@ -69,44 +88,44 @@ void     Init_Everythings  (void)
 State**  Everythings     ( void ) { return &Everythings_Sm             ;} // devuelve la direccion de la maquina de estados Everythings para poder mandarle mensajes.
 void     Everythings_Rti ( void ) { Send_Event(ANY_Event,Everythings());} // manda mensajes ANY a tiempos predefinidos...
 //----------------------------------------------------------------------------------------------------
-State Free_State1 [ ] RODATA  =
+State Free_State1 [ ]RODATA  =
 {
-{ANY_Event ,Rien                ,Free_State2} ,
-};
-State Free_State2 [ ] RODATA  =
-{{
- ANY_Event ,Rien                ,Free_State3  ,
+{ ANY_Event ,Rien                ,Free_State2} ,
+} ;
+State Free_State2 [ ]RODATA  =
+{ {
+ ANY_Event  ,Rien                ,Free_State3  ,
 }};
-State Free_State3 [ ] RODATA  =
-{{
- ANY_Event ,Rien                ,Free_State4  ,
+State Free_State3 [ ]RODATA  =
+{ {
+ ANY_Event  ,Update_Ack_State    ,Free_State4  ,
 }};
-State Free_State4 [ ] RODATA  =
-{{
- ANY_Event ,Rien                ,Free_State5  ,
+State Free_State4 [ ]RODATA  =
+{ {
+ ANY_Event  ,Rien                ,Free_State5  ,
 }};
-State Free_State5 [ ] RODATA  =
-{{
- ANY_Event ,Accelerate_All_Ftm0 ,Free_State6  ,
+State Free_State5 [ ]RODATA  =
+{ {
+ ANY_Event  ,Accelerate_All_Ftm0 ,Free_State6  ,
 }};
-State Free_State6 [ ] RODATA  =
-{{
- ANY_Event ,Schedule            ,Free_State7  ,
+State Free_State6 [ ]RODATA  =
+{ {
+ ANY_Event  ,Schedule            ,Free_State7  ,
 }};
-State Free_State7 [ ] RODATA  =
-{{
- ANY_Event ,Rien                ,Free_State8  ,
+State Free_State7 [ ]RODATA  =
+{ {
+ ANY_Event  ,Rien                ,Free_State8  ,
 }};
-State Free_State8 [ ] RODATA  =
-{{
- ANY_Event ,Led_Effects_Func    ,Free_State9  ,
+State Free_State8 [ ]RODATA  =
+{ {
+ ANY_Event  ,Led_Effects_Func    ,Free_State9  ,
 }};
-State Free_State9 [ ] RODATA  =
-{{
- ANY_Event ,Rien                ,Free_State10 ,
+State Free_State9 [ ]RODATA  =
+{ {
+ ANY_Event  ,Rien                ,Free_State10 ,
 }};
-State Free_State10[ ] RODATA  =
-{{
- ANY_Event ,Rien                ,Free_State1  ,
+State Free_State10[ ]RODATA  =
+{ {
+ ANY_Event  ,Rien                ,Free_State1  ,
 }};
 //-------------------------------------------------------------------------------

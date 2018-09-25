@@ -41,6 +41,7 @@ void Init_Ftm0C0(void) //bligth
    FTM0->CONTROLS[0].CnV  = 0;                 // arranca apagado
    FTM0->SC               = 0x00010009;        // habilito el pwm0 y seto clk 120M/2
    PORT_SetPinMux ( PORTC, 0, kPORT_MuxAlt2 ); // PTC0 como alt2 es FTM0CH0
+   Set_Bligth(80);
 }
 
 void Inc10_Bligth ( void ) {
@@ -61,6 +62,8 @@ void Dec_Bligth ( void ) {
 }
 void Set_Bligth(uint8_t Percent) {
    Set2Accelerate_Ftm0(0,(FTM0->MOD*Percent)/100);
+   Send_NVData2Serial(11,"Set Bligth:");
+   Send_Int_NLine2Serial(Percent);
 }
 //--------------------------------------------------------------------------------
 void     Set2Accelerate_Ftm0 ( uint8_t Ch ,uint16_t Pwm) {

@@ -18,11 +18,11 @@
 
 __attribute__((section(".uflash")))
 struct Log_Table FLog={
-   {  "1       +",
-      "22      +",
-      "333     -",
-      "4444    +",
-      "55555   -",
+   {  "         ",
+      "         ",
+      "         ",
+      "         ",
+      "         ",
    }
 };
 void Init_Flash(void)
@@ -32,7 +32,7 @@ void Init_Flash(void)
       *Read_RLog()=FLog;         //copio estructuras asi como asi
    else                          //si fallo la flash resetea la lista (sino arrancaria con todo 0xFF
       memcpy(Read_RLog()->Line[0],
-            "        +\0""        +\0""        -\0" "        +\0" "        -\0",
+            "        +\0""        -\0""        +\0""        -\0""        +\0",
             sizeof(FLog));
 }
 //void Atomic_Save_Table_Log ( void ) { Atomic(Save_Table_Log());}

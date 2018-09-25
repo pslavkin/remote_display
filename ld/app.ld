@@ -2,7 +2,7 @@ MEMORY
 {
   /* Define each memory region */
   PROGRAM_FLASH (rx): ORIGIN = 0x0,          LENGTH = 0x7E000  /* 512K bytes (alias Flash) */
-  /*USER_FLASH (rx):    ORIGIN = 0x0A000,      LENGTH = 0x00400  /* 8k para flash de usuario, para poder ir intercambiando de banco. */
+  /*USER_FLASH (rx):    ORIGIN = 0x30000,      LENGTH = 0x00400  /* 8k para flash de usuario, para poder ir intercambiando de banco. */
   USER_FLASH (rx):    ORIGIN = 0x7E000,      LENGTH = 0x00400  /* 8k para flash de usuario, para poder ir intercambiando de banco. */
   SRAM_UPPER (rwx):   ORIGIN = 0x20000000,   LENGTH = 0x8000   /* 32K bytes (alias RAM) */
   SRAM_LOWER (rwx):   ORIGIN = 0x1fff8000,   LENGTH = 0x8000   /* 32K bytes (alias RAM2) */

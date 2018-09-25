@@ -26,6 +26,9 @@ uint8_t Actual_Command;
 uint8_t OW[8];                                     //CRC|1|2|3|4|5|6|FAMILY
 uint8_t Zero_Code[12]={0,0,0,0,0,0,0,0,1,2,3,4};
 void (*PTimer_Irq) (void);
+
+bool     Code_Validated;
+uint8_t  TOut_Waiting_Validated;
 //-------------------------------------------------------------------
 void Init_One_Wire_Pin(void)
 {
@@ -120,7 +123,7 @@ void Print_Code_Sended  ( void ) { Send_NVData2Serial(13,"Code Sended\r\n") ;}
 void Print_Abort        ( void ) { Send_NVData2Serial( 7,"Abort\r\n")       ;}
 void Print_Time_Invalid ( void ) { Send_NVData2Serial(14,"Time invalid\r\n");}
 void Print_Command(void) {
-   Send_NVData2Serial        ( 9,"Command=:"             ) ;
+   Send_NVData2Serial        ( 8,"Command="             ) ;
    Send_Hex_Int_NLine2Serial ( Actual_Command            ) ;
 }
 void Print_Actual_Code(void)
@@ -146,23 +149,23 @@ void Wait_None(void) {
 }
 //----------------------------------------------------------------------------------------------------
 void Ack_Presence     ( void ) {
-   Delay_Useg(30);
-   PORT_SetPinMux     ( PORTD ,14 ,kPORT_MuxAsGpio );
-   Delay_Useg(200);
-   PORT_SetPinMux     ( PORTD ,14 ,kPORT_MuxAlt2 );
-   Delay_Useg(10);
-   Wait_Fall();
-   Print_Presence();
+   Delay_Useg     ( 30                         );
+   PORT_SetPinMux ( PORTD ,14 ,kPORT_MuxAsGpio );
+   Delay_Useg     ( 200                        );
+   PORT_SetPinMux ( PORTD ,14 ,kPORT_MuxAlt2   );
+   Delay_Useg     ( 10                         );
+   Wait_Fall      (                            );
+   Print_Presence (                            );
 }
 void Write_Next_Bit(void) {
-   bool Bit=Read_Bit4String(OW,Actual_Bit);
-   Delay_Useg(2);
+   bool Bit=Read_Bit4String ( OW,Actual_Bit );
+//   Delay_Useg(2);
    if(Bit==0)
       PORT_SetPinMux     ( PORTD ,14 ,kPORT_MuxAsGpio );
-   Delay_Useg(18);
-   PORT_SetPinMux     ( PORTD ,14 ,kPORT_MuxAlt2 );
-   Delay_Useg(10);
-   Wait_Fall();
+   Delay_Useg     ( 40                       ); // probe con 18 y a veces el rastreador le pifia.. lo relaje un poco para que le de el tiempo
+   PORT_SetPinMux ( PORTD ,14 ,kPORT_MuxAlt2 );
+   Delay_Useg     ( 10                       );
+   Wait_Fall      (                          );
    if(Actual_Bit--==0)
       Atomic_Send_Event(Code_Sended_Event,One_Wire());
 }
@@ -181,23 +184,23 @@ void Next_Command_Bit(void)
 }
 void Read_One(void)
 {
-   Wait_Fall();
-   Set_Bit_On_String(&Actual_Command,Actual_Bit);
-   Next_Command_Bit();
-   Print_One();
+   Wait_Fall         (                            );
+   Set_Bit_On_String ( &Actual_Command,Actual_Bit );
+   Next_Command_Bit  (                            );
+   Print_One         (                            );
 }
 void Read_Zero(void)
 {
-   Clear_Bit_On_String(&Actual_Command,Actual_Bit);
-   Next_Command_Bit();
-   Print_Zero();
+   Clear_Bit_On_String ( &Actual_Command,Actual_Bit );
+   Next_Command_Bit    (                            );
+   Print_Zero          (                            );
 }
 void Send_One_Wire_Abort_Event ( void ) { Atomic_Send_Event(Abort_Event,One_Wire())   ;}
 void Send_New_OW_Code          ( void ) { Atomic_Send_Event(New_Code_Event,One_Wire());}
 void Clear_Busy                ( void ) { Busy=false                                  ;}
 void Set_Busy                  ( void ) { Busy=true                                   ;}
 bool One_Wire_Busy             ( void ) { return Busy                                 ;}
-//----------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------
 void Ack_Presence_And_Begin_Read_Command            ( void ) { Ack_Presence()      ;Begin_Read_Command();}
 void Print_Presence_And_Wait_Fall                   ( void ) { Print_Presence()    ;Wait_Fall()         ;}
 void Print_Error_And_Wait_Fall                      ( void ) { Print_Error()       ;Wait_Fall()         ;}
@@ -244,5 +247,5 @@ State Writing_Code[ ]RODATA  =
 { Abort_Event        ,Print_Abort_And_Wait_None_And_Clear_Busy       ,Idle         },
 { Time_Invalid_Event ,Print_Time_Invalid_And_Wait_Fall               ,Presence     },
 { ANY_Event          ,Print_Error_And_Wait_Fall                      ,Presence     },
-                                                                                   };
+};
 //-------------------------------------------------------------------------------

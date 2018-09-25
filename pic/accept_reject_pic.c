@@ -7,6 +7,7 @@
 #include "serial_tx.h"
 #include "mask_pic.h"
 #include "pass_pic.h"
+#include "pass_big_pic.h"
 #include "debug.h"
 #include "tpanel.h"
 #include "bkgd_pic.h"
@@ -33,11 +34,13 @@ uint16_t *Accept_Data[] RODATA=
 void Accept_Constr(void)
 {
    Copy_Pass2Log  ( Read_Pass_String( ),true);
-   Save_Table_Log (                   )      ;
+   Send_NVData2Serial(10,"Accepted\r\n");
+//   Save_Table_Log (                   )      ; //no quiere que grabe cuando apaga!!
 }
 void Accept_Destr(void)
 {
   Del_Bkgd_Black ( );
+  Add_Pass_Big   ( );
   Layer_Clr_Lcd  ( );
 }
 //--------------Events----------------------------------
@@ -70,12 +73,12 @@ uint16_t *Reject_Data[] RODATA=
 {
    Reject_Data_Raw,
 };
-
 //---------------Functions---------------------------------------
 void Reject_Constr(void)
 {
    Copy_Pass2Log(Read_Pass_String(),false);
-   Save_Table_Log();
+   Send_NVData2Serial(10,"Rejected\r\n");
+//   Save_Table_Log (                   )      ; //no quiere que grabe cuando apaga!!
 }
 void Reject_Destr(void)
 {

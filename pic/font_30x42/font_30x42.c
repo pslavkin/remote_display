@@ -6,6 +6,7 @@
 #include "stdint.h"
 #include "pass_pic.h"
 #include "debug.h"
+#include "font_80x88.h"
 #include <string.h>
 //-----------------------------------------------------
 uint16_t Font_30x42_0_Raw[] RODATA= {/*{{{*/
@@ -28,50 +29,52 @@ uint16_t Font_30x42_3_Raw[] RODATA= {
    #include "font_30x42_3.raw"
 #endif
 };
-uint16_t Font_30x42_4_Raw[] RODATA= { 
+uint16_t Font_30x42_4_Raw[] RODATA= {
 #ifdef PICS_ENABLED
-   #include "font_30x42_4.raw" 
+   #include "font_30x42_4.raw"
 #endif
 };
-uint16_t Font_30x42_5_Raw[] RODATA= { 
+uint16_t Font_30x42_5_Raw[] RODATA= {
 #ifdef PICS_ENABLED
-   #include "font_30x42_5.raw" 
+   #include "font_30x42_5.raw"
 #endif
 };
-uint16_t Font_30x42_6_Raw[] RODATA= { 
+uint16_t Font_30x42_6_Raw[] RODATA= {
 #ifdef PICS_ENABLED
-   #include "font_30x42_6.raw" 
+   #include "font_30x42_6.raw"
 #endif
 };
-uint16_t Font_30x42_7_Raw[] RODATA= { 
+uint16_t Font_30x42_7_Raw[] RODATA= {
 #ifdef PICS_ENABLED
-   #include "font_30x42_7.raw" 
+   #include "font_30x42_7.raw"
 #endif
 };
-uint16_t Font_30x42_8_Raw[] RODATA= { 
+uint16_t Font_30x42_8_Raw[] RODATA= {
 #ifdef PICS_ENABLED
-   #include "font_30x42_8.raw" 
+   #include "font_30x42_8.raw"
 #endif
 };
-uint16_t Font_30x42_9_Raw[] RODATA= { 
+uint16_t Font_30x42_9_Raw[] RODATA= {
 #ifdef PICS_ENABLED
-   #include "font_30x42_9.raw" 
+   #include "font_30x42_9.raw"
 #endif
 };
-uint16_t Font_30x42__Raw[] RODATA= { 
+uint16_t Font_30x42__Raw[] RODATA= {
 #ifdef PICS_ENABLED
-   #include "font_30x42__.raw" 
+   #include "font_30x42__.raw"
 #endif
 };
-uint16_t Font_30x42_Space_Raw[] RODATA= { 
-#ifdef PICS_ENABLED
-   #include "font_30x42_space.raw"
-#endif
-};/*}}}*/
+//uint16_t Font_30x42_Space_Raw[] RODATA= {
+//#ifdef PICS_ENABLED
+//   #include "font_30x42_space.raw"
+//#endif
+//};
+/*}}}*/
 
 uint16_t * Font_30x42_Data[] RODATA=
 {
-Font_30x42_Space_Raw , //
+Font_80x88_Space_Raw , //
+//Font_30x42_Space_Raw , //
 NULL, //!
 NULL, //"
 NULL, //#

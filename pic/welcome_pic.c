@@ -17,8 +17,7 @@
 uint16_t Welcome_Data_Raw[] RODATA=
 {
 #ifdef PICS_ENABLED
-//#ifdef PICS_ENABLED_TEST
-   #include "pointer_logo.raw"
+   #include "pointer_logo_mini.raw"
 #endif
 };
 uint16_t *Welcome_Data[] RODATA=
@@ -28,7 +27,6 @@ uint16_t *Welcome_Data[] RODATA=
 //---------------Functions---------------------------------------
 void Welcome_Constr(void)
 {
-   Set_Bligth ( 50 );
    Layer_Clr_Lcd();
 }
 void Welcome_Destr(void)
@@ -45,14 +43,14 @@ struct Struct_Pic_Events Welcome_Events[] RODATA=
 //--------------Pics Info----------------------------------
 struct Struct_Pic Welcome_Pic RODATA=
 {
-   {16,16+207,100,100+125},2,0,2,Welcome_Events,1,Welcome_Data
+//   {16,16+207,100,100+125},3,0,2,Welcome_Events,1,Welcome_Data  //big
+   {16,16+204,142,142+ 34},3,0,2,Welcome_Events,1,Welcome_Data //mini
 };
 void Add_Welcome               ( void ) { Add_Pic_On_Bottom(&Welcome_Pic);}
 void Del_Welcome               ( void ) { Del_Pic(&Welcome_Pic)          ;}
 //------------------------------------------------------
 void Off_Constr(void)
 {
-   Set_Bligth(10);
    Layer_Clr_Lcd();
 }
 void Off_Destr(void)
@@ -67,7 +65,8 @@ struct Struct_Pic_Events Off_Events[] RODATA=
 };
 struct Struct_Pic Off_Pic RODATA=
 {
-   {16,16+207,100,100+125},0,0,2,Off_Events,1,Welcome_Data
+///   {16,16+207,100,100+125},0,0,2,Off_Events,1,Welcome_Data //big
+   {16,16+204,142,142+ 34},0,0,2,Off_Events,1,Welcome_Data //mini
 };
 void Add_Off               ( void ) { Add_Pic_On_Bottom(&Off_Pic);}
 void Del_Off               ( void ) { Del_Pic(&Off_Pic)          ;}
